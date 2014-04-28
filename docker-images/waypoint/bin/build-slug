@@ -73,14 +73,19 @@ $selected_buildpack/bin/compile "$build_dir" "$cache_dir" | ensure_indent
 ## Produce slug
 
 slug_file="$slug_dir/$app_name-latest.tgz"
+checksum_file="$slug_dir/$app_name-latest.sha512"
+
 previous_slug_file="$slug_dir/$app_name-previous.tgz"
+previous_checksum_file="$slug_dir/$app_name-previous.sha512"
 
 if [[ -e "$slug_file" ]]; then
   if [[ -e "$previous_slug_file" ]]; then
     rm $previous_slug_file
+    rm $previous_checksum_file
   fi
   echo_title "Storing previous slug for potential rollbacks"
   mv $slug_file $previous_slug_file
+  mv $checksum_file $previous_checksum_file
 fi
 
 if [[ -f "$build_dir/.slugignore" ]]; then
@@ -89,6 +94,10 @@ if [[ -f "$build_dir/.slugignore" ]]; then
 else
   tar --directory $build_dir -zcf $slug_file . | cat
 fi
+
+# Write shasum
+checksum=sha512sum $slug_file | awk -F '\ ' '{print $1}' -
+echo $checksum > $checksum_file
 
 slug_size=$(du -Sh "$slug_file" | cut -f1)
 echo_title "Compiled slug size is $slug_size"
