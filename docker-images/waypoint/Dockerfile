@@ -14,10 +14,10 @@ ADD ./buildpacks/ /srv/buildpacks
 # To be reused after rebuild
 VOLUME ["/srv/data"]
 
-# for git-receive
-EXPOSE 9999
+# forego auto assigned ports for:
+# git-receive & slug-serving
+EXPOSE 5000
+EXPOSE 5100
 
-# for slug-serving with shelf
-EXPOSE 6666
-
-# TODO set forego with Procfile as entrypoint
+# Trigger's forego start
+CMD /srv/bin/init

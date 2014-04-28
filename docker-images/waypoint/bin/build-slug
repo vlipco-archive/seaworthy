@@ -96,7 +96,8 @@ else
 fi
 
 # Write shasum
-checksum=sha512sum $slug_file | awk -F '\ ' '{print $1}' -
+echo_title "Calculating slug's checksum (SHA512)"
+checksum="$(/usr/bin/shasum -a 512 $slug_file | /usr/bin/awk -F '\ ' '{print $1}' -)"
 echo $checksum > $checksum_file
 
 slug_size=$(du -Sh "$slug_file" | cut -f1)

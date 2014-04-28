@@ -1,0 +1,2 @@
+gitreceived: /srv/bin/start-gitreceive 
+slugserver: /bin/sleep infinity
