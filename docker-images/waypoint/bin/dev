@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "Starting gitreceive server in background"
+/srv/bin/start-gitreceive &
+
+echo "Starting bash term"
+/bin/bash
