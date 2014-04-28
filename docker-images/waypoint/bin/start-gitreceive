@@ -10,5 +10,5 @@ receiver="/srv/bin/build-slug"
 # no auth here, that's the hosts responsability
 fake_auth_checker="/bin/true"
 
-/srv/bin/gitreceived -k="$ssh_key" -r="$cache_dir" -p="$PORT" -n=false \
+/srv/bin/gitreceived -k="$ssh_key" -r="$cache_dir" -p="$PORT" \
 	$ssh_key $fake_auth_checker	$receiver
