@@ -1,0 +1,88 @@
+#!/bin/bash
+set -eo pipefail
+
+function abort() {
+  echo "FATAL: $1" && exit 1
+}
+
+function ensure_defined() {
+  if [[ -z "${!1}" ]] ; then
+    abort "$1 isn't defined in the environment"
+  fi
+}
+
+function get_checksum() {
+  curl -s $checksum_url
+}
+
+function sync_slug() {
+  # download
+  echo "Downloading $app-latest from $SLUG_SERVER"
+  wget -qO $slug_file $slug_url
+
+  echo $(get_checksum) > $checksum_file
+  expected_checksum=$(cat $checksum_file)
+  slug_checksum=$(/usr/bin/shasum -a 512 $slug_file | /usr/bin/awk -F '\ ' '{print $1}' -)
+  #echo "EXPECTED: $expected_checksum"
+  #echo "FOUND:    $slug_checksum"
+  if [[ "$expected_checksum" == "$slug_checksum" ]]; then
+    echo "Checksum verification passed"
+  else
+    abort "Server's checksum doesn't match the downloaded slug"
+  fi
+  
+  echo "Extracting slug"
+  mkdir -p $app_dir
+  tar -xzf $slug_file -C $app_dir 
+}
+
+# Ensure the environment is defined
+ensure_defined "SLUG_SERVER"
+ensure_defined "APP_NAME"
+
+app="$APP_NAME"
+
+app_dir="/app"
+cache="/srv/data"
+
+procfile="$app_dir/Procfile"
+
+slug_server_url="http://$SLUG_SERVER"
+
+slug_file="$cache/slug.tgz"
+slug_url="$slug_server_url/$app-latest.tgz"
+
+checksum_file="$cache/slug.sha512"
+checksum_url="$slug_server_url/$app-latest.sha512"
+
+#echo "Running $app app from slug provided by $slug_server_url"
+
+# TODO handle slug server unavailability
+
+echo "Checking for previous slug"
+
+if [[ -e "$slug_file" ]]; then
+  echo "Matching existing slug with server's latest version"
+  local_checksum=cat $checksum_file
+  remote_checksum=get_checksum
+  if [[ "$local_checksum" -eq "$remote_checksum" ]]; then
+    echo "Checksums match, using existing slug"
+  else
+    echo "Checksums differ, cleaning existing slug"
+    rm -fr $app_dir $slug_file $checksum_file
+    sync_slug
+  fi
+else
+  echo "No slug found, pulling from the server"
+  sync_slug
+fi
+
+types=$(ruby -e "require 'yaml';puts YAML.load_file('$procfile').keys().join(', ')")
+echo "Procfile declares types -> $types"
+
+echo "Starting Procfile with Forego"
+cd $app_dir
+for file in profile.d/*; do
+  source $file
+done
+/srv/bin/forego start
