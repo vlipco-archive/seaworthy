@@ -18,7 +18,7 @@ run: build
 	@docker stop $(ctr_name) || echo "WARN: Stopped failed, maybe it wasn't running"
 	@echo "Removing previous container"
 	@docker rm --volumes=false $(ctr_name) || echo "WARN: Remove failed, maybe there was no predecessor"
-	docker run --name $(ctr_name) -d $(port_opts) $(volumes_opts) $(image)
+	docker run --name $(ctr_name) --rm -i -t $(port_opts) $(volumes_opts) $(image)
 
 run-alone: build
 	docker run $(port_opts) -i -t $(image)	

@@ -1,2 +1,3 @@
 gitreceived: /srv/bin/start-gitreceive 
-slugserver: /bin/sleep infinity
+slugserver: /srv/bin/fileserver -port 5100 -root /srv/data/slugs
+debugger: /bin/bash -c "while true; do echo $PORT; sleep 1; done"
