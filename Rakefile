@@ -18,6 +18,10 @@ def folder_for(img)
 	return File.expand_path path, __FILE__
 end
 
+def dockerfile_for(img)
+	return "#{folder_for(img)}/Dockerfile"
+end
+
 def cache_file(img)
 	return ".cache/#{img}.build"
 end
@@ -33,8 +37,10 @@ def dependencies_for(cache_file)
 		when :ferry  	then [cache_file(:hull), cache_file(:deckhouse)]
 		else 			raise "Unknown image: #{image_name}"
 	end
-	#puts "DEPS #{cache_file} => #{dependencies}"
-	return dependencies.unshift '.cache' # dir dependency
+	dependencies.unshift '.cache' # cache dir dependency
+	# Each build also depends on it's own dockerfile!
+	dependencies.push dockerfile_for(image_name)
+	return dependencies
 end
 
 directory '.cache'
@@ -42,14 +48,13 @@ directory '.cache'
 rule( /\.cache\/.*/ => ->(f){dependencies_for(f)}) do |t|
 	image_name = t.name.pathmap '%n'
 	image_folder = folder_for image_name
-	info "Building #{image_name} #{t.sources} => #{t.name}"
+	info "Building #{image_name}"
 	cmd="docker build -t vlipco/#{image_name} --rm #{image_folder} | bin/indent"
 	sh cmd do |ok,res|
 		if ok
-			dockerfile = "#{image_folder}/Dockerfile"
-			puts "DCOKERFILE: #{dockerfile}"
+			dockerfile = dockerfile_for(image_name)
 			digest = Digest::MD5.hexdigest File.read(dockerfile)
-			#File.open( t.name, 'w+') {|f| f.write digest }
+			File.open( t.name, 'w+') {|f| f.write digest }
 		else
 			error "Docker build failed"
 		end

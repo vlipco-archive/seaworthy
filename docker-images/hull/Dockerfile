@@ -4,7 +4,7 @@
 FROM progrium/cedarish
 MAINTAINER David Pelaez <david@vlipco.co>
 
-WORKDIR /srv/
+WORKDIR /srv
 ENV PATH /srv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ADD ./vendor/ /srv/bin
 ADD ./conf/bashrc /root/.bashrc
