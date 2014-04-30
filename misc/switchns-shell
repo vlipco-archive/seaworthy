@@ -1,0 +1,4 @@
+#!/bin/bash
+set -eo pipefail
+
+exec ./switchns --container=$1 -- /bin/bash

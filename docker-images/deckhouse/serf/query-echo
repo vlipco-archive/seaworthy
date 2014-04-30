@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -t 0 ]; then
+  payload='null'
+else
+  payload=`cat -`
+fi
+	
+echo "$payload"

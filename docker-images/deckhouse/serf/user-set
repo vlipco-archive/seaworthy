@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ -t 0 ]; then
+  # No payload sent over stdin
+  exit 0
+else
+  payload=`cat -`
+fi
+	
+echo $payload > /tmp/set

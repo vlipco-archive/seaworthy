@@ -1,13 +1,12 @@
-environment = -e "SLUG_SERVER=172.17.42.1:9999" -e "APP_NAME=ruby"
+dbus_socket = /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+geard_data = /var/lib/containers:/var/lib/containers
+systemd_target = /etc/systemd/system/container-active.target.wants:/etc/systemd/system/container-active.target.wants
 
 build:
-	docker build -t vlipco/harbor --rm .
-
-dev: build
-	docker run -i -t -p 3333:5000 vlipco/harbor /srv/bin/dev
+	docker build -t vlipco/harbor .
 
 shell: build
-	docker run -i -t -p 3333:5000 $(environment) vlipco/harbor /bin/bash
+	docker run -i -t vlipco/harbor /bin/bash
 
 run: build
-	docker run -i -t -p 3333:5000 $(environment) vlipco/harbor
+	docker run -v $(dbus_socket) -v $(geard_data) -v $(systemd_target) -i -t vlipco/harbor /bin/bash

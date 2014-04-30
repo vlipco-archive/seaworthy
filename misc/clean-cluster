@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function remove_container() {
+	docker stop $1
+	docker rm $1
+}
+
+remove_container alpha
+remove_container beta
+remove_container gamma
+remove_container delta

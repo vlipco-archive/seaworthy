@@ -35,3 +35,5 @@ build/
 .rvmrc
 
 sample-apps/ruby/.git
+.vagrant
+*.build

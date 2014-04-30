@@ -1,0 +1,9 @@
+#!/bin/bash
+set -eo pipefail
+
+# Inits the deployment of an app
+# It installs the app if needed
+# starts or restarts according to the case
+
+gear install pmorie/sti-html-app test.1 --start
+

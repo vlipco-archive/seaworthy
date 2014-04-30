@@ -4,14 +4,9 @@
 FROM progrium/cedarish
 MAINTAINER David Pelaez <david@vlipco.co>
 
-WORKDIR /srv
-
-RUN mkdir -p /srv
-ADD ./vendor/ /srv/bin
-
-#ADD ./bin/ /srv/bin
-#ADD ./conf/ /srv/conf
-
-
-
+WORKDIR /srv/
 ENV PATH /srv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ADD ./vendor/ /srv/bin
+ADD ./conf/bashrc /root/.bashrc
+RUN mkdir -p /srv
+RUN ln -s /root/.bashrc /.bashrc
