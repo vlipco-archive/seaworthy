@@ -15,7 +15,19 @@ namespace :build do
 		task img => ".cache/#{img}.build"
 	end
 
-	desc "All images in the project"
+	desc "Build all images in the project"
 	task all: IMAGES
 
 end
+
+desc "Clear any track of previous build stored in .cache"
+task :clean_cache do
+	rm_rf '.cache'
+end
+
+# TODO create cluster?
+# TODO clean cluster
+# TODO serf events
+# TODO make fake release
+
+# TODO full integration test
