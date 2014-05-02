@@ -26,7 +26,7 @@ rule( /\.cache\/.*/ => ->(f){dependencies_for(f)}) do |t|
 	image_name = t.name.pathmap '%n'
 	image_folder = folder_for image_name
 	info "Building #{image_name}"
-	cmd="docker build -t vlipco/#{image_name} --rm #{image_folder}"
+	cmd="sudo docker build -t vlipco/#{image_name} --rm #{image_folder}"
 	# start writing before creating the image
 	# so that changes to files during creationg result in run next time
 	dockerfile = dockerfile_for(image_name)

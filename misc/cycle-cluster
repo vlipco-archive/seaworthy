@@ -1,5 +1,0 @@
-#!/bin/bash
-
-./clean-cluster
-./start-cluster 
-./switchns-shell alpha
