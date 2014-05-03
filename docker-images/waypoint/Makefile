@@ -3,6 +3,7 @@ volumes_opts = -v /home/docker/waypoint:/srv/data:rw
 image = vlipco/waypoint
 ctr_name = waypoint
 
+
 build:
 	docker build -t $(image) --rm .
 

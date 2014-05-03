@@ -5,18 +5,19 @@ end
 def dependencies_for(cache_file)
   image_name = cache_file.pathmap '%n'
   dependencies = case image_name.to_sym
-    when :hull    then []
-    when :deckhouse then [cache_file_for(:hull)]
-    when :waypoint  then [cache_file_for(:hull), cache_file_for(:deckhouse)]
-    when :harbor    then [cache_file_for(:hull), cache_file_for(:deckhouse)]
-    when :ship    then [cache_file_for(:hull)]
-    when :ferry   then [cache_file_for(:hull), cache_file_for(:deckhouse)]
-    else      raise "Unknown image: #{image_name}"
-  end
+    when :hull then []
+    when :deckhouse then [:hull]
+    when :waypoint then [:hull, :deckhouse]
+    when :harbor then [:hull, :deckhouse]
+    when :ship then [:hull]
+    when :ferry then [:hull, :deckhouse]
+    else raise "Unknown image: #{image_name}"
+  end.map {|d| cache_file_for(d)}
+  #dependencies = dependencies_names
   dependencies.unshift '.cache' # cache dir dependency
-  # Each build also depends on it's own dockerfile!
+  # Each build also depends on it's own folder!
   dependencies.push folder_for(image_name)
-  #puts "DEPS #{cache_file} = #{dependencies}"
+  debug "DEPENDENCIES FOR #{cache_file}: #{dependencies}"
   return dependencies
 end
 

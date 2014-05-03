@@ -7,6 +7,10 @@ def error(msg)
 	puts "\n---> #{msg}\n".colorize :red
 end
 
+def debug(msg)
+  puts "\n---> #{msg}\n".colorize :magenta
+end
+
 def folder_for(img)
   return File.expand_path "docker-images/#{img}", ROOT_DIR
 end
