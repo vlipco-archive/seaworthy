@@ -15,7 +15,7 @@ def dependencies_for(cache_file)
   end
   dependencies.unshift '.cache' # cache dir dependency
   # Each build also depends on it's own dockerfile!
-  dependencies.push dockerfile_for(image_name)
+  dependencies.push folder_for(image_name)
   #puts "DEPS #{cache_file} = #{dependencies}"
   return dependencies
 end

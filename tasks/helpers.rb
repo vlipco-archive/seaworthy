@@ -17,7 +17,7 @@ end
 
 def remove_container(ctr)
   # TODO gracefully handle errors
-  sh "sudo docker stop #{ctr.to_s}"
+  sh "sudo docker stop -t 1 #{ctr.to_s}"
   sh "sudo docker rm #{ctr.to_s}"
 end
 
@@ -47,10 +47,11 @@ def serf_env_for(name: nil, role: nil, port: nil)
   opts.join " "
 end
 
-def start_ctr(name, port: nil, cmd: nil, img: nil, role: nil)
+def start_ctr(name, port: nil, cmd: nil, img: nil, role: nil, options: nil)
   parts = ["sudo docker run --name #{name} -d -i -t"]
   parts << serf_ports_options_for(port)
   parts << serf_env_for(name: name, port: port, role: role)
+  parts << options if options
   parts << img
   parts << cmd if cmd
   sh parts.join(" ")
