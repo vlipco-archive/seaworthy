@@ -19,26 +19,30 @@ def serf_ports_options_for(port)
   "-p #{port}:#{port} -p #{port}:#{port}/udp"
 end
 
-def serf_env_for(name: nil, role: nil, port: nil)
+def serf_env_for(name: nil, role: nil, port: nil, tags: nil)
   opts = []
   opts << "-e SERF_ROUTABLE_IP=172.17.42.1"
   opts << "-e SERF_NODE_NAME=#{name.to_s}"
   opts << "-e SERF_BIND_PORT=#{port}"
+  opts << "-e SERF_TAGS=#{tags}" if tags
   opts << "-e SERF_JOIN_NODE=172.17.42.1:7649"
   role ||= name
   opts << "-e SERF_ROLE=#{role.to_s}"
   opts.join " "
 end
 
-def start_ctr(name, port: nil, cmd: nil, img: nil, role: nil, options: nil, background: true)
-  parts = ["sudo docker run --name #{name}-i -t"]
+def start_ctr(name, port: nil, cmd: nil, img: nil, 
+              role: nil, options: nil, background: true, tags: nil)
+
+  parts = ["sudo docker run --name #{name} -i -t"]
   parts << "-d" if background
   parts << serf_ports_options_for(port)
-  parts << serf_env_for(name: name, port: port, role: role)
+  parts << serf_env_for(name: name, port: port, role: role, tags: tags)
   parts << options if options
   parts << img
   parts << cmd if cmd
   sh parts.join(" "), verbose: false
+
 end
 
 def switchns(ctr, cmd)

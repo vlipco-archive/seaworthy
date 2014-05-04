@@ -13,7 +13,7 @@ ROOT_DIR = File.dirname(__FILE__)
 ].each {|x| require_relative x }
 
 IMAGES=%w(hull deckhouse waypoint harbor ship ferry)
-CLUSTER_CONTAINERS = %w(admiral waypoint harbor observer)
+CLUSTER_CONTAINERS = %w(admiral waypoint public_harbor internal_harbor)
 
 namespace :build do
 
@@ -51,7 +51,11 @@ namespace :cluster do
 		start_ctr :waypoint, port: 7650, img: "vlipco/waypoint", 
 			options: "-p 5000:5000 -p 5100:5100"
 
-		start_ctr :harbor, port: 7651, img: "vlipco/harbor"
+		start_ctr :public_harbor, port: 7651, img: "vlipco/harbor",
+			role: :harbor, tags: "group=public"
+
+		start_ctr :internal_harbor, port: 7652, img: "vlipco/harbor",
+			role: :harbor, tags: "group=internal"
 	end
 
 	desc "Removed the named containers"
