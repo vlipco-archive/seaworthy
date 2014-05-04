@@ -30,12 +30,17 @@ def serf_env_for(name: nil, role: nil, port: nil)
   opts.join " "
 end
 
-def start_ctr(name, port: nil, cmd: nil, img: nil, role: nil, options: nil)
-  parts = ["sudo docker run --name #{name} -d -i -t"]
+def start_ctr(name, port: nil, cmd: nil, img: nil, role: nil, options: nil, background: true)
+  parts = ["sudo docker run --name #{name}-i -t"]
+  parts << "-d" if background
   parts << serf_ports_options_for(port)
   parts << serf_env_for(name: name, port: port, role: role)
   parts << options if options
   parts << img
   parts << cmd if cmd
   sh parts.join(" "), verbose: false
+end
+
+def switchns(ctr, cmd)
+  exec "sudo dev-tools/vendor/switchns --container=#{ctr} -- #{cmd}"
 end

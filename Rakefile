@@ -13,7 +13,7 @@ ROOT_DIR = File.dirname(__FILE__)
 ].each {|x| require_relative x }
 
 IMAGES=%w(hull deckhouse waypoint harbor ship ferry)
-CLUSTER_CONTAINERS = %w(admiral waypoint harbor)
+CLUSTER_CONTAINERS = %w(admiral waypoint harbor observer)
 
 namespace :build do
 
@@ -44,9 +44,10 @@ namespace :cluster do
 	desc "Starts named containers simulation a real cluster"
 	task start: ["build:all"] do
 		info "Launching cluster containers"
+
 		start_ctr :admiral, port: 7649, img: "vlipco/deckhouse", 
 			cmd: "/srv/bin/start-serf"
-
+		
 		start_ctr :waypoint, port: 7650, img: "vlipco/waypoint", 
 			options: "-p 5000:5000 -p 5100:5100"
 
@@ -66,9 +67,23 @@ namespace :cluster do
 	desc "Clean all container followed by a cluster start"
 	task reset: [:clean,:start]
 
+	desc "Attach to admiral and monitor the cluster"
+	task :monitor do
+		info "Starting Serf oberserver (ctrl+c to exit)"		
+		switchns :admiral, "/srv/bin/serf monitor"
+	end
+
+	desc "Attach to admiral and run bash"
+	task :shell do
+		info "Running bash in the context of the admiral container"
+		switchns :admiral, "/bin/bash"
+	end
+
 end
 
 namespace :integration do
+
+	
 
 	desc "Pushes a sample-app/ruby to the cluster"
 	task :fake_deploy do
