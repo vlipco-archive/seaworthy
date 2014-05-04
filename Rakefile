@@ -73,7 +73,7 @@ namespace :integration do
 	desc "Pushes a sample-app/ruby to the cluster"
 	task :fake_deploy do
 		info "Pushing sample app to the cluster"
-		sh "dev-tools/bin/fake-release sample-apps/ruby"
+		sh "dev-tools/bin/fake-release sample-apps/ruby", verbose: false
 	end
 
 	desc "Creates a cluster, fakes a deploy and performs some tests"
