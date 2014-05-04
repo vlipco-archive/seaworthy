@@ -1,12 +1,13 @@
 #!/bin/bash
-cd $(dirname $0)
+bin_folder="$(pwd)/$(dirname $0)"
+cd $1
 git init || :
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
-date > date
+echo "Last fake commit date: $(date +'%s')" > date
 git add -A .
 git commit -am "Fake commit"
-git remote add tester ssh://git@localhost:5100/ruby
-export GIT_SSH="$(pwd)/../git_ssh"
+git remote add tester ssh://git@localhost:5100/ruby || :
+export GIT_SSH="$bin_folder/git_ssh"
 echo $GIT_SSH
 git push tester master
