@@ -43,7 +43,7 @@ namespace :cluster do
 
 	desc "Starts named containers simulation a real cluster"
 	task start: ["build:all"] do
-
+		info "Launching cluster containers"
 		start_ctr :admiral, port: 7649, img: "vlipco/deckhouse", 
 			cmd: "/srv/bin/start-serf"
 
@@ -55,7 +55,11 @@ namespace :cluster do
 
 	desc "Removed the named containers"
 	task :clean do
-		CLUSTER_CONTAINERS.each {|ctr| remove_container ctr}
+		info "Removing cluster's containers"
+		CLUSTER_CONTAINERS.each do |ctr|
+			log "- #{ctr}"
+			remove_container ctr
+		end
 		# TODO add ships to the list of coantiners to remove
 	end
 
@@ -68,12 +72,14 @@ namespace :integration do
 
 	desc "Pushes a sample-app/ruby to the cluster"
 	task :fake_deploy do
+		info "Pushing sample app to the cluster"
 		sh "dev-tools/bin/fake-release sample-apps/ruby"
 	end
 
 	desc "Creates a cluster, fakes a deploy and performs some tests"
 	task test: [:fake_deploy] do
 		# Nugget tests?
+		info "Performing tests..."
 	end
 
 end

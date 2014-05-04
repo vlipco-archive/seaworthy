@@ -1,7 +1,7 @@
 def remove_container(ctr)
   # TODO gracefully handle errors
-  sh "sudo docker stop -t 1 #{ctr.to_s}"
-  sh "sudo docker rm #{ctr.to_s}"
+  sh "sudo docker stop -t 1 #{ctr.to_s} &> /dev/null", verbose: false
+  sh "sudo docker rm #{ctr.to_s} &> /dev/null", verbose: false
 end
 
 def gear_volumes_options
@@ -37,5 +37,5 @@ def start_ctr(name, port: nil, cmd: nil, img: nil, role: nil, options: nil)
   parts << options if options
   parts << img
   parts << cmd if cmd
-  sh parts.join(" ")
+  sh parts.join(" "), verbose: false
 end
