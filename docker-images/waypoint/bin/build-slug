@@ -102,3 +102,6 @@ echo $checksum > $checksum_file
 
 slug_size=$(du -Sh "$slug_file" | cut -f1)
 echo_title "Compiled slug size is $slug_size"
+
+echo_title "Notifying cluster"
+/srv/bin/serf event deploy $app_name

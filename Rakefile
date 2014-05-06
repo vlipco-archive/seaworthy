@@ -26,7 +26,9 @@ namespace :build do
 	end
 
 	desc "Build all images in the project"
-	task all: IMAGES
+	task all: IMAGES do
+		info "All images built"
+	end
 
 end
 
@@ -52,10 +54,10 @@ namespace :cluster do
 			options: "-p 5000:5000 -p 5100:5100"
 
 		start_ctr :public_harbor, port: 7651, img: "vlipco/harbor",
-			role: :harbor, tags: "group=public"
+			role: :harbor, tags: "group=public", options: gear_volumes_options
 
 		start_ctr :internal_harbor, port: 7652, img: "vlipco/harbor",
-			role: :harbor, tags: "group=internal"
+			role: :harbor, tags: "group=internal", options: gear_volumes_options
 	end
 
 	desc "Removed the named containers"
@@ -85,7 +87,12 @@ namespace :cluster do
 
 end
 
-namespace :integration do
+namespace :dev do
+
+	desc "Creates the cluster from scratch and simulates a push"
+	task cycle: ["build:all","cluster:reset",:fake_deploy,:test] do
+		info "Cycle completed."
+	end
 
 	
 
@@ -96,7 +103,7 @@ namespace :integration do
 	end
 
 	desc "Creates a cluster, fakes a deploy and performs some tests"
-	task test: [:fake_deploy] do
+	task :test do
 		# Nugget tests?
 		info "Performing tests..."
 	end

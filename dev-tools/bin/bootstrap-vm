@@ -1,36 +1,46 @@
 #!/bin/bash
+set -euo pipefail
 
-echo "Installing dependencies and setting up vm for geard development"
+if [[ `whoami` != "root" ]]; then
+  echo "RUN THIS AS ROOT"
+  exit 1
+fi
 
+function log() {
+  echo -e "--> $1"
+}
+
+seaworthydir=$(echo ~vagrant/seaworthy)
+godir=$(echo ~vagrant/go)
+
+log "Updating all packages"
 yum update -y
-yum install -y docker-io golang git hg bzr libselinux-devel
-yum install -y vim tig glibc-static btrfs-progs-devel device-mapper-devel sqlite-devel libnetfilter_queue-devel gcc gcc-c++ nmap-ncat
 
+log "Adding vagrant to the docker group"
 usermod -a -G docker vagrant
-systemctl enable docker.service
-systemctl start docker
-systemctl status docker
 
+log "Setting permissions for /vagrant"
 chown -R vagrant:vagrant /vagrant
 
-# SET VAGRANT USER PATH VARIABLES: GOPATH, GEARD_PATH
-if [[ $(cat ~vagrant/.bash_profile | grep GOPATH) = "" ]]; then
-  echo 'export GOPATH=/vagrant' >> ~vagrant/.bash_profile
-  echo 'export PATH=$GOPATH/bin:$PATH' >> ~vagrant/.bash_profile
-  echo "cd $GEARD_PATH" >> ~vagrant/.bashrc  
-  echo "bind '\"\e[A\":history-search-backward'" >> ~vagrant/.bashrc
-  echo "bind '\"\e[B\":history-search-forward'" >> ~vagrant/.bashrc
-else
-  echo "vagrant user path variables already configured"
+if [[ ! -e "$seaworthydir" ]]; then
+  log "Linking vagrant folder as seaworthy under $HOME"
+  ln -s /vagrant $seaworthydir
 fi
 
-# SET ROOT USER PATH VARIABLES: GOPATH, GEARD_PATH
-if [[ $(cat /root/.bash_profile | grep GOPATH) = "" ]]; then
-  echo 'export GOPATH=/vagrant' >> /root/.bash_profile
-  echo 'export PATH=$GOPATH/bin:$PATH' >> /root/.bash_profile
-  echo "cd $GEARD_PATH" >> /root/.bashrc
-  echo "bind '\"\e[A\":history-search-backward'" >> /root/.bashrc
-  echo "bind '\"\e[B\":history-search-forward'" >> /root/.bashrc  
+log "Creating $HOME/go (to be used as GOPATH)"
+mkdir -p $godir
+
+log "Configuring environment for vagrant"
+
+target=$(echo ~vagrant/.zsh.after/gopath.zsh)
+touch $target
+chmod +x $target
+
+if [[ $(cat $target | grep GOPATH) == "" ]]; then
+  echo 'export GOPATH='$godir >> $target
+  echo 'export PATH=$GOPATH/bin:$PATH' >> $target
 else
-  echo "root user path variables already configured"
+  echo "vagrant's environment is already configured"
 fi
+
+chown -R vagrant:vagrant ~vagrant
