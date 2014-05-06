@@ -1,0 +1,4 @@
+admiral: launchers/admiral
+waypoint: launchers/waypoint
+public_harbor: launchers/public_harbor
+private_harbor: launchers/private_harbor
