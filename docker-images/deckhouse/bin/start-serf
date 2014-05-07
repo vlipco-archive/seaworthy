@@ -2,7 +2,8 @@
 set -eo pipefail
 
 function abort() {
-  echo "FATAL: $1" && exit 1
+  echo "FATAL: $1"
+  exit 1
 }
 
 function ensure_defined() {
@@ -44,12 +45,12 @@ SERF_BIND="$SERF_ROUTABLE_IP:$SERF_BIND_PORT"
 
 # we use a background job then wait to play nice with Forego signals & output
 
-/srv/bin/serf agent $JOIN_OPTION -node $SERF_NODE_NAME \
+exec /srv/bin/serf agent $JOIN_OPTION -node $SERF_NODE_NAME \
 		-bind 0.0.0.0:$SERF_BIND_PORT -advertise $SERF_BIND \
 		$TAGS_OPTIONS $SECURITY_OPTIONS \
 		-event-handler /srv/bin/event-router &
 
-trap "echo 'SIGTERM! Leaving cluster'; /srv/bin/serf leave && exit 0" 15
-trap "echo 'SIGKILL!'; exit 1" 9
-
-wait
+#trap "echo 'SIGTERM! Leaving cluster'; /srv/bin/serf leave && exit 0" 15
+#trap "echo 'SIGKILL!'; exit 1" 9
+#
+#wait
