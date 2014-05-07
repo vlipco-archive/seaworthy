@@ -1,0 +1,2 @@
+gitreceived: /srv/bin/start-gitreceive 
+slugserver: /srv/bin/fileserver -port $PORT -root /srv/data/slugs

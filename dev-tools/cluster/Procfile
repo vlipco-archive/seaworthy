@@ -1,0 +1,2 @@
+admiral: SERF_PORT=$ADMIRAL_PORT launchers/admiral
+waypoint: SERF_PORT=4001 launchers/waypoint

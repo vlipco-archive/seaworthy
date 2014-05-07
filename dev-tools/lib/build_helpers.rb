@@ -37,7 +37,7 @@ def build_image(img)
 
       if should_build
         info "Building #{img}"
-        cmd="sudo docker build -t vlipco/#{img} --rm #{folder_for(img)}"
+        cmd="docker build -t vlipco/#{img} #{folder_for(img)}"
         mkdir_p '.tmp', verbose: false
         File.open(cache_buster, 'w+') {|f| f.write expected_val}
         sh cmd, verbose: false do |ok,res|

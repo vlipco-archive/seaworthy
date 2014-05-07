@@ -8,5 +8,5 @@ WORKDIR /srv
 ENV PATH /srv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ADD ./vendor/ /srv/bin
 ADD ./conf/bashrc /root/.bashrc
-RUN mkdir -p /srv
-RUN ln -s /root/.bashrc /.bashrc
+RUN mkdir -p /srv; ln -s /root/.bashrc /.bashrc
+RUN apt-get update; apt-get install -y nano parallel

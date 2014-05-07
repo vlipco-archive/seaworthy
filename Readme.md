@@ -25,3 +25,20 @@ build:
 
 shell: build
     docker run -i -t vlipco/hull /bin/bash
+
+    waypoint: ./waypoint
+public_harbor: ./public_harbor
+private_harbor: ./private_harbor
+
+
+sudo docker run --name admiral -i -t -d -p 7649:7649 -p 7649:7649/udp -e SERF_ROUTABLE_IP=172.17.42.1 -e SERF_NODE_NAME=admiral -e SERF_BIND_PORT=7649 -e SERF_JOIN_NODE=172.17.42.1:7649 -e SERF_ROLE=admiral vlipco/deckhouse /srv/bin/start-serf
+
+
+sudo docker run --name waypoint -i -t -d -p 7650:7650 -p 7650:7650/udp -e SERF_ROUTABLE_IP=172.17.42.1 -e SERF_NODE_NAME=waypoint -e SERF_BIND_PORT=7650 -e SERF_JOIN_NODE=172.17.42.1:7649 -e SERF_ROLE=waypoint -p 5000:5000 -p 5100:5100 vlipco/waypoint
+
+
+sudo docker run --name public_harbor -i -t -d -p 7651:7651 -p 7651:7651/udp -e SERF_ROUTABLE_IP=172.17.42.1 -e SERF_NODE_NAME=public_harbor -e SERF_BIND_PORT=7651 -e SERF_TAGS=group=public -e SERF_JOIN_NODE=172.17.42.1:7649 -e SERF_ROLE=harbor -v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket -v /var/lib/containers:/var/lib/containers -v /etc/systemd/system/container-active.target.wants:/etc/systemd/system/ vlipco/harbor
+
+
+sudo docker run --name internal_harbor -i -t -d -p 7652:7652 -p 7652:7652/udp -e SERF_ROUTABLE_IP=172.17.42.1 -e SERF_NODE_NAME=internal_harbor -e SERF_BIND_PORT=7652 -e SERF_TAGS=group=internal -e SERF_JOIN_NODE=172.17.42.1:7649 -e SERF_ROLE=harbor -v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket -v /var/lib/containers:/var/lib/containers -v /etc/systemd/system/container-active.target.wants:/etc/systemd/system/ vlipco/harbor
+

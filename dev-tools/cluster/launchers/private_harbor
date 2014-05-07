@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#trap "echo $0 received SIGTERM ; exit 0 " 15
+#trap "echo $0 received SIGKILL ; exit 0 " 9
+
+/opt/bin/docker run --tty=false -i --rm $GEAR_VOL_OPTS \
+	-p $SERF_PORT:$SERF_PORT -p $SERF_PORT:$SERF_PORT/udp \
+	-e SERF_BIND_PORT=$SERF_PORT \
+	-e SERF_ROUTABLE_IP=$SERF_ROUTABLE_IP \
+	-e SERF_JOIN_NODE=$SERF_ROUTABLE_IP:$ADMIRAL_PORT \
+	-e SERF_ROLE=harbor -e SERF_TAGS=group=private \
+	-e SERF_NODE_NAME=private_harbor \
+	vlipco/harbor 
+
+#wait

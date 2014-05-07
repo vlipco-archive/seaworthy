@@ -14,10 +14,9 @@ ADD ./buildpacks/ /srv/buildpacks
 # To be reused after rebuild
 VOLUME ["/srv/data"]
 
-# forego auto assigned ports for:
 # git-receive & slug-serving
 EXPOSE 5000
 EXPOSE 5100
 
-# Trigger's forego start
-CMD /srv/bin/init
+# multi-init using Procfile
+CMD /srv/bin/minit

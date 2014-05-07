@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e
+
+# Based in Shoreman
+
+info() {
+  echo "[info] $1"
+}
+
+info "Minit started with pid $$"
+
+while read line || [ -n "$line" ]; do
+  name=${line%%:*}
+  command=${line#*: }
+  $command | sed -e "s/^/\[$name\] /g" &
+  info "$name started with pid $!"
+done < "/srv/conf/Procfile"
+
+send_signal() {
+  for pid in $(jobs -p); do
+    kill -s $1 $pid &> /dev/null
+  done
+}
+
+onexit() {
+  echo " $1 Terminating all processes"
+  send_signal SIGTERM
+  sleep 3
+  send_signal SIGKILL
+  sleep 1
+  info "-- Bye"
+}
+
+trap 'onexit "SIGINT received."' SIGINT
+trap 'onexit "SIGTERM received."' SIGTERM
+
+while true; do
+  for line in $(jobs -p); do
+    kill -0 $line &> /dev/null || onexit "UNEXPECTED FAILURE in $line."
+  done
+  sleep 0.5
+done

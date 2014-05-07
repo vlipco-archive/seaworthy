@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#trap "echo $0 received SIGTERM ; exit 0" 15
+#trap "echo $0 received SIGKILL ; exit 0" 9
+
+/opt/bin/docker run --tty=false -i --rm \
+	-p $SERF_PORT:$SERF_PORT -p $SERF_PORT:$SERF_PORT/udp \
+	-e SERF_BIND_PORT=$SERF_PORT \
+	-e SERF_ROUTABLE_IP=$SERF_ROUTABLE_IP \
+	-e SERF_ROLE=admiral \
+	-e SERF_NODE_NAME=admiral \
+	vlipco/deckhouse "/srv/bin/start-serf" &
+
+CTR_PID=$!
+
+for NUM in `seq 1 64`; do
+	#trap "echo !!$NUM && exit 0" $NUM
+	trap "echo !!$NUM $0; kill -$NUM $CTR_PID; sleep 3; exit 0" $NUM
+done
+
+wait

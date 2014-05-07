@@ -1,0 +1,6 @@
+#!/bin/bash
+set -euo pipefail
+
+false &
+sleep 1
+echo "123"

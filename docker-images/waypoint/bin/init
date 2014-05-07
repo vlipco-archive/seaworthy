@@ -1,6 +1,0 @@
-#!/bin/bash
-set -eo pipefail
-
-echo "Starting container's Procfile"
-# Change working dir and start Procfile
-cd /srv/conf && /srv/bin/forego start

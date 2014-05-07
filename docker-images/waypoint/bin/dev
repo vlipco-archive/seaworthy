@@ -1,8 +1,0 @@
-#!/bin/bash
-set -eo pipefail
-
-echo "Starting Waypoint's Procfile in the background (gitreceived + slugserver)" 
-/srv/bin/init &
-
-echo "Starting bash term"
-/bin/bash

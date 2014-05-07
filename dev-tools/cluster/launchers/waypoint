@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#trap "echo $0 received SIGTERM ; exit 0 " 15
+#trap "echo $0 received SIGKILL ; exit 0 " 9
+
+/opt/bin/docker run --tty=false -i --rm \
+	-p $SERF_PORT:$SERF_PORT -p $SERF_PORT:$SERF_PORT/udp \
+	-p 5000:5000 -p 5100:5100 \
+	-e SERF_BIND_PORT=$SERF_PORT \
+	-e SERF_ROUTABLE_IP=$SERF_ROUTABLE_IP \
+	-e SERF_JOIN_NODE=$SERF_ROUTABLE_IP:$ADMIRAL_PORT \
+	-e SERF_ROLE=waypoint \
+	-e SERF_NODE_NAME=waypoint \
+	vlipco/waypoint &
+
+CTR_PID=$!
+
+for NUM in `seq 1 64`; do
+	trap "echo !!$NUM $0; kill -$NUM $CTR_PID; sleep 3; exit 0" $NUM
+done
+
+wait
