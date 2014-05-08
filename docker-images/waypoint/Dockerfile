@@ -19,4 +19,4 @@ EXPOSE 5000
 EXPOSE 5100
 
 # multi-init using Procfile
-CMD /srv/bin/minit
+CMD ["/srv/bin/shoreman", "/srv/conf/Procfile"]

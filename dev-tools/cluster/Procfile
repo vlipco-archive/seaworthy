@@ -1,2 +1,4 @@
 admiral: SERF_PORT=$ADMIRAL_PORT launchers/admiral
-waypoint: exec $(SERF_PORT=4001 launchers/waypoint)
+waypoint: SERF_PORT=4001 launchers/waypoint
+public_harbor: SERF_PORT=4002 HARBOR=public launchers/harbor
+private_harbor: SERF_PORT=4003 HARBOR=private launchers/harbor

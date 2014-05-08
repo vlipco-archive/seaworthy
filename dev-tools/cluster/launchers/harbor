@@ -4,6 +4,7 @@ exec /opt/bin/docker run --tty=false -i --rm \
 	-p $SERF_PORT:$SERF_PORT -p $SERF_PORT:$SERF_PORT/udp \
 	-e SERF_BIND_PORT=$SERF_PORT \
 	-e SERF_ROUTABLE_IP=$SERF_ROUTABLE_IP \
-	-e SERF_ROLE=admiral \
-	-e SERF_NODE_NAME=admiral \
-	vlipco/deckhouse "/srv/bin/start-serf"
+	-e SERF_JOIN_NODE=$SERF_ROUTABLE_IP:$ADMIRAL_PORT \
+	-e SERF_ROLE=harbor -e SERF_TAGS="group=$HARBOR" \
+	-e SERF_NODE_NAME=${HARBOR}_harbor \
+	vlipco/harbor

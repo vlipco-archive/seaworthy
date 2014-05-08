@@ -1,7 +1,0 @@
-#!/bin/bash
-set -euo pipefail
-
-echo "Starting $0 with pid $$"
-sleep 1
-echo "FAILING!"
-exit 1

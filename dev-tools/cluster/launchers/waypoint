@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo /opt/bin/docker run --tty=false -i --rm \
+exec /opt/bin/docker run --tty=false -i --rm \
 	-p $SERF_PORT:$SERF_PORT -p $SERF_PORT:$SERF_PORT/udp \
 	-p 5000:5000 -p 5100:5100 \
 	-e SERF_BIND_PORT=$SERF_PORT \
