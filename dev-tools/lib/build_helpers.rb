@@ -2,7 +2,7 @@ def folder_for(img)
   return File.expand_path "docker-images/#{img}", ROOT_DIR
 end
 
-def dependencies_for(img)
+def image_dependencies(img)
   case img.to_sym
     when :hull then []
     when :deckhouse then [:hull]
@@ -14,37 +14,36 @@ def dependencies_for(img)
   end
 end
 
+def files_in(folder_path)
+  glob = "#{folder_path}/**/*"
+  Rake::FileList[glob]
+end
+
+def cache_buster_dependencies(cache_file)
+  img = cache_file.pathmap('%n').to_sym
+  dependencies = image_dependencies(img).map {|d| cache_buster_file(d)}
+  image_files = files_in folder_for(img)
+  dependencies.push image_files
+  return dependencies
+end
+
 def cache_buster_file(img)
-  ".tmp/#{img}.last-deps"
+  ".tmp/#{img}.build"
 end
 
-def cache_buster_val(img)
-  result = dependencies_for(img).push(img).map do |f| 
-    timestamp = %x(date -r #{folder_for(f)} +'%s')
-    "#{f} #{timestamp}"
-  end.join ""
-end
-
-def build_image(img)
-  cache_buster = cache_buster_file img
-      expected_val = cache_buster_val img
-
-      should_build = true
-
-      if File.exists? cache_buster
-        should_build = ( File.read(cache_buster) != expected_val )
-      end
-
-      if should_build
-        info "Building #{img}"
-        cmd="docker build -t vlipco/#{img} #{folder_for(img)}"
-        mkdir_p '.tmp', verbose: false
-        File.open(cache_buster, 'w+') {|f| f.write expected_val}
-        sh cmd, verbose: false do |ok,res|
-          if !ok
-            rm cache_buster
-            error "Docker build of #{img} failed"
-          end
-        end
-      end
+rule( /\.tmp\/.*\.build/ => ->(f){cache_buster_dependencies(f)}) do |t|
+  image_name = t.name.pathmap '%n'
+  image_folder = folder_for image_name
+  info "Building #{image_name}"
+  cmd="docker build -t vlipco/#{image_name} --rm #{image_folder}"
+  mkdir_p '.tmp', verbose: false
+  # start writing before creating the image
+  # so that changes to files during creationg result in run next time
+  File.open( t.name, 'w+') {|f| f.write Time.now }
+  sh cmd, verbose: true do |ok,res|
+    if !ok
+      rm t.name
+      error "Docker build failed"
+    end
+  end 
 end

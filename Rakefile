@@ -15,19 +15,28 @@ ROOT_DIR = File.dirname(__FILE__)
 IMAGES=%w(hull deckhouse waypoint harbor ship ferry)
 CLUSTER_CONTAINERS = %w(admiral waypoint public_harbor internal_harbor)
 
+task :pry do
+	binding.pry
+end
+
 namespace :build do
+
+	#IMAGES.each do |img|
+	#	desc "Build vlipco/#{img}"
+	#	task img => dependencies_for(img) do
+	#		# TODO support force option
+	#		build_image img
+	#	end
+	#end
 
 	IMAGES.each do |img|
 		desc "Build vlipco/#{img}"
-		task img => dependencies_for(img) do
-			# TODO support force option
-			build_image img
-		end
+		task img => cache_buster_file(img)
 	end
 
 	desc "Build all images in the project"
 	task all: IMAGES do
-		info "All images built"
+		info "All images up to date"
 	end
 
 end
