@@ -17,12 +17,14 @@ RUN \
    ./contrib/test && \
    /bin/cp -f $GOPATH/bin/gear-auth-keys-command /usr/sbin/ && \
    /bin/cp -f $GOPATH/bin/switchns /usr/bin && \
-   /bin/cp -f $GOPATH/bin/gear /usr/bin && \
-   rm -rf $GOPATH
+   /bin/cp -f $GOPATH/bin/gear /usr/bin
+
+#rm -rf $GOPATH
 
 VOLUME /var/lib/containers
 
 # Serf event handler shared by many containers
 ADD ./serf/ /srv/serf/harbor-plugin
+ADD ./conf/ /srv/conf
 
-CMD ["/usr/local/bin/start-serf"]
+CMD ["/usr/local/bin/shoreman", "/srv/conf/Procfile"]

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-exec sudo /opt/bin/docker run --tty=false -i --rm \
+exec /opt/bin/docker run --tty=false -i --rm \
 	-p $SERF_PORT:$SERF_PORT -p $SERF_PORT:$SERF_PORT/udp \
 	-e SERF_BIND_PORT=$SERF_PORT \
 	-e SERF_ROUTABLE_IP=$SERF_ROUTABLE_IP \

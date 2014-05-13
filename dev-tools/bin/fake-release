@@ -14,9 +14,11 @@ echo "Last fake commit date: $(date +'%s')" > date
 git add -A .
 git commit -am "Fake commit"
 
-if ! git remote | grep tester &> /dev/null; then
-	git remote add tester ssh://git@localhost:5000/ruby
+if git remote | grep tester &> /dev/null; then
+	git remote remove tester
 fi
+
+git remote add tester ssh://git@localhost:5000/ruby44
 
 export GIT_SSH="$bin_folder/git_ssh"
 

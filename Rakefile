@@ -51,7 +51,7 @@ namespace :cluster do
     info "Launching cluster's Procfile"
     envfile = "dev-tools/cluster/cluster.env"
     procfile = "dev-tools/cluster/Procfile"
-    exec "dev-tools/bin/forego start -e #{envfile} -f #{procfile}"
+    exec "sudo dev-tools/bin/forego start -e #{envfile} -f #{procfile}"
   end
 
   desc "Attach to admiral and monitor the cluster"
