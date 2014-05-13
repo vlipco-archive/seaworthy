@@ -23,7 +23,7 @@ def cache_buster_dependencies(cache_file)
   img = cache_file.pathmap('%n').to_sym
   dependencies = image_dependencies(img).map {|d| cache_buster_file(d)}
   image_files = files_in folder_for(img)
-  dependencies.push image_files
+  dependencies.push *image_files
   return dependencies
 end
 

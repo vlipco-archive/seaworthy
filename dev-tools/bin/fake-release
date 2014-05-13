@@ -15,7 +15,7 @@ git add -A .
 git commit -am "Fake commit"
 
 if ! git remote | grep tester &> /dev/null; then
-	git remote add tester ssh://git@localhost:5100/ruby
+	git remote add tester ssh://git@localhost:5000/ruby
 fi
 
 export GIT_SSH="$bin_folder/git_ssh"

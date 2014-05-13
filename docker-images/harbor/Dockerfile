@@ -1,7 +1,28 @@
 FROM vlipco/deckhouse
 MAINTAINER David Pelaez <david@vlipco.co>
 
+#modified from https://raw.githubusercontent.com/openshift/geard/master/Dockerfile
+
+ENV GOPATH /go
+RUN yum install -y golang git hg bzr libselinux-devel glibc-static btrfs-progs-devel device-mapper-devel sqlite-devel libnetfilter_queue-devel gcc gcc-c++ && yum clean all
+RUN mkdir -p $GOPATH && echo $GOPATH >> ~/.bash_profile
+
+ENV GEARD_SRC /go/src/github.com/openshift/geard
+
+RUN \
+   mkdir -p $GEARD_SRC && \
+   cd $GEARD_SRC && \
+   git clone https://github.com/openshift/geard.git . && \
+   ./contrib/build -s -n && \
+   ./contrib/test && \
+   /bin/cp -f $GOPATH/bin/gear-auth-keys-command /usr/sbin/ && \
+   /bin/cp -f $GOPATH/bin/switchns /usr/bin && \
+   /bin/cp -f $GOPATH/bin/gear /usr/bin && \
+   rm -rf $GOPATH
+
+VOLUME /var/lib/containers
+
 # Serf event handler shared by many containers
 ADD ./serf/ /srv/serf/harbor-plugin
 
-CMD ["/srv/bin/start-serf"]
+CMD ["/usr/local/bin/start-serf"]

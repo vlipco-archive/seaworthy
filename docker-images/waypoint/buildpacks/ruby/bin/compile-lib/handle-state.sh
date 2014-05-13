@@ -16,7 +16,7 @@ rename_previous $ruby_version_file
 rename_previous $buildpack_revision_file
 
 # Saved this run's info
-$ruby -v > "$ruby_version_file.current"
+ruby -v > "$ruby_version_file.current"
 echo $buildpack_revision > "$buildpack_revision_file.current"
 
 check_ruby_version() {

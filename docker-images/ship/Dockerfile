@@ -1,9 +1,7 @@
 FROM vlipco/hull
 MAINTAINER David Pelaez <david@vlipco.co>
 
-WORKDIR /srv
-
-ADD ./bin/ /srv/bin
+ADD ./bin/init /init
 
 RUN mkdir -p /app
 
@@ -17,4 +15,4 @@ VOLUME ["/srv/data"]
 # in case the app needs to listen to the outside
 EXPOSE 5000
 
-CMD /srv/bin/init
+CMD /init

@@ -97,11 +97,11 @@ fi
 
 # Write shasum
 echo_title "Calculating slug's checksum (SHA512)"
-checksum="$(/usr/bin/shasum -a 512 $slug_file | /usr/bin/awk -F '\ ' '{print $1}' -)"
+checksum="$(/usr/bin/sha512sum $slug_file | /usr/bin/awk -F ' ' '{print $1}' -)"
 echo $checksum > $checksum_file
 
 slug_size=$(du -Sh "$slug_file" | cut -f1)
 echo_title "Compiled slug size is $slug_size"
 
 echo_title "Notifying cluster"
-/srv/bin/serf event deploy $app_name
+serf event deploy $app_name

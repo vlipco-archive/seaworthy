@@ -4,10 +4,9 @@
 FROM vlipco/deckhouse
 MAINTAINER David Pelaez <david@vlipco.co>
 
-WORKDIR /srv
+ADD ./bin/ /usr/local/bin
+ADD ./vendor/ /usr/local/bin
 
-ADD ./bin/ /srv/bin
-ADD ./vendor/ /srv/bin
 ADD ./conf/ /srv/conf
 ADD ./buildpacks/ /srv/buildpacks
 
@@ -19,4 +18,4 @@ EXPOSE 5000
 EXPOSE 5100
 
 # multi-init using Procfile
-CMD ["/srv/bin/shoreman", "/srv/conf/Procfile"]
+CMD ["/usr/local/bin/shoreman", "/srv/conf/Procfile"]

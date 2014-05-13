@@ -1,13 +1,8 @@
-## This is the base of all other container
-# It exists to share commong things like pre-installed pkgs
-
-FROM progrium/cedarish
-MAINTAINER David Pelaez <david@vlipco.co>
-
-WORKDIR /srv
-ENV PATH /srv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
-ADD ./vendor/ /srv/bin
-ADD ./conf/bashrc /root/.bashrc
-RUN mkdir -p /srv; ln -s /root/.bashrc /.bashrc
-RUN apt-get update; apt-get install -y vim 2&> /dev/null
+FROM fedora:20
+ENV DEFAULT_RUBY_VERSION 2.1.1
+ADD ./etc/ /usr/local/etc
+RUN ln -s /usr/local/etc/profile.sh /etc/profile.d/
+ADD ./bin/ /usr/local/bin
+ADD ./vendor/ /usr/local/bin
+RUN /usr/local/bin/provisioner.sh
+RUN mkdir -p /srv

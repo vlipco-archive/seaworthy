@@ -6,4 +6,4 @@ exec /opt/bin/docker run --tty=false -i --rm \
 	-e SERF_ROUTABLE_IP=$SERF_ROUTABLE_IP \
 	-e SERF_ROLE=admiral \
 	-e SERF_NODE_NAME=admiral \
-	vlipco/deckhouse "/srv/bin/start-serf"
+	vlipco/deckhouse "/usr/local/bin/start-serf"
