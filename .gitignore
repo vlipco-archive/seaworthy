@@ -36,5 +36,6 @@ build/
 .rvmrc
 
 sample-apps/ruby/.git
+sample-apps/ruby/date
 .vagrant
 *.build
