@@ -19,13 +19,13 @@ yum update -y
 log "Adding vagrant to the docker group"
 usermod -a -G docker vagrant
 
-log "Setting permissions for /vagrant"
-chown -R vagrant:vagrant /vagrant
+#log "Setting permissions for /vagrant"
+#chown -R vagrant:vagrant /vagrant
 
-if [[ ! -e "$seaworthydir" ]]; then
-  log "Linking vagrant folder as seaworthy under $HOME"
-  ln -s /vagrant $seaworthydir
-fi
+#if [[ ! -e "$seaworthydir" ]]; then
+  #log "Linking vagrant folder as seaworthy under $HOME"
+  #ln -s /vagrant $seaworthydir
+#fi
 
 log "Creating $HOME/go (to be used as GOPATH)"
 mkdir -p $godir
@@ -43,4 +43,4 @@ else
   echo "vagrant's environment is already configured"
 fi
 
-chown -R vagrant:vagrant ~vagrant
+#chown -R vagrant:vagrant ~vagrant

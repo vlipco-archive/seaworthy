@@ -77,10 +77,21 @@ namespace :dev do
     #sh "docker rm $(docker ps -a -q)"
   end
 
-  desc "Pushes a sample-app/ruby to the cluster"
-  task :fake_deploy do
-    info "Pushing sample app to the cluster"
-    sh "dev-tools/bin/fake-release sample-apps/ruby", verbose: false
+  namespace :push do
+    desc "Pushes a sample-app/ruby to the cluster as ruby1"
+    task :ruby1 do
+      push "sample-apps/ruby", "ruby1"
+    end
+
+    desc "Pushes a sample-app/ruby to the cluster as ruby2"
+    task :ruby2 do
+      push "sample-apps/ruby", "ruby2"
+    end
+
+    esc "Pushes a sample-app/ruby to the cluster as ruby2"
+    task :static1 do
+      push "sample-apps/static", "static1"
+    end
   end
 
   desc "Creates a cluster, fakes a deploy and performs some tests"

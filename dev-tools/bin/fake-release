@@ -18,7 +18,7 @@ if git remote | grep tester &> /dev/null; then
 	git remote remove tester
 fi
 
-git remote add tester ssh://git@localhost:5000/ruby44
+git remote add tester ssh://git@localhost:5000/$2
 
 export GIT_SSH="$bin_folder/git_ssh"
 

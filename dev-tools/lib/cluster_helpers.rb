@@ -48,3 +48,8 @@ end
 def switchns(ctr, cmd)
   exec "sudo dev-tools/vendor/switchns --container=#{ctr} -- #{cmd}"
 end
+
+def push_app(app, as_name)
+  info "Pushing #{app} as #{as_name}"
+  sh "dev-tools/bin/fake-release #{app} #{as_name}", verbose: false
+end
