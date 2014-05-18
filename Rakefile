@@ -6,7 +6,7 @@ ROOT_DIR = File.dirname(__FILE__)
 
 [
 
-  'dev-tools/lib/logging_helpers.rb', 
+  'dev-tools/lib/logging_helpers.rb',
   'dev-tools/lib/build_helpers.rb',
   'dev-tools/lib/cluster_helpers.rb'
 
@@ -37,8 +37,8 @@ end
 
 namespace :clean do
   desc "Clear any .build files tracking previous docker builds"
-  task :tmp do	
-    info "Deleting .tmp folder recursively"	
+  task :tmp do
+    info "Deleting .tmp folder recursively"
     rm_rf '.tmp', verbose: false
   end
 end
@@ -56,7 +56,7 @@ namespace :cluster do
 
   desc "Attach to admiral and monitor the cluster"
   task :monitor do
-    info "Starting Serf oberserver (ctrl+c to exit)"		
+    info "Starting Serf oberserver (ctrl+c to exit)"
     switchns :admiral, "/srv/bin/serf monitor"
   end
 
@@ -68,7 +68,7 @@ namespace :cluster do
 
 end
 
-namespace :dev do	
+namespace :dev do
 
   desc "Kill all running docker containers"
   task :clean_docker do

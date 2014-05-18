@@ -1,0 +1,7 @@
+---
+
+- hosts: harbors
+  sudo: yes
+  roles:
+    - { role: harbor }
+

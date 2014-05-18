@@ -1,3 +1,0 @@
-serf: start-serf
-gitreceive: start-gitreceive
-slugserver: fileserver -port 5100 -root /srv/data/slugs

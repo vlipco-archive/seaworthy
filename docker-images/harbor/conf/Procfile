@@ -1,2 +1,0 @@
-serf: start-serf
-geard: gear daemon --has-env-file

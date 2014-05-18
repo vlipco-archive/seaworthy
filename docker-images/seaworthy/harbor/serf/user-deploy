@@ -1,0 +1,23 @@
+#!/bin/bash
+set -eo pipefail
+
+# Inits the deployment of an app
+# It installs the app if needed
+# starts or restarts according to the case
+
+app="$1"
+
+echo "Triggering gear actions for $app"
+
+gear set-env "$app" APP_NAME=$app SLUG_SERVER=172.17.42.1:5100 --reset
+
+gear install vlipco/ship localhost/$app \
+	--ports="5000:0" \
+	--env-file="/var/lib/containers/env/contents/${app:0:2}/$app" \
+	--env-id="$app" \
+
+sleep 1
+gear restart $app
+
+#gear install vlipco/ship localhost/$app --ports="5000:0" --env-id="$app"
+#gear start "$app"

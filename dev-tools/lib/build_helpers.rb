@@ -1,15 +1,15 @@
 def folder_for(img)
-  return File.expand_path "docker-images/#{img}", ROOT_DIR
+  return File.expand_path "docker-images/#{img.to_s.slit('_').join('/')}", ROOT_DIR
 end
 
 def image_dependencies(img)
   case img.to_sym
-    when :hull then []
-    when :deckhouse then [:hull]
-    when :waypoint then [:hull, :deckhouse]
-    when :harbor then [:hull, :deckhouse]
-    when :ship then [:hull]
-    when :ferry then [:hull, :deckhouse]
+    when :starters_hull then []
+    when :starters_deckhouse then [:hull]
+    when :seaworthy_waypoint then [:hull, :deckhouse]
+    when :seaworthy_harbor then [:hull, :deckhouse]
+    when :seaworthy_ship then [:hull]
+    when :seaworthy_ferry then [:hull, :deckhouse]
     else raise "Unknown image: #{image_name}"
   end
 end

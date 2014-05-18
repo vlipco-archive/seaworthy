@@ -1,0 +1,2 @@
+- name: Printing some msg
+  debug: msg="aloha mundo!"

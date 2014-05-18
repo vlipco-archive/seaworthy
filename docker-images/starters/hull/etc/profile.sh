@@ -1,0 +1,2 @@
+export PS1="\[\e[00;37m\]\u \[\e[0m\]\[\e[00;31m\]ctr-\h\[\e[0m\]\[\e[00;37m\] \\$\[\e[0m\] "
+$(cat /.dockerenv | ruby -ne 'eval($_).each {|x| puts "export #{x}"}')
