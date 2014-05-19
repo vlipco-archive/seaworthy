@@ -10,6 +10,7 @@
 /test/version_tmp/
 /tmp/
 /.tmp/
+gopath
 
 ## Specific to RubyMotion:
 .dat*

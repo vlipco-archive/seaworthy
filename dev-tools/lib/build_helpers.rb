@@ -46,7 +46,7 @@ rule( /\.tmp\/.*\.build/ => ->(f){cache_buster_dependencies(f)}) do |t|
   sh cmd, verbose: true do |ok,res|
     if !ok
       rm t.name
-      error "Docker build failed"
+      raise "Docker build failed"
     end
   end 
 end
