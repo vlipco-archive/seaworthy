@@ -1,15 +1,16 @@
 def folder_for(img)
-  return File.expand_path "docker-images/#{img.to_s.slit('_').join('/')}", ROOT_DIR
+  return File.expand_path "docker-images/#{img.to_s.split('_').join('/')}", ROOT_DIR
 end
 
 def image_dependencies(img)
   case img.to_sym
-    when :starters_hull then []
-    when :starters_deckhouse then [:hull]
-    when :seaworthy_waypoint then [:hull, :deckhouse]
-    when :seaworthy_harbor then [:hull, :deckhouse]
-    when :seaworthy_ship then [:hull]
-    when :seaworthy_ferry then [:hull, :deckhouse]
+    when :vendor_consul then []
+    when :vendor_nsq then []
+    #when :starters_deckhouse then [:hull]
+    when :seaworthy_waypoint then []
+    when :seaworthy_harbor then []
+    when :seaworthy_ship then []
+    when :seaworthy_ferry then []
     else raise "Unknown image: #{image_name}"
   end
 end
@@ -34,8 +35,10 @@ end
 rule( /\.tmp\/.*\.build/ => ->(f){cache_buster_dependencies(f)}) do |t|
   image_name = t.name.pathmap '%n'
   image_folder = folder_for image_name
+  # we remove the directory part of the image name
+  image_name = image_name.split('_')[-1]
   info "Building #{image_name}"
-  cmd="docker build -t vlipco/#{image_name} --rm #{image_folder}"
+  cmd="sudo docker build -t vlipco/#{image_name} --rm #{image_folder}"
   mkdir_p '.tmp', verbose: false
   # start writing before creating the image
   # so that changes to files during creationg result in run next time

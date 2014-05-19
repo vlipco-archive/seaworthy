@@ -7,13 +7,13 @@ ROOT_DIR = File.dirname(__FILE__)
 [
 
   'dev-tools/lib/logging_helpers.rb',
-  'dev-tools/lib/build_helpers.rb',
-  'dev-tools/lib/cluster_helpers.rb'
+  'dev-tools/lib/build_helpers.rb'#,
+  #'dev-tools/lib/cluster_helpers.rb'
 
 ].each {|x| require_relative x }
 
-IMAGES=%w(hull deckhouse waypoint harbor ship ferry)
-CLUSTER_CONTAINERS = %w(admiral waypoint public_harbor internal_harbor)
+IMAGES=%w(seaworthy_waypoint seaworthy_harbor
+  seaworthy_ship seaworthy_ferry vendor_consul vendor_nsq)
 
 task :pry do
   binding.pry
@@ -22,8 +22,9 @@ end
 namespace :build do
 
   IMAGES.each do |img|
-    desc "Build vlipco/#{img}"
-    task img => cache_buster_file(img)
+    img_name = img.split('_')[-1]
+    desc "Build vlipco/#{img_name}"
+    task img_name => cache_buster_file(img)
   end
 
   all_cache_busters = IMAGES.map { |img| cache_buster_file(img) }
@@ -44,29 +45,29 @@ namespace :clean do
 end
 
 
-namespace :cluster do
-
-  desc "Starts named containers simulation a real cluster"
-  task launch: ["build:all"] do
-    info "Launching cluster's Procfile"
-    envfile = "dev-tools/cluster/cluster.env"
-    procfile = "dev-tools/cluster/Procfile"
-    exec "sudo dev-tools/bin/forego start -e #{envfile} -f #{procfile}"
-  end
-
-  desc "Attach to admiral and monitor the cluster"
-  task :monitor do
-    info "Starting Serf oberserver (ctrl+c to exit)"
-    switchns :admiral, "/srv/bin/serf monitor"
-  end
-
-  desc "Attach to admiral and run bash"
-  task :shell do
-    info "Running bash in the context of the admiral container"
-    switchns :admiral, "/bin/bash"
-  end
-
-end
+#namespace :cluster do
+#
+#  desc "Starts named containers simulation a real cluster"
+#  task launch: ["build:all"] do
+#    info "Launching cluster's Procfile"
+#    envfile = "dev-tools/cluster/cluster.env"
+#    procfile = "dev-tools/cluster/Procfile"
+#    exec "sudo dev-tools/bin/forego start -e #{envfile} -f #{procfile}"
+#  end
+#
+#  desc "Attach to admiral and monitor the cluster"
+#  task :monitor do
+#    info "Starting Serf oberserver (ctrl+c to exit)"
+#    switchns :admiral, "/srv/bin/serf monitor"
+#  end
+#
+#  desc "Attach to admiral and run bash"
+#  task :shell do
+#    info "Running bash in the context of the admiral container"
+#    switchns :admiral, "/bin/bash"
+#  end
+#
+#end
 
 namespace :dev do
 
@@ -88,7 +89,7 @@ namespace :dev do
       push "sample-apps/ruby", "ruby2"
     end
 
-    esc "Pushes a sample-app/ruby to the cluster as ruby2"
+    desc "Pushes a sample-app/ruby to the cluster as ruby2"
     task :static1 do
       push "sample-apps/static", "static1"
     end

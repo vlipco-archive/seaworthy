@@ -1,7 +1,7 @@
 # Ocean liner is a hevily modified fork of flynn/slugbuilder
 # created to match Vlipco needs in a serf cluster
 
-FROM vlipco/deckhouse
+FROM vlipco/hull
 MAINTAINER David Pelaez <david@vlipco.co>
 
 ADD ./bin/ /usr/local/bin

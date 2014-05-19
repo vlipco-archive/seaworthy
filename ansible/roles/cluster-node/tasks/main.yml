@@ -1,0 +1,8 @@
+
+- name: Installing systemd units
+  copy: src={{item}}.service dest=/etc/systemd/system/{{item}}.service
+  with_items: enabled_units
+
+- name: Enabling units and boot and starting them
+  service: name={{item}}.service enabled=yes state=started
+  with_items: enabled_units

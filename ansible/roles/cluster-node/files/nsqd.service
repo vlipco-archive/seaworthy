@@ -1,0 +1,11 @@
+[Unit]
+Description=Nsq daemon
+Requires=vlipco.target
+
+[Service]
+ExecStart=/usr/local/bin/docker run \
+	--name nsqd \
+	vlipco/nsq /usr/local/bin/nsqd
+
+[Install]
+WantedBy=vlipco.target

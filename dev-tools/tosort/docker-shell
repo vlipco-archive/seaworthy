@@ -1,4 +1,0 @@
-#!/bin/bash
-set -eo pipefail
-
-docker run -i -t $1 /bin/bash

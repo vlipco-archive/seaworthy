@@ -1,0 +1,11 @@
+[Unit]
+Description=Nsq lookup daemon
+Requires=vlipco.target
+
+[Service]
+ExecStart=/usr/local/bin/docker run \
+	--name nsqlookupd \
+	vlipco/nsq /usr/local/bin/nsqlookupd
+
+[Install]
+WantedBy=vlipco.target

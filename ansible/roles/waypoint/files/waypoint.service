@@ -1,0 +1,15 @@
+[Unit]
+Description=Waypoint
+Requires=vlipco.target
+
+#Ports for gitreceived
+#ports for slug server
+#ports for consul
+#ports for nsqd
+#ports for 
+
+[Service]
+ExecStart=/usr/local/bin/docker run --name waypoint vlipco/waypoint
+
+[Install]
+WantedBy=vlipco.target

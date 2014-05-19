@@ -1,0 +1,7 @@
+---
+
+- hosts: waypoints
+  sudo: yes
+  roles:
+    - { role: waypoint }
+

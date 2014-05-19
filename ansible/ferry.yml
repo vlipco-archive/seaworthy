@@ -1,0 +1,7 @@
+---
+
+- hosts: ferries
+  sudo: yes
+  roles:
+    - { role: ferry }
+

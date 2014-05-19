@@ -1,0 +1,6 @@
+---
+
+enabled_units:
+  - consul
+  - nsqd
+  - lookupd
