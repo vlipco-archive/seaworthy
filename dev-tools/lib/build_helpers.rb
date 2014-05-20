@@ -29,21 +29,24 @@ def cache_buster_dependencies(cache_file)
 end
 
 def cache_buster_file(img)
-  ".tmp/#{img}.build"
+  # a tempo dir outside the repository is used
+  # because every vm must have it's own track of
+  # previous builds
+  "#{TMPDIR}/#{img}.build"
 end
 
-rule( /\.tmp\/.*\.build/ => ->(f){cache_buster_dependencies(f)}) do |t|
+rule( /#{TMPDIR}\/.*\.build/ => ->(f){cache_buster_dependencies(f)}) do |t|
   image_name = t.name.pathmap '%n'
   image_folder = folder_for image_name
   # we remove the directory part of the image name
   image_name = image_name.split('_')[-1]
   info "Building #{image_name}"
-  cmd="sudo docker build -t vlipco/#{image_name} --rm #{image_folder}"
+  cmd="docker build -t vlipco/#{image_name} --rm #{image_folder}"
   mkdir_p '.tmp', verbose: false
   # start writing before creating the image
   # so that changes to files during creationg result in run next time
   File.open( t.name, 'w+') {|f| f.write Time.now }
-  sh cmd, verbose: true do |ok,res|
+  sh cmd, verbose: false do |ok,res|
     if !ok
       rm t.name
       raise "Docker build failed"

@@ -1,10 +1,15 @@
 [Unit]
 Description=Nsq lookup daemon
 Requires=vlipco.target
+After=consul.service
 
 [Service]
+ExecStartPre=/usr/local/bin/docker-rm "%p"
+ExecStop=/usr/local/bin/docker-stop "%p"
+TimeoutStopSec=15
 ExecStart=/usr/local/bin/docker run \
 	--name nsqlookupd \
+	-p 4160:4160 -p 4161:4161 \
 	vlipco/nsq /usr/local/bin/nsqlookupd
 
 [Install]

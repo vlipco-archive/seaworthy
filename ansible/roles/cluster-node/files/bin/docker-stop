@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+# Tries to stop a container only if it's running
+# the first argument is the container name/id
+# the optional second argument is a timeout (default: 15s)
+
+exit 0

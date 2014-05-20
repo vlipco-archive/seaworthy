@@ -1,0 +1,18 @@
+[Unit]
+
+Description=Waypoint
+Requires=vlipco.target
+
+[Install]
+
+WantedBy=vlipco.target
+
+[Service]
+ExecStartPre=/usr/local/bin/docker-rm "%p"
+ExecStop=/usr/local/bin/docker-stop "%p"
+TimeoutStopSec=15
+
+ExecStart=/usr/local/bin/docker run \
+	--name waypoint \
+	-p 5000:5000 -p 5100:5100 \
+	vlipco/waypoint /usr/bin/sleep infinity

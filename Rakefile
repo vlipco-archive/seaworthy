@@ -3,6 +3,7 @@ require 'bundler/setup'
 Bundler.require :default
 
 ROOT_DIR = File.dirname(__FILE__)
+TMPDIR = ENV['TMPDIR'] || '/tmp'
 
 [
 

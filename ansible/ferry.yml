@@ -3,5 +3,6 @@
 - hosts: ferries
   sudo: yes
   roles:
-    - { role: ferry }
+    - cluster-node
+    - ferry
 

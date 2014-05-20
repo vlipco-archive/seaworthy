@@ -1,8 +1,33 @@
+- name: Installing docker helper script for systemd units
+  copy: "src=bin/{{item}} dest=/usr/local/bin/ mode=0755"
+  with_items:
+    - docker-rm
+    - docker-stop
+
+- set_fact:
+    basic_units:
+      - consul
+      - nsqd
 
 - name: Installing systemd units
-  copy: src={{item}}.service dest=/etc/systemd/system/{{item}}.service
-  with_items: enabled_units
+  copy:
+    src: "systemd/{{item}}.service"
+    dest: "/etc/systemd/system/{{item}}.service"
+  with_flattened: 
+    - basic_units
+    - extra_units | default([])
 
-- name: Enabling units and boot and starting them
-  service: name={{item}}.service enabled=yes state=started
-  with_items: enabled_units
+- name: Enabling units on boot
+  service: name={{item}}.service enabled=yes
+  with_flattened: 
+    - basic_units
+    - extra_units | default([])
+
+- name: Reloading systemd daemon
+  command: /usr/bin/systemctl daemon-reload
+
+- name: Starting units
+  service: name={{item}}.service state=started
+  with_flattened: 
+    - basic_units
+    - extra_units | default([])

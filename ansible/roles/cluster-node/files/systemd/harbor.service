@@ -1,0 +1,14 @@
+[Unit]
+Description=Harbor
+Requires=vlipco.target
+
+[Service]
+ExecStartPre=/usr/local/bin/docker-rm "%p"
+ExecStop=/usr/local/bin/docker-stop "%p"
+TimeoutStopSec=15
+ExecStart=/usr/local/bin/docker run \
+	--name harbor \
+	vlipco/harbor /usr/bin/sleep infinity
+
+[Install]
+WantedBy=vlipco.target

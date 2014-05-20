@@ -1,9 +1,0 @@
-[Unit]
-Description=Consul Server
-Requires=vlipco.target
-
-[Service]
-ExecStart=/usr/local/bin/docker run --name consul vlipco/consul
-
-[Install]
-WantedBy=vlipco.target

@@ -1,0 +1,52 @@
+#!/bin/bash
+set -euo pipefail
+
+if [[ `whoami` != "root" ]]; then
+  echo "RUN THIS AS ROOT"
+  exit 1
+fi
+
+function log() {
+  echo -e "--> $1"
+}
+
+seaworthydir=$(echo ~vagrant/seaworthy)
+godir=$(echo ~vagrant/go)
+
+log "Updating all packages"
+yum update -y &> /dev/null 
+
+log "Trying to create docker group"
+groupadd docker 2> /dev/null || :
+
+log "Adding vagrant to the docker group"
+usermod -a -G docker vagrant
+
+log "Pulling vlipco hull"
+docker pull vlipco/hull &> /dev/null 
+
+cd /home/vagrant/seaworthy
+
+log "Bundle installing seaworthy"
+bundle install &> /dev/null 
+
+log "Building all seaworthy images"
+rake build:all 2>&1
+
+#log "Creating $HOME/go (to be used as GOPATH)"
+#mkdir -p $godir
+
+#log "Configuring environment for vagrant"
+
+#target=$(echo ~vagrant/.zsh.after/gopath.zsh)
+#touch $target
+#chmod +x $target
+
+#if [[ $(cat $target | grep GOPATH) == "" ]]; then
+#  echo 'export GOPATH='$godir >> $target
+#  echo 'export PATH=$GOPATH/bin:$PATH' >> $target
+#else
+#  echo "vagrant's environment is already configured"
+#fi
+
+#chown -R vagrant:vagrant ~vagrant

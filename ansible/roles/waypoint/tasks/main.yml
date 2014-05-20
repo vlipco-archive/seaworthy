@@ -1,5 +1,0 @@
-- name: Install waypoint service unit
-  copy: src=waypoint.service dest=/etc/systemd/system/waypoint.service
-
-- name: Enable waypoint on boot (not starting)
-  service: name=waypoint.service enabled=yes

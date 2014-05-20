@@ -2,6 +2,9 @@
 
 - hosts: waypoints
   sudo: yes
+  vars: 
+    extra_units:
+      - waypoint
+      - nsqlookupd
   roles:
-    - { role: waypoint }
-
+    - cluster-node

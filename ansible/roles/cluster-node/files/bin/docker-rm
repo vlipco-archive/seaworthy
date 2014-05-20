@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+
+# Tries to delete a container only if it exists
+# the first argument is the container name/id
+
+docker="/usr/local/bin/docker"
+
+if $docker inspect --format='{{.ID}}' "$1"; then
+  # container exists
+  echo "Removing $1"
+  $docker rm "$1"
+  exit $?
+else
+  # no such container
+  exit 0
+fi

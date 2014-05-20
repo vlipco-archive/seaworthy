@@ -2,6 +2,9 @@
 
 - hosts: harbors
   sudo: yes
+  vars: 
+    extra_units:
+      - harbor
+      - nsqlookupd
   roles:
-    - { role: harbor }
-
+    - cluster-node

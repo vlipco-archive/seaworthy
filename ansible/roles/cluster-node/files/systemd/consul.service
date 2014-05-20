@@ -1,0 +1,16 @@
+[Unit]
+Description=Consul Server
+Requires=vlipco.target
+
+[Service]
+ExecStartPre=/usr/local/bin/docker-rm "%p"
+ExecStop=/usr/local/bin/docker-stop "%p"
+TimeoutStopSec=15
+ExecStart=/usr/local/bin/docker run \
+	--name "%p" \
+	-p 8500:8500 -p 8600:8600/udp -p 8301:8301/udp -p 8301:8301 \
+	vlipco/consul /usr/local/bin/consul agent -bootstrap -server \
+	-data-dir=/tmp/consul -client=0.0.0.0
+
+[Install]
+WantedBy=vlipco.target

@@ -8,24 +8,27 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   config.vm.synced_folder ".", "/home/vagrant/seaworthy"
   config.vm.box = "vlipco/fedora-20"
 
+  config.vm.provision "shell", privileged: true,
+    path: "dev-tools/provisioners/common"
+
   config.vm.define "waypoint" do |waypoint|
     waypoint.vm.hostname = "waypoint"
+    config.vm.network "private_network", ip: "10.0.77.10"
     waypoint.vm.provision "ansible" do |ansible|
       ansible.groups = { "waypoints" => [ "waypoint" ] }
       ansible.playbook = "ansible/waypoint.yml"
     end
-    config.vm.network "private_network", ip: "10.0.77.10"
   end
 
   config.vm.define "harbor-1" do |harbor|
     harbor.vm.hostname = "harbor-1"
+    config.vm.network "private_network", ip: "10.0.77.20"
     harbor.vm.provision "ansible" do |ansible|
       ansible.groups = { "harbors" => [ "harbor-1" ] }
       ansible.playbook = "ansible/harbor.yml"
     end
-    #harbor.vm.provision "shell", privileged: true,
-    #path: "dev-tools/provisioners/harbor.sh"
-    config.vm.network "private_network", ip: "10.0.77.20"
+    harbor.vm.provision "shell", privileged: true,
+      path: "dev-tools/provisioners/harbor-1"
   end
 
   # TODO create ferry machine
