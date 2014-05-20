@@ -1,15 +1,16 @@
 #!/bin/bash
-set -euo pipefail
 
-if [[ `whoami` != "root" ]]; then
-  echo "RUN THIS AS ROOT"
-  exit 1
-fi
+# to be source by the common provisioner
+# when applied to the right machine
+# don't run this manually
 
-function log() {
-  echo -e "--> $1"
+log "Writing consul main config of harbor-1"
+
+cat - > /usr/local/etc/consul/main.json <<ConsulConf
+{
+	"data_dir": "/tmp/consul",
+	"server": true,
+	"start_join": ["10.0.77.10"],
+	"bind_addr": "10.0.77.30"
 }
-
-log "Joining waypoint's consul cluster"
-#/usr/local/bin/consul
-##/v1/agent/join/10.0.77.10
+ConsulConf

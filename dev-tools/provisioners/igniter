@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# to be source by the common provisioner
+# when applied to the right machine
+# don't run this manually
+
+log "Writing consul main config of igniter"
+
+cat - > /usr/local/etc/consul/main.json <<ConsulConf
+{
+	"data_dir": "/tmp/consul",
+	"server": true,
+	"bootstrap": true,
+	"bind_addr": "10.0.77.10"
+}
+ConsulConf

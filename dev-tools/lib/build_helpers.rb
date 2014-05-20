@@ -4,7 +4,7 @@ end
 
 def image_dependencies(img)
   case img.to_sym
-    when :vendor_consul then []
+    #when :vendor_consul then []
     when :vendor_nsq then []
     #when :starters_deckhouse then [:hull]
     when :seaworthy_waypoint then []

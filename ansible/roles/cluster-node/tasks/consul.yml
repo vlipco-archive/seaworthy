@@ -1,0 +1,25 @@
+- name: Downloading consul
+  get_url: 
+    sha256sum: 2802ce8e173ee37e1a1e992ba230963e09d4b41ce4ac60c1222714c036787b4f
+    url: https://dl.bintray.com/mitchellh/consul/0.2.0_linux_amd64.zip
+    dest: /usr/local/src/0.2.0_linux_amd64.zip
+
+- name: Extracting consul binary
+  shell: "cd /usr/local/src && unzip 0.2.0_linux_amd64.zip"
+
+- name: Installing consul binary
+  shell: mv /usr/local/src/consul /usr/local/bin/
+
+- name: Setting +x for consul
+  file: path=/usr/local/bin/consul mode=0755
+
+- name: Installing consul's systemd unit
+  copy:
+    src: "systemd/consul.service"
+    dest: "/etc/systemd/system/consul.service"
+
+- name: Reloading systemd daemon
+  command: /usr/bin/systemctl daemon-reload
+
+- name: "Enabling consul on boot & starting it"
+  service: name=consul.service enabled=yes state=restarted

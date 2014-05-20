@@ -1,16 +1,21 @@
 [Unit]
+
 Description=Nsq daemon
 Requires=vlipco.target
 After=consul.service
 
 [Service]
+
 ExecStartPre=/usr/local/bin/docker-rm "%p"
 ExecStop=/usr/local/bin/docker-stop "%p"
+
 TimeoutStopSec=15
+
 ExecStart=/usr/local/bin/docker run \
 	--name nsqd \
 	-p 4150:4150 -p 4151:4151 \
 	vlipco/nsq /usr/local/bin/nsqd
 
 [Install]
+
 WantedBy=vlipco.target

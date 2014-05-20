@@ -4,9 +4,10 @@
     - docker-rm
     - docker-stop
 
+- include: consul.yml
+
 - set_fact:
     basic_units:
-      - consul
       - nsqd
 
 - name: Installing systemd units

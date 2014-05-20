@@ -1,8 +1,0 @@
----
-
-- hosts: ferries
-  sudo: yes
-  roles:
-    - cluster-node
-    - ferry
-

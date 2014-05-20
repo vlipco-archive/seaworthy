@@ -4,4 +4,16 @@
 # the first argument is the container name/id
 # the optional second argument is a timeout (default: 15s)
 
-exit 0
+docker="/usr/local/bin/docker"
+
+echo "Checking if $1 is running"
+
+if $docker inspect --format='{{.ID}}' "$1" &> /dev/null ; then
+  # container exists
+  echo "Stopping $1"
+  $docker stop -t ${2:-15} "$1"
+  exit $?
+else
+  # no such container
+  exit 0
+fi

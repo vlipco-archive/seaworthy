@@ -1,52 +1,57 @@
 #!/bin/bash
 set -euo pipefail
 
+consul_main_config="/usr/local/etc/consul/main.json"
+
 if [[ `whoami` != "root" ]]; then
+
   echo "RUN THIS AS ROOT"
   exit 1
+
 fi
 
 function log() {
+
   echo -e "--> $1"
+
 }
 
-seaworthydir=$(echo ~vagrant/seaworthy)
-godir=$(echo ~vagrant/go)
+function common_provisioning() {
 
-log "Updating all packages"
-yum update -y &> /dev/null 
+	seaworthydir=$(echo ~vagrant/seaworthy)
+	godir=$(echo ~vagrant/go)
 
-log "Trying to create docker group"
-groupadd docker 2> /dev/null || :
+	log "Updating all packages"
+	yum update -y &> /dev/null 
 
-log "Adding vagrant to the docker group"
-usermod -a -G docker vagrant
+	log "Trying to create docker group"
+	groupadd docker 2> /dev/null || :
 
-log "Pulling vlipco hull"
-docker pull vlipco/hull &> /dev/null 
+	log "Adding vagrant to the docker group"
+	usermod -a -G docker vagrant
+	chgrp docker /var/run/docker.sock
 
-cd /home/vagrant/seaworthy
+	log "Pulling vlipco hull"
+	docker pull vlipco/hull &> /dev/null
 
-log "Bundle installing seaworthy"
-bundle install &> /dev/null 
+	cd $seaworthydir 
 
-log "Building all seaworthy images"
-rake build:all 2>&1
+	log "Bundle installing seaworthy"
+	su vagrant -c "bundle install &> /dev/null"
 
-#log "Creating $HOME/go (to be used as GOPATH)"
-#mkdir -p $godir
+	log "Building all seaworthy images"
+	su vagrant -c "rake build:all 2>&1"
 
-#log "Configuring environment for vagrant"
+	log "Creating consul's configuration dir"
+	mkdir -p /usr/local/etc/consul
 
-#target=$(echo ~vagrant/.zsh.after/gopath.zsh)
-#touch $target
-#chmod +x $target
+}
 
-#if [[ $(cat $target | grep GOPATH) == "" ]]; then
-#  echo 'export GOPATH='$godir >> $target
-#  echo 'export PATH=$GOPATH/bin:$PATH' >> $target
-#else
-#  echo "vagrant's environment is already configured"
-#fi
+common_provisioning
 
-#chown -R vagrant:vagrant ~vagrant
+log "Sourcing host specific provisiner"
+
+my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "$my_dir/$(hostname)"
+
+log "Shell provisioning completed"

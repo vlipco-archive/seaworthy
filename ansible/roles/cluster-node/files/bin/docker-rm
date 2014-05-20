@@ -5,10 +5,12 @@
 
 docker="/usr/local/bin/docker"
 
-if $docker inspect --format='{{.ID}}' "$1"; then
+echo "Checking if $1 is running"
+
+if $docker inspect --format='{{.ID}}' "$1" &> /dev/null ; then
   # container exists
-  echo "Removing $1"
-  $docker rm "$1"
+  echo "Force removing $1"
+  $docker rm -f "$1"
   exit $?
 else
   # no such container

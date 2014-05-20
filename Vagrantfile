@@ -9,26 +9,62 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   config.vm.box = "vlipco/fedora-20"
 
   config.vm.provision "shell", privileged: true,
-    path: "dev-tools/provisioners/common"
+    inline: "/home/vagrant/seaworthy/dev-tools/provisioners/common"
+    #path: "dev-tools/provisioners/common"
+
+  config.vm.provision "ansible" do |ansible|
+      ansible.groups = { 
+        #{}"igniter" => [ "igniter" ],
+        "waypoints" => [ "waypoint" ],
+        "harbors" => [ "harbor-1" ]
+      }
+      ansible.playbook = "ansible/cluster.yml"
+    end
+
+  config.vm.define "igniter" do |igniter|
+
+    igniter.vm.hostname = "igniter"
+    igniter.vm.network "private_network", ip: "10.0.77.10"
+
+    #igniter.vm.provision "shell", privileged: true,
+    #  path: "dev-tools/provisioners/igniter"
+
+    #igniter.vm.provision "ansible" do |ansible|
+      #ansible.groups = { "igniter" => [ "igniter" ] }
+     # ansible.playbook = "ansible/igniter.yml"
+    #end
+
+  end
+
 
   config.vm.define "waypoint" do |waypoint|
+
     waypoint.vm.hostname = "waypoint"
-    config.vm.network "private_network", ip: "10.0.77.10"
-    waypoint.vm.provision "ansible" do |ansible|
-      ansible.groups = { "waypoints" => [ "waypoint" ] }
-      ansible.playbook = "ansible/waypoint.yml"
-    end
+    waypoint.vm.network "private_network", ip: "10.0.77.20"
+
+    #waypoint.vm.provision "shell", privileged: true,
+    #  path: "dev-tools/provisioners/waypoint"
+
+   #waypoint.vm.provision "ansible" do |ansible|
+   #  ansible.groups = { "waypoints" => [ "waypoint" ] }
+   #  ansible.playbook = "ansible/waypoint.yml"
+   #end
+
   end
 
   config.vm.define "harbor-1" do |harbor|
+
     harbor.vm.hostname = "harbor-1"
-    config.vm.network "private_network", ip: "10.0.77.20"
-    harbor.vm.provision "ansible" do |ansible|
-      ansible.groups = { "harbors" => [ "harbor-1" ] }
-      ansible.playbook = "ansible/harbor.yml"
-    end
-    harbor.vm.provision "shell", privileged: true,
-      path: "dev-tools/provisioners/harbor-1"
+    harbor.vm.network "private_network", ip: "10.0.77.30"
+
+    #harbor.vm.provision "shell", privileged: true,
+    #  path: "dev-tools/provisioners/harbor-1"
+    
+    #harbor.vm.provision "ansible" do |ansible|
+    #  ansible.groups = { "harbors" => [ "harbor-1" ] }
+    #  ansible.playbook = "ansible/harbor.yml"
+    #end
+
   end
 
   # TODO create ferry machine
