@@ -3,8 +3,9 @@
         "name": "lookupd",
         "id": "{{inventory_hostname}}-lookupd",
         "check": {
+            "notes": "Every 30s checks lookupd ping endpoint",
             "script": "/usr/local/checks/lookupd",
-            "interval": "5s"
+            "interval": "30s"
         }
     }
 }

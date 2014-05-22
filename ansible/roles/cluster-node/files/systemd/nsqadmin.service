@@ -2,13 +2,13 @@
 
 Description=Nsq daemon
 Requires=vlipco.target
-After=consul.service
+Wants=lookupd.service
 
 [Service]
 
 Restart=always
 TimeoutStopSec=15
-ExecStart=/bin/bash -c "/usr/local/bin/nsqd --broadcast-address=$(hostname).node.consul $(lookupd-params)"
+ExecStart=/bin/bash -c "/usr/local/bin/nsqadmin $(lookupd-params http)"
 
 [Install]
 

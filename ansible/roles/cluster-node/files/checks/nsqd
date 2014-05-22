@@ -47,8 +47,8 @@ if consul-leader &> /dev/null; then
 		echo "OK. Every lookupd in the cluster knows about this host"
 		exit 0
 	else
-		echo "Triggering nsqd restart"
-		systemctl restart nsqd && echo -n '...restart sent'
+		echo -n "Triggering nsqd restart"
+		systemctl restart nsqd && echo '...restart sent'
 		echo "Marking check with warning"
 		exit 1
 	fi

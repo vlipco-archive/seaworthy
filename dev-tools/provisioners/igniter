@@ -35,16 +35,19 @@ if [[ "$(systemctl status consul)" == *\(running\)* ]]; then
 		bootstrap="false"
 	fi
 else
-	log "consul isn't running, assuming bootstrap=true"
+	log "consul has no leader, assuming bootstrap=true"
 fi
 
 # Should obtain another nodes IP before changing bootstrap flag
+
+join_cmd='"start_join": ["10.0.77.20"],'
 
 log "Writing consul main config of igniter (bootstrap=$bootstrap)"
 
 cat - > /usr/local/etc/consul/main.json <<ConsulConf
 {
 	"bootstrap": $bootstrap,
+	$(if [[ "$bootstrap" == "false" ]]; then echo $join_cmd; fi)
 	"bind_addr": "10.0.77.10",
 	"ui_dir": "$consul_ui"
 }

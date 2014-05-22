@@ -22,7 +22,7 @@ function common_provisioning() {
 	godir=$(echo ~vagrant/go)
 
 	log "Updating all packages"
-	yum update -y &> /dev/null 
+	yum update -y
 
 	log "Trying to create docker group"
 	groupadd docker 2> /dev/null || :
@@ -64,6 +64,7 @@ cat - > /usr/local/etc/consul/common.json <<ConsulConf
 {
 	"data_dir": "/tmp/consul.$timestamp",
 	"server": true,
+	"log_level": "warn",
 	"recursor": "10.0.2.3",
 	"leave_on_terminate": true,
 	"ports": { "dns": 53 }

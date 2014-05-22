@@ -7,6 +7,7 @@ Before=nsqd.service
 
 [Service]
 
+Restart=always
 TimeoutStopSec=15
 ExecStart=/usr/local/bin/nsqlookupd --broadcast-address=$(hostname).node.consul 
 

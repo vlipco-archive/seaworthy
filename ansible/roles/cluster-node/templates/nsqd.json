@@ -3,8 +3,9 @@
         "name": "nsqd",
         "id": "{{inventory_hostname}}-nsqd",
         "check": {
+            "notes": "Every 30s checks nsqd ping endpoint and makes sure all known lookupd instances are aware of the local nsqd",
             "script": "/usr/local/checks/nsqd",
-            "interval": "5s"
+            "interval": "30s"
         }
     }
 }
