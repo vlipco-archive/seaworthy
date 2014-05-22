@@ -4,11 +4,11 @@
 # when applied to the right machine
 # don't run this manually
 
-log "Writing consul main config of waypoint"
+log "Writing consul main config of ferry"
 
 cat - > /usr/local/etc/consul/main.json <<ConsulConf
 {
 	"start_join": ["10.0.77.10"],
-	"bind_addr": "10.0.77.20"
+	"bind_addr": "10.0.77.50"
 }
 ConsulConf

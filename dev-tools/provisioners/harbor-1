@@ -8,8 +8,6 @@ log "Writing consul main config of harbor-1"
 
 cat - > /usr/local/etc/consul/main.json <<ConsulConf
 {
-	"data_dir": "/tmp/consul",
-	"server": true,
 	"start_join": ["10.0.77.10"],
 	"bind_addr": "10.0.77.30"
 }

@@ -5,12 +5,12 @@ end
 def image_dependencies(img)
   case img.to_sym
     #when :vendor_consul then []
-    when :vendor_nsq then []
+    #when :vendor_nsq then []
     #when :starters_deckhouse then [:hull]
-    when :seaworthy_waypoint then []
-    when :seaworthy_harbor then []
-    when :seaworthy_ship then []
-    when :seaworthy_ferry then []
+    when :waypoint then []
+    when :harbor then []
+    when :ship then []
+    when :ferry then []
     else raise "Unknown image: #{image_name}"
   end
 end

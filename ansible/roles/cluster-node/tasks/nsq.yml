@@ -1,0 +1,51 @@
+- set_fact:
+    nsq_version: "nsq-0.2.28.linux-amd64.go1.2.1"
+    nsq_units:
+      - nsqd
+
+- when: install_lookupd
+  set_fact:
+    nsq_units:
+      - lookupd
+      - nsqd
+
+- set_fact:
+    nsq_glob: "/usr/local/src/{{nsq_version}}/bin/*"
+
+- name: Downloading nsq 0.2.28 (go-1.2.1)
+  get_url:
+    sha256sum: 25899925c7294002f3b2b9dd037f0b2777a5efe28122379281cb96e9883e79c3
+    url: https://s3.amazonaws.com/bitly-downloads/nsq/{{nsq_version}}.tar.gz
+    dest: "/usr/local/src/{{nsq_version}}.tar.gz"
+
+- name: Extracting nsq binaries
+  shell: "cd /usr/local/src && tar xf {{nsq_version}}.tar.gz"
+
+- name: Setting +x to binaries
+  shell: "chmod +x {{nsq_glob}}"
+
+- name: Installing nsq binaries
+  shell: "mv {{nsq_glob}} /usr/local/bin/"
+
+- name: Installing systemd unit(s)
+  with_items: nsq_units
+  copy:
+    src: "systemd/{{item}}.service"
+    dest: "/etc/systemd/system/{{item}}.service"
+
+- name: Reloading systemd daemon
+  command: /usr/bin/systemctl daemon-reload
+
+- name: "Enabling unit(s) on boot"
+  service: name={{item}}.service enabled=yes state=restarted
+  with_items: nsq_units
+
+- name: Compiling consul service definitions
+  with_items: nsq_units
+  template:
+    src: "{{item}}.json"
+    dest: "/usr/local/etc/consul/{{item}}.json"
+    validate: "/usr/local/bin/jq '.' %s"
+
+- name: "Reloading consul"
+  service: name=consul.service state=reloaded

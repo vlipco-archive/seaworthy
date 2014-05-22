@@ -1,0 +1,15 @@
+[Unit]
+
+Description=Nsq lookup daemon
+Requires=vlipco.target
+After=consul.service
+Before=nsqd.service
+
+[Service]
+
+TimeoutStopSec=15
+ExecStart=/usr/local/bin/nsqlookupd --broadcast-address=$(hostname).node.consul 
+
+[Install]
+
+WantedBy=vlipco.target

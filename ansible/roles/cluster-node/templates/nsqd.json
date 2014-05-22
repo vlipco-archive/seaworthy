@@ -1,0 +1,10 @@
+{
+    "service": {
+        "name": "nsqd",
+        "id": "{{inventory_hostname}}-nsqd",
+        "check": {
+            "script": "/usr/local/checks/nsqd",
+            "interval": "5s"
+        }
+    }
+}

@@ -1,34 +1,11 @@
-- name: Installing docker helper script for systemd units
-  copy: "src=bin/{{item}} dest=/usr/local/bin/ mode=0755"
-  with_items:
-    - docker-rm
-    - docker-stop
+- name: Installing misc helper scripts to bin
+  copy: "src=bin/ dest=/usr/local/bin/ mode=0755"
+
+- name: Installing misc check scripts to /usr/local/checks
+  copy: "src=checks/ dest=/usr/local/checks/ mode=0755"
 
 - include: consul.yml
+- include: nsq.yml
 
-- set_fact:
-    basic_units:
-      - nsqd
-
-- name: Installing systemd units
-  copy:
-    src: "systemd/{{item}}.service"
-    dest: "/etc/systemd/system/{{item}}.service"
-  with_flattened: 
-    - basic_units
-    - extra_units | default([])
-
-- name: Enabling units on boot
-  service: name={{item}}.service enabled=yes
-  with_flattened: 
-    - basic_units
-    - extra_units | default([])
-
-- name: Reloading systemd daemon
-  command: /usr/bin/systemctl daemon-reload
-
-- name: Starting units
-  service: name={{item}}.service state=started
-  with_flattened: 
-    - basic_units
-    - extra_units | default([])
+- include: extra.yml
+  when: extra_units.0 is defined

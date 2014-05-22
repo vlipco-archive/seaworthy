@@ -1,0 +1,10 @@
+{
+    "service": {
+        "name": "lookupd",
+        "id": "{{inventory_hostname}}-lookupd",
+        "check": {
+            "script": "/usr/local/checks/lookupd",
+            "interval": "5s"
+        }
+    }
+}

@@ -13,8 +13,7 @@ TMPDIR = ENV['TMPDIR'] || '/tmp'
 
 ].each {|x| require_relative x }
 
-IMAGES=%w(seaworthy_waypoint seaworthy_harbor
-  seaworthy_ship seaworthy_ferry vendor_nsq)
+IMAGES=%w(waypoint harbor ship ferry)
 
 task :pry do
   binding.pry

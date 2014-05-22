@@ -1,11 +1,11 @@
 - name: Downloading consul
-  get_url: 
-    sha256sum: 2802ce8e173ee37e1a1e992ba230963e09d4b41ce4ac60c1222714c036787b4f
-    url: https://dl.bintray.com/mitchellh/consul/0.2.0_linux_amd64.zip
-    dest: /usr/local/src/0.2.0_linux_amd64.zip
+  get_url:
+    sha256sum: 0b4a91051c35acd86a8adc89b1c5d53c31cb3260eec88646cc47081729b0dbbf
+    url: https://dl.bintray.com/mitchellh/consul/0.2.1_linux_amd64.zip
+    dest: /usr/local/src/0.2.1_linux_amd64.zip
 
 - name: Extracting consul binary
-  shell: "cd /usr/local/src && unzip 0.2.0_linux_amd64.zip"
+  shell: "cd /usr/local/src && unzip 0.2.1_linux_amd64.zip"
 
 - name: Installing consul binary
   shell: mv /usr/local/src/consul /usr/local/bin/
@@ -21,5 +21,8 @@
 - name: Reloading systemd daemon
   command: /usr/bin/systemctl daemon-reload
 
-- name: "Enabling consul on boot & starting it"
+- name: "Enabling consul on boot & restarting it"
   service: name=consul.service enabled=yes state=restarted
+
+- name: Setting consul as default DNS
+  shell: "echo 'nameserver 127.0.0.1' > /etc/resolv.conf"

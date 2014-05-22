@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 
 consul_main_config="/usr/local/etc/consul/main.json"
 
@@ -34,7 +34,7 @@ function common_provisioning() {
 	log "Pulling vlipco hull"
 	docker pull vlipco/hull &> /dev/null
 
-	cd $seaworthydir 
+	pushd $seaworthydir &> /dev/null
 
 	log "Bundle installing seaworthy"
 	su vagrant -c "bundle install &> /dev/null"
@@ -45,13 +45,35 @@ function common_provisioning() {
 	log "Creating consul's configuration dir"
 	mkdir -p /usr/local/etc/consul
 
+	popd &> /dev/null
 }
 
-common_provisioning
+if [[ ! "$1" == "quick" ]]; then
+	common_provisioning
+else
+	log "Skipping common provisioning"
+fi
+
+## Shared by all consul machines
+# put outside the previous function only for
+# proper syntax highligthing to work on my editor
+
+timestamp=`date +%s`
+
+cat - > /usr/local/etc/consul/common.json <<ConsulConf
+{
+	"data_dir": "/tmp/consul.$timestamp",
+	"server": true,
+	"recursor": "10.0.2.3",
+	"leave_on_terminate": true,
+	"ports": { "dns": 53 }
+}
+ConsulConf
 
 log "Sourcing host specific provisiner"
 
-my_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source "$my_dir/$(hostname)"
+provisioner="$(dirname $0)/$(hostname)"
+#log "Sourcing $provisioner"
+source $provisioner
 
 log "Shell provisioning completed"

@@ -1,3 +1,0 @@
-admiral: SERF_PORT=$ADMIRAL_PORT launchers/admiral
-waypoint: SERF_PORT=2001 launchers/waypoint
-public_harbor: SERF_PORT=2002 HARBOR=public launchers/harbor
