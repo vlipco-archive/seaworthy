@@ -1,0 +1,11 @@
+{
+    "service": {
+        "name": "nsqevents",
+        "id": "{{inventory_hostname}}-nsqevents",
+        "check": {
+            "notes": "---",
+            "script": "/usr/bin/true",
+            "interval": "30s"
+        }
+    }
+}

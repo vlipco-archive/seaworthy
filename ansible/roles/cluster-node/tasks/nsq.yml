@@ -2,12 +2,14 @@
     nsq_version: "nsq-0.2.28.linux-amd64.go1.2.1"
     nsq_units:
       - nsqd
+      - nsqevents
 
 - when: install_lookupd
   set_fact:
     nsq_units:
       - lookupd
       - nsqd
+      - nsqevents
 
 - set_fact:
     nsq_glob: "/usr/local/src/{{nsq_version}}/bin/*"
@@ -26,6 +28,9 @@
 
 - name: Installing nsq binaries
   shell: "mv {{nsq_glob}} /usr/local/bin/"
+
+- name: Create event handlers dir
+  file: path=/usr/local/event_handlers state=directory
 
 - name: Installing systemd unit(s)
   with_items: nsq_units
