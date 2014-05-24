@@ -1,0 +1,5 @@
+---
+# default vars
+systemd_tgt_dir: /etc/systemd/system
+consul_components_tgt_dir: /cluster/components
+consul_conf_tgt_dir: /cluster/consul

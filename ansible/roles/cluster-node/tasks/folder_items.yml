@@ -1,0 +1,22 @@
+- name: Listing files to affect
+  command: "ls {{src}} -1"
+  register: folder_list
+  ignore_errors: True
+
+- name: Changing files' mode
+  when: folder_list | success
+  when: mode is defined
+  with_items: folder_list.stdout_lines
+  file:
+    path: "{{src}}/{{item}}"
+    mode: "{{mode}}"
+
+- name: Linking files in target folder
+  when: folder_list | success
+  when: link_to is defined
+  with_items: folder_list.stdout_lines
+  file:
+    force: yes
+    state: link
+    src: "{{src}}/{{item}}"
+    dest: "{{link_to}}/{{item}}"

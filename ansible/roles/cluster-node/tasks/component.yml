@@ -1,0 +1,69 @@
+# generic set of tasks for a common pattern of cluster components
+# it expects a specific folder structure inside the role
+
+- set_fact:
+    component_tgt_dir: "{{consul_components_tgt_dir}}/{{component}}"
+
+- set_fact:
+    units_src_dir: "{{component_tgt_dir}}/systemd"
+    consul_conf_src_dir: "{{component_tgt_dir}}/consul"
+    bin_src_dir: "{{component_tgt_dir}}/bin"
+    checks_src_dir: "{{component_tgt_dir}}/checks"
+    consul_templates_glob: "../templates/consul/{{component}}/*.json"
+
+- name: Removing previous component directory
+  when: clean_install | default(True)
+  file:
+    path: "{{component_tgt_dir}}"
+    state: absent
+
+#-------------------------------------#
+# executables to be added to the path #
+#-------------------------------------#
+
+- name: Copying component's folder
+  copy:
+    src: "{{component}}"
+    dest: "{{consul_components_tgt_dir}}"
+
+- include: "folder_items.yml src={{bin_src_dir}} mode=0755 link_to=/usr/local/bin"
+
+- include: "folder_items.yml src={{checks_src_dir}} mode=0755"
+
+#-----------------------------------------#
+# consul json templates for configuration #
+#-----------------------------------------#
+
+- name: Ensuring consul templates directory exists
+  file:
+    state: directory
+    path: "{{component_tgt_dir}}/consul"
+
+- name: Compiling consul templates
+  with_fileglob: consul_templates_glob
+  template:
+    src: "{{item}}"
+    dest: "{{component_tgt_dir}}/consul/"
+
+- include: "folder_items.yml src={{consul_conf_src_dir}} link_to={{consul_conf_tgt_dir}}"
+
+#-------------------------------#
+# systemd units enabled on boot #
+#-------------------------------#
+
+- name: Listing systemd units to enable
+  command: "ls {{units_src_dir}} -1"
+  register: units_list
+  ignore_errors: True
+
+- name: Enabling systemd units on boot
+  command: "systemctl enable {{units_src_dir}}/{{item}}"
+  with_items: units_list.stdout_lines
+  when: units_list | success
+
+- name: Reloading units
+  command: "systemctl reload-or-restart {{item}}"
+  with_items: units_list.stdout_lines
+  when: units_list | success
+
+# TODO handle unit failure?

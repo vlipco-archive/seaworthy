@@ -1,0 +1,14 @@
+[Unit]
+
+Description=Consul Server
+Requires=vlipco.target
+
+[Service]
+
+Restart=always
+TimeoutStopSec=15
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/usr/local/bin/consul agent -config-dir /usr/local/etc/consul/
+
+[Install]
+WantedBy=vlipco.target
