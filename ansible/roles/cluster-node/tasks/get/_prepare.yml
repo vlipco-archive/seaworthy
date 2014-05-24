@@ -1,0 +1,20 @@
+- set_fact:
+    pkg_dir: "{{cluster_pkgs_tgt_dir}}/{{pkg}}"
+
+- name: Clean previous version directory if present
+  file: "path={{pkg_dir}} state=absent"
+
+- name: Create package directory
+  file: "path={{pkg_dir}} state=directory"
+
+- command: openssl rand -base64 32 
+  register: random_string
+
+- file: "state=directory path=/tmp/{{random_string.stdout}}"
+
+- name: Starting package download
+  include: >
+    {{pkg}}.yml temp_dir=/tmp/{{random_string.stdout}} pkg_dir={{pkg_dir}}
+
+- include: "../_folder_items.yml src={{pkg_dir}} link_to=/usr/local/bin"
+  when: link_to_path | default(True)

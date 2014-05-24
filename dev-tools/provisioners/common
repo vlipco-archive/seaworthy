@@ -21,8 +21,8 @@ function common_provisioning() {
 	seaworthydir=$(echo ~vagrant/seaworthy)
 	godir=$(echo ~vagrant/go)
 
-	log "Updating all packages"
-	yum update -y
+	#log "Updating all packages"
+	#yum update -y
 
 	log "Trying to create docker group"
 	groupadd docker 2> /dev/null || :
@@ -31,8 +31,8 @@ function common_provisioning() {
 	usermod -a -G docker vagrant
 	chgrp docker /var/run/docker.sock
 
-	log "Pulling vlipco hull"
-	docker pull vlipco/hull &> /dev/null
+	#log "Pulling vlipco hull"
+	#docker pull vlipco/hull &> /dev/null
 
 	pushd $seaworthydir &> /dev/null
 
@@ -41,9 +41,6 @@ function common_provisioning() {
 
 	log "Building all seaworthy images"
 	su vagrant -c "rake build:all 2>&1"
-
-	log "Creating consul's configuration dir"
-	mkdir -p /usr/local/etc/consul
 
 	popd &> /dev/null
 }
@@ -54,27 +51,10 @@ else
 	log "Skipping common provisioning"
 fi
 
-## Shared by all consul machines
-# put outside the previous function only for
-# proper syntax highligthing to work on my editor
-
-timestamp=`date +%s`
-
-cat - > /usr/local/etc/consul/common.json <<ConsulConf
-{
-	"data_dir": "/tmp/consul.$timestamp",
-	"server": true,
-	"log_level": "warn",
-	"recursor": "10.0.2.3",
-	"leave_on_terminate": true,
-	"ports": { "dns": 53 }
-}
-ConsulConf
-
 log "Sourcing host specific provisiner"
 
 provisioner="$(dirname $0)/$(hostname)"
 #log "Sourcing $provisioner"
-source $provisioner
+[[ -e "$provisioner" ]] && source $provisioner
 
 log "Shell provisioning completed"

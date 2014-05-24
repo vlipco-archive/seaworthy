@@ -1,3 +1,2 @@
 ---
-extra_units:
-  - harbor
+install_harbor: True

@@ -1,0 +1,14 @@
+- set_fact:
+    nsq_pkg_name: "nsq-{{nsq_version}}.linux-amd64.go1.2.1"
+
+- name: Downloading nsq
+  get_url:
+    sha256sum: "{{nsq_sha256sum}}"
+    url: "https://s3.amazonaws.com/bitly-downloads/nsq/{{nsq_pkg_name}}.tar.gz"
+    dest: "{{temp_dir}}/{{nsq_pkg_name}}.tar.gz"
+
+- name: Extracting nsq binaries
+  shell: "cd {{temp_dir}} && tar xf {{nsq_pkg_name}}.tar.gz"
+
+- name: Moving nsq binaries
+  shell: "mv {{temp_dir}}/{{nsq_pkg_name}}/bin/* {{pkg_dir}}/"

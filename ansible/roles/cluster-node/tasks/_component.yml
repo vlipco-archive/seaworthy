@@ -12,7 +12,7 @@
     consul_templates_glob: "../templates/consul/{{component}}/*.json"
 
 - name: Removing previous component directory
-  when: clean_install | default(True)
+  when: clean_install
   file:
     path: "{{component_tgt_dir}}"
     state: absent
@@ -26,9 +26,9 @@
     src: "{{component}}"
     dest: "{{consul_components_tgt_dir}}"
 
-- include: "folder_items.yml src={{bin_src_dir}} mode=0755 link_to=/usr/local/bin"
+- include: "_folder_items.yml src={{bin_src_dir}} mode=0755 link_to=/usr/local/bin"
 
-- include: "folder_items.yml src={{checks_src_dir}} mode=0755"
+- include: "_folder_items.yml src={{checks_src_dir}} mode=0755"
 
 #-----------------------------------------#
 # consul json templates for configuration #
@@ -45,7 +45,7 @@
     src: "{{item}}"
     dest: "{{component_tgt_dir}}/consul/"
 
-- include: "folder_items.yml src={{consul_conf_src_dir}} link_to={{consul_conf_tgt_dir}}"
+- include: "_folder_items.yml src={{consul_conf_src_dir}} link_to={{consul_conf_tgt_dir}}/consul"
 
 #-------------------------------#
 # systemd units enabled on boot #

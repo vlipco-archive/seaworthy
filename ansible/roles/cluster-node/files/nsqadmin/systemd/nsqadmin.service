@@ -1,6 +1,6 @@
 [Unit]
 
-Description=Nsq daemon
+Description=Nsq admin web UI
 Requires=vlipco.target
 Wants=lookupd.service
 
@@ -8,7 +8,7 @@ Wants=lookupd.service
 
 Restart=always
 TimeoutStopSec=15
-ExecStart=/bin/bash -c "/usr/local/bin/nsqadmin $(lookupd-params http)"
+ExecStart=/bin/bash -c "/usr/local/bin/nsqadmin `lookupd-params http`"
 
 [Install]
 

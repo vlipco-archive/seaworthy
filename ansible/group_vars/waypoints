@@ -1,3 +1,2 @@
 ---
-extra_units:
-  - waypoint
+install_waypoint: True

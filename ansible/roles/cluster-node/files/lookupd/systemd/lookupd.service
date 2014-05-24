@@ -1,6 +1,6 @@
 [Unit]
 
-Description=Nsq lookup daemon
+Description=Nsq discovery daemon
 Requires=vlipco.target
 After=consul.service
 Before=nsqd.service

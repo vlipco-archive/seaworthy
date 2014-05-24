@@ -1,5 +1,30 @@
 ---
-# default vars
+
+clean_install: False
+
+ansible_dirs:
+  - /cluster/etc/consul
+  - /cluster/components
+  - /cluster/pkg
+
 systemd_tgt_dir: /etc/systemd/system
 consul_components_tgt_dir: /cluster/components
-consul_conf_tgt_dir: /cluster/consul
+consul_conf_tgt_dir: /cluster/etc
+
+consul_server: True
+install_consul_ui: True
+
+install_lookupd: False
+install_nsqadmin: False
+install_waypoint: False
+install_harbor: False
+install_ferry: False
+
+cluster_pkgs_tgt_dir: /cluster/pkg
+
+consul_version: 0.2.1
+consul_sha256sum: 0b4a91051c35acd86a8adc89b1c5d53c31cb3260eec88646cc47081729b0dbbf
+consul_ui_sha256sum: 3a8b00499002b56f101abecb2df3bd8ae6f417b776d76059aaeb42dded378ba0
+
+nsq_version: 0.2.28
+nsq_sha256sum: 25899925c7294002f3b2b9dd037f0b2777a5efe28122379281cb96e9883e79c3

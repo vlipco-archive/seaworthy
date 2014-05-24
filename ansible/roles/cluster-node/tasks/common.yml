@@ -1,0 +1,26 @@
+- name: Creating misc. directories
+  file: "state=directory path={{item}}"
+  with_items: ansible_dirs
+
+- include: >
+    _cond_get.yml pkg="consul"
+    version_command="/usr/local/bin/consul --version" 
+    expected_version="{{consul_version}}" 
+
+- include: >
+    _cond_get.yml pkg="nsq"
+    version_command="/usr/local/bin/nsqd --version" 
+    expected_version="{{nsq_version}}" 
+
+# configure consul and start it
+
+- include: _component.yml component=consul
+
+# apply dns change only if consul works
+#- name: Setting consul as default DNS
+#  shell: "echo 'nameserver 127.0.0.1' > /etc/resolv.conf"
+
+# with consul running, add other cluster basic components
+
+- include: _component.yml component=common
+- include: _component.yml component=nsq

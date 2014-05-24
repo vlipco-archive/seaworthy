@@ -1,8 +1,18 @@
-- name: Creating consul's config-dir
-  file:
-    state: directory
-    path: "{{consul_conf_tgt_dir}}"
+- include: common.yml
 
-- include: component.yml component=consul
-- include: component.yml component=common
-- include: component.yml component=nsq
+# with_items + include is forbidden, hence the verbosity
+
+- include: _component.yml component=lookupd
+  when: install_lookupd
+
+- include: _component.yml component=nsqadmin
+  when: install_nsqadmin
+
+- include: _component.yml component=waypoint
+  when: install_waypoint
+
+- include: _component.yml component=harbor
+  when: install_harbor
+
+- include: _component.yml component=ferry
+  when: install_ferry

@@ -4,16 +4,6 @@
 # when applied to the right machine
 # don't run this manually
 
-consul_ui="/usr/local/src/consul_ui"
-
-if [ ! -d "$consul_ui" ]; then
-	log "Downloading web ui for consul"
-	cd /usr/local/src
-	wget "https://dl.bintray.com/mitchellh/consul/0.2.1_web_ui.zip"
-	unzip 0.2.1_web_ui.zip
-	mv "dist" "$consul_ui"
-fi
-
 function three-plus-nodes() {
 	nodes=`curl -s "http://127.0.0.1:8500/v1/catalog/nodes" --max-time 1`
 	enough_nodes=`echo $nodes | jq '. | length > 2'`
