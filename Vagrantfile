@@ -8,9 +8,6 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   config.vm.synced_folder ".", "/home/vagrant/seaworthy"
   config.vm.box = "vlipco/fedora-20"
 
-  #provisioner = "/home/vagrant/seaworthy/dev-tools/provisioners/common"
-  #config.vm.provision "shell", privileged: true, inline: provisioner
-
   config.vm.define "igniter" do |igniter|
     igniter.vm.hostname = "igniter"
     igniter.vm.network "private_network", ip: "10.0.77.10"
