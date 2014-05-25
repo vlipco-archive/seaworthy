@@ -1,0 +1,21 @@
+- name: Create docker group
+  group: name=docker state=present
+
+- name: Add vagrant to docker group
+  user: name=vagrant append=yes groups=docker
+
+- name: Set docker sock permissions
+  file:
+    path: /var/run/docker.sock
+    group: docker
+
+- name: Pulling vlipco hull image
+  command: docker pull vlipco/hull
+
+- name: Installing seaworthy bundle
+  shell: su vagrant -c "bundle install" chdir=/home/vagrant/seaworthy
+
+- name: Building seaworthy images
+  when: seaworthy_images is defined
+  shell: "su vagrant -c 'rake build:{{item}}' chdir=/home/vagrant/seaworthy"
+  with_items: seaworthy_images

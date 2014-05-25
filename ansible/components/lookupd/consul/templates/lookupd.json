@@ -4,7 +4,7 @@
         "id": "{{inventory_hostname}}-lookupd",
         "check": {
             "notes": "Every 30s checks lookupd ping endpoint",
-            "script": "{{component_tgt_dir}}/checks/lookupd",
+            "script": "{{checks_dir}}/lookupd",
             "interval": "30s"
         }
     }

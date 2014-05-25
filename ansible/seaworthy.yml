@@ -4,9 +4,17 @@
   handlers:
     - include: components/handlers.yml
   tasks:
-    - include: generic/install.yml component=consul
-    - include: generic/install.yml component=common
-    - include: generic/install.yml component=nsq
+    - include: vagrant/development.yml
+      when: vagrant_development | default(False)
 
     - include: generic/install.yml component=nsqadmin
       when: install_nsqadmin | default(False)
+
+    - include: generic/install.yml component=lookupd
+      when: install_lookupd | default(False)
+
+    - include: generic/install.yml component=harbor
+      when: install_harbor | default(False)
+
+    - include: generic/install.yml component=waypoint
+      when: install_waypoint | default(False)

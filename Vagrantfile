@@ -8,15 +8,8 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   config.vm.synced_folder ".", "/home/vagrant/seaworthy"
   config.vm.box = "vlipco/fedora-20"
 
-  provisioner = "/home/vagrant/seaworthy/dev-tools/provisioners/common"
-  config.vm.provision "shell", privileged: true, inline: provisioner
-
-  config.vm.provision "ansible" do |ansible|
-      ansible.groups = {}
-      ansible.groups["waypoints"] = ["waypoint"]
-      ansible.groups["harbors"] = ["harbor-1"]
-      ansible.playbook = "ansible/cluster.yml"
-    end
+  #provisioner = "/home/vagrant/seaworthy/dev-tools/provisioners/common"
+  #config.vm.provision "shell", privileged: true, inline: provisioner
 
   config.vm.define "igniter" do |igniter|
     igniter.vm.hostname = "igniter"
@@ -36,6 +29,18 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   config.vm.define "ferry" do |ferry|
     ferry.vm.hostname = "ferry"
     ferry.vm.network "private_network", ip: "10.0.77.50"
+
+    # Provisioning only on last machine since ansible deals with multiple hosts
+    config.vm.provision "ansible" do |ansible|
+      ansible.groups = {}
+      ansible.groups["waypoints"] = ["waypoint"]
+      ansible.groups["harbors"] = ["harbor-1"]
+      ansible.groups["ferries"] = ["ferry"]
+      ansible.playbook = "ansible/seaworthy.yml"
+      ansible.limit = 'all'
+      ansible.extra_vars = { vagrant_development: true }
+    end
+
   end
 
   # TODO create ferry machine

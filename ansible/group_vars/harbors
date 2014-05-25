@@ -1,2 +1,5 @@
 ---
 install_harbor: True
+seaworthy_images:
+  - ship
+  - harbor
