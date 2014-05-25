@@ -38,6 +38,7 @@
 
 - name: "{{component}}: Copying systemd units"
   with_fileglob: systemd_units_glob
+  notify: enable {{component}} units
   copy:
     src: "{{item}}"
     dest: "{{systemd_dir}}"
