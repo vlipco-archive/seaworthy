@@ -1,8 +1,0 @@
-- name: Checking version
-  shell: "{{version_command}} | grep -G '{{expected_version}}'"
-  ignore_errors: True
-  register: version_match
-
-- when: version_match | failed
-  include: >
-    get/_prepare.yml pkg={{pkg}}

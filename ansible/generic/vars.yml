@@ -1,0 +1,16 @@
+---
+
+source_dir: "../components/{{component}}"
+
+target_dir: "/cluster/components/{{component}}"
+package_target_dir: "/cluster/pkg/{{component}}"
+checks_dir: "/cluster/components/{{component}}/checks"
+bin_dir: "/cluster/components/{{component}}/bin"
+systemd_dir: "/cluster/components/{{component}}/systemd"
+consul_conf_dir: "/cluster/components/{{component}}/consul"
+
+binaries_glob: "{{source_dir}}/bin/*"
+consul_checks_glob: "{{source_dir}}/consul/checks/*"
+consul_templates_glob: "{{source_dir}}/consul/templates/*"
+systemd_units_glob: "{{source_dir}}/systemd/*"
+installer_glob: "{{source_dir}}/install.sh"

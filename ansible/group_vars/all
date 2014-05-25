@@ -1,2 +1,3 @@
 ---
 install_lookupd: True
+ansible_sudo: yes

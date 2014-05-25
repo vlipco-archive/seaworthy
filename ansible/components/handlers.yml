@@ -9,11 +9,7 @@
 - name: update dns
   copy: content="nameserver 127.0.0.1" dest=/etc/resolv.conf 
 
-- name: restart nsq
-  service: "name={{item}} state=restarted"
-  with_items:
-    - nsqd
-    - nsqevents
+
 
 - name: restart lookupd
   service: name=lookupd state=restarted

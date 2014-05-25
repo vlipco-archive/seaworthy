@@ -1,0 +1,46 @@
+- name: "{{component}}: Loading installation variables"
+  include_vars: generic/vars.yml
+
+- name: "{{component}}: Checking current version or installing"
+  with_fileglob: installer_glob
+  script: "{{item}} {{package_target_dir}}"
+
+- name: "{{component}}: Removing previous folder"
+  when: clean_install | default(True)
+  file:
+    path: "{{target_dir}}"
+    state: absent
+
+- name: "{{component}}: Creating component folder"
+  file:
+    path: "{{target_dir}}"
+    state: directory
+
+- name: "{{component}}: Copying bin"
+  with_fileglob: binaries_glob
+  copy:
+    mode: 0755
+    src: "{{item}}"
+    dest: "{{bin_dir}}"
+
+- name: "{{component}}: Copying consul checks"
+  with_fileglob: consul_checks_glob
+  copy:
+    mode: 0755
+    src: "{{item}}"
+    dest: "{{checks_dir}}"
+
+- name: "{{component}}: Compiling consul templates"
+  with_fileglob: consul_templates_glob
+  template:
+    src: "{{item}}"
+    dest: "{{consul_conf_dir}}"
+
+- name: "{{component}}: Copying systemd units"
+  with_fileglob: systemd_units_glob
+  copy:
+    src: "{{item}}"
+    dest: "{{systemd_dir}}"
+    # todo enable units
+
+# link consul_conf & bin
