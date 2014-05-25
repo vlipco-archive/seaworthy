@@ -3,4 +3,7 @@
 - hosts: all
   sudo: yes
   roles:
-    - cluster-node
+    - nsq
+    #cluster-node
+  #tasks:
+  #  - include: roles/cluster-node/tasks/_component.yml name=nsq tags=nsq

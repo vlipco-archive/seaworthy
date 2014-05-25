@@ -3,13 +3,6 @@
   ignore_errors: True
   command: find . -maxdepth 1 -type f chdir={{src}}
 
-#- debug: msg={{folder_list.stdout_lines}}
-#
-#stat: path=/path/to/something
-#  register: p
-#- debug: msg="Path exists and is a directory"
-#  when: p.stat.isdir is defined and p.stat.isdir == true
-
 - name: Changing files' mode
   when: mode is defined and folder_list|success
   with_items: folder_list.stdout_lines

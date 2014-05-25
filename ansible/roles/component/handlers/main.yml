@@ -1,0 +1,38 @@
+---
+
+- name: restart consul
+  notify: update dns
+  service: name=consul state=restarted
+
+# todo wait for leader cluster
+
+- name: update dns
+  copy: content="nameserver 127.0.0.1" dest=/etc/resolv.conf 
+
+- name: restart nsq
+  service: "name={{item}} state=restarted"
+  with_items:
+    - nsqd
+    - nsqevents
+
+- name: restart lookupd
+  service: name=lookupd state=restarted
+
+- name: restart nsqadmin
+  service: name=nsqdamin state=restarted
+
+- name: restart waypoint
+  service: name=waypoint state=restarted
+
+- name: restart harbor
+  service: name=harbor state=restarted
+
+- name: restart ferry
+  service: name=ferry state=restarted
+
+#- name: Reloading units
+#  command: "systemctl reload-or-restart {{item}}"
+#  with_items: units_list.stdout_lines
+#  when: units_list | success
+
+# TODO handle unit failure?
