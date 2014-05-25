@@ -18,10 +18,7 @@ function verify-checksum() {
 	fi
 }
 
-# check the version
-if consul --version 2> /dev/null | grep -G "$version"; then
-	echo "Skipping install, consul $version already present"
-else
+function install-consul() {
 	echo "Removing previous version if present"
 	rm -rf $target || :
 	rm /usr/local/bin/consul || :
@@ -47,4 +44,13 @@ else
 	verify-checksum $ui_pkg_filename $ui_sha256sum
 	unzip $ui_pkg_filename
 	mv dist $target/ui
+}
+
+if [[ -e "/usr/local/bin/consul" ]] ; then
+	if /usr/local/bin/consul --version | grep -G "$version" &> /dev/null ; then
+		echo "Skipping install, consul $version already present"
+		exit 0
+	fi
 fi
+
+install-consul

@@ -34,7 +34,7 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
       ansible.groups["harbors"] = ["harbor-1"]
       ansible.groups["ferries"] = ["ferry"]
       ansible.playbook = "ansible/seaworthy.yml"
-      ansible.limit = 'all'
+      ansible.limit = 'igniter'
       ansible.extra_vars = { vagrant_development: true }
     end
 

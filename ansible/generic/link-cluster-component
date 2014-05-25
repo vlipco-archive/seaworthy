@@ -1,0 +1,28 @@
+#!/bin/bash
+set -eo pipefail
+
+component="$1"
+component_dir="/cluster/components/$component"
+bin_dir="$component_dir/bin"
+consul_conf_dir="$component_dir/consul"
+
+function link_folder() {
+	src="$1"
+	dest="$2"
+	if [[ -d "$src" ]]; then
+		cd "$src"
+		echo "Linking items in $src:"
+		for file in $(ls . -1); do
+			rm $dest/$file &> /dev/null || true
+			echo "  $file -> $dest/$file"
+			ln -s $src/$file $dest/$file
+		done
+	else
+		echo "$src doesn't exist, skipping"
+	fi
+}
+
+mkdir -p /cluster/etc/consul
+
+link_folder $consul_conf_dir /cluster/etc/consul
+link_folder $bin_dir /usr/local/bin

@@ -7,6 +7,11 @@
     - include: vagrant/development.yml
       when: vagrant_development | default(False)
 
+    - include: generic/install.yml component=consul
+
+    - include: generic/install.yml component=common tags=common
+    - include: generic/install.yml component=nsq
+
     - include: generic/install.yml component=nsqadmin
       when: install_nsqadmin | default(False)
 
