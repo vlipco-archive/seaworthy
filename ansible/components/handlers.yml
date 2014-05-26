@@ -2,7 +2,7 @@
 
 - name: prune links
   notify: reload systemd daemon
-  script: "generic/prune-links"
+  script: "generic/bin/prune-links"
 
 - name: reload systemd daemon
   command: systemctl daemon-reload

@@ -55,7 +55,7 @@
     dest: "{{systemd_dir}}/"
 
 - name: "{{component}}: Linking component parts"
-  script: "generic/link-cluster-component {{component}}"
+  script: "generic/bin/link-cluster-component {{component}}"
   notify: prune links
 
 - name: "{{component}}: Notifying component's systemd handler"
