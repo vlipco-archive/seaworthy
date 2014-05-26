@@ -1,3 +1,5 @@
 ---
 install_nsqadmin: True
 install_consul_ui: True
+consul_bootstrap: "true"
+routable_addr: 10.0.77.10

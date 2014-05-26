@@ -1,31 +1,33 @@
 ---
 
-- name: check links
+- name: prune links
   notify: reload systemd daemon
-  debug: msg="link checks are pending"
+  script: "generic/prune-links"
 
 - name: reload systemd daemon
   command: systemctl daemon-reload
 
 - name: restart consul
-  notify: wait for leader
+  notify: 
+    - consul join
+    - wait for leader
   service: 
     name: consul.service 
     state: restarted
     enabled: yes
 
+- name: consul join
+  notify: wait for leader
+  when: consul_start_join is defined
+  command: "consul join {{consul_start_join}}"
+
 - name: wait for leader
-  notify:
-    - update dns
-    - systemd healthcheck
+  notify: systemd healthcheck
   shell: /usr/local/bin/consul-leader
   register: leade_result
   until: not (leade_result.stdout | search('null'))
   retries: 12
   delay: 5
-
-- name: update dns
-  copy: content="nameserver 127.0.0.1" dest=/etc/resolv.conf 
 
 - name: restart lookupd
   service: 

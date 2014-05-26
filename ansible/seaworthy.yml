@@ -8,6 +8,27 @@
     - include: vagrant/development.yml
       when: vagrant_development | default(False)
 
+    - name: Save DNS backup
+      shell: >
+        cp /etc/resolv.conf /etc/resolv.conf.orig
+        creates=/etc/resolv.conf.orig
+
+    - name: Disable NetworkManager DNS management
+      ini_file:
+        backup: yes
+        dest: /etc/NetworkManager/NetworkManager.conf
+        section: main
+        option: dns
+        value: none
+
+    - name: Removing previous cluster configuation
+      with_items:
+        #- /cluster/data
+        - /cluster/etc
+      file:
+        path: "{{item}}"
+        state: absent
+
     - include: generic/install.yml component=consul
 
     - include: generic/install.yml component=common tags=common

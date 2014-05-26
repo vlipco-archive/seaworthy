@@ -2,7 +2,7 @@
   include_vars: generic/vars.yml
 
 - name: "{{component}}: Removing previous folder"
-  when: clean_install | default(False)
+  when: clean_install | default(True)
   file:
     path: "{{target_dir}}"
     state: absent
@@ -37,7 +37,8 @@
   with_fileglob: consul_templates_glob
   template:
     src: "{{item}}"
-    dest: "{{consul_conf_dir}}/"
+    dest: >
+      {{consul_conf_dir}}/{{item|regex_replace('(.*\/)([^\.]*)(\..*)', '\\2') }}.json
 
 - name: "{{component}}: Copying systemd units"
   with_fileglob: systemd_units_glob
@@ -48,7 +49,7 @@
 
 - name: "{{component}}: Linking component parts"
   script: "generic/link-cluster-component {{component}}"
-  notify: check links
+  notify: prune links
 
 - name: "{{component}}: Notifying component's systemd handler"
   command: /bin/true

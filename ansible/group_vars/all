@@ -1,3 +1,4 @@
 ---
 install_lookupd: True
 ansible_sudo: yes
+consul_recursor: 10.0.2.3
