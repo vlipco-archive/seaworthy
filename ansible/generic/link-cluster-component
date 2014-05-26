@@ -6,6 +6,7 @@ component_dir="/cluster/components/$component"
 bin_dir="$component_dir/bin"
 systemd_dir="$component_dir/systemd"
 consul_conf_dir="$component_dir/consul"
+event_handlers_dir="$component_dir/events"
 
 function link_folder() {
 	src="$1"
@@ -24,7 +25,9 @@ function link_folder() {
 }
 
 mkdir -p /cluster/etc/consul
+mkdir -p /cluster/etc/events
 
+link_folder $event_handlers_dir /cluster/etc/events
 link_folder $consul_conf_dir /cluster/etc/consul
 link_folder $bin_dir /usr/local/bin
 link_folder $systemd_dir /etc/systemd/system

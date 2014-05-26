@@ -3,8 +3,8 @@
         "name": "nsqevents",
         "id": "{{inventory_hostname}}-nsqevents",
         "check": {
-            "notes": "---",
-            "script": "/usr/bin/true",
+            "notes": "Every 30s checks nsqevent ping writes to the tail of a file",
+            "script": "{{checks_dir}}/nsqevents",
             "interval": "30s"
         }
     }

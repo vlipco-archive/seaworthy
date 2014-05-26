@@ -1,0 +1,3 @@
+---
+routable_addr: 10.0.77.20
+consul_start_join: 10.0.77.10

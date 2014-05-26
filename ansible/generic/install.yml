@@ -33,6 +33,13 @@
     src: "{{item}}"
     dest: "{{checks_dir}}/"
 
+- name: "{{component}}: Copying event handlers"
+  with_fileglob: event_handlers_glob
+  copy:
+    mode: 0755
+    src: "{{item}}"
+    dest: "{{event_handlers_dir}}/"
+
 - name: "{{component}}: Compiling consul templates"
   with_fileglob: consul_templates_glob
   template:

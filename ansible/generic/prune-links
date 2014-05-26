@@ -1,0 +1,14 @@
+#!/bin/bash
+set -eo pipefail
+
+function prune_folder() {
+	cd $1
+	for broken in $(find -L . -type l); do
+		echo "Removing broken link $broken"
+		rm $broken
+	done
+}
+
+prune_folder /cluster
+prune_folder /usr/local/bin
+prune_folder /etc/systemd/system
