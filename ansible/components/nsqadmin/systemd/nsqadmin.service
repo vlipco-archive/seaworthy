@@ -7,6 +7,7 @@ Wants=lookupd.service
 [Service]
 
 Restart=always
+RestartSec=5
 TimeoutStopSec=15
 ExecStart=/bin/bash -c "/usr/local/bin/nsqadmin `lookupd-params http`"
 

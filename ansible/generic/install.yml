@@ -39,9 +39,6 @@
     src: "{{item}}"
     dest: "{{consul_conf_dir}}/"
 
-- name: "{{component}}: Linking"
-  script: "generic/link-cluster-component {{component}}"
-
 - name: "{{component}}: Copying systemd units"
   with_fileglob: systemd_units_glob
   register: units_install
@@ -49,9 +46,11 @@
     src: "{{item}}"
     dest: "{{systemd_dir}}/"
 
-- name: "{{component}}: Notifying components systemd handler"
+- name: "{{component}}: Linking component parts"
+  script: "generic/link-cluster-component {{component}}"
+  notify: check links
+
+- name: "{{component}}: Notifying component's systemd handler"
   command: /bin/true
   with_fileglob: systemd_units_glob
   notify: "restart {{component}}"
-
-#- meta: flush_handlers

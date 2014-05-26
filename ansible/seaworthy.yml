@@ -4,6 +4,7 @@
   handlers:
     - include: components/handlers.yml
   tasks:
+
     - include: vagrant/development.yml
       when: vagrant_development | default(False)
 

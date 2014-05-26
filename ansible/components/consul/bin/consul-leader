@@ -13,6 +13,6 @@ if curl -s "http://127.0.0.1:8500" &> /dev/null; then
 		exit 1
 	fi
 else
-	echo "No local connection to consul on port 8500"
+	echo "null - No local connection to consul on port 8500"
 	exit 1
 fi
