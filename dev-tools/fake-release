@@ -1,6 +1,6 @@
 #!/bin/bash
 
-bin_folder="$(pwd)/$(dirname $0)"
+dev_tools="$(pwd)/$(dirname $0)"
 cd $1
 
 if [[ ! -d ".git" ]]; then 
@@ -18,9 +18,9 @@ if git remote | grep tester &> /dev/null; then
 	git remote remove tester
 fi
 
-git remote add tester ssh://git@localhost:5000/$2
+git remote add tester ssh://git@waypoint.service.consul:5000/$2
 
-export GIT_SSH="$bin_folder/git_ssh"
+export GIT_SSH="$dev_tools/git-ssh"
 
 echo
 git push tester master

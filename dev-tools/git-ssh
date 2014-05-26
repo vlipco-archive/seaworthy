@@ -1,4 +1,4 @@
 #!/bin/bash
-key=$(dirname $0)/../vendor/vagrant.pem
+key=$(dirname $0)/vagrant.pem
 chmod 600 $key
 /usr/bin/ssh -i $key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $@

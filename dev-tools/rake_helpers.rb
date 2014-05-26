@@ -1,19 +1,48 @@
+def info(msg)
+	puts "\n---> #{msg}\n".colorize :green
+end
+
+def log(msg)
+	puts "     #{msg}"
+end
+
+#def error(msg)
+#	puts "\n---> #{msg}\n".colorize :red
+#end
+
+def debug(msg)
+  puts "\n---> #{msg}\n".colorize :magenta
+end
+
+def remove_container(ctr)
+  # TODO gracefully handle errors
+  sh "sudo docker stop -t 1 #{ctr.to_s} &> /dev/null", verbose: false
+  sh "sudo docker rm #{ctr.to_s} &> /dev/null", verbose: false
+end
+
+def gear_volumes_options
+  opts = []
+  #dbus_socket
+  opts << "-v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket"
+  #geard_data
+  opts << "-v /var/lib/containers:/var/lib/containers"
+  #systemd_target
+  opts << "-v /etc/systemd/system/container-active.target.wants:/etc/systemd/system/"
+  opts.join " "
+end
+
+def push_app(app, as_name)
+  info "Pushing #{app} as #{as_name}"
+  sh "dev-tools/fake-release #{app} #{as_name}", verbose: false
+end
+
 def folder_for(img)
   return File.expand_path "docker-images/#{img.to_s.split('_').join('/')}", ROOT_DIR
 end
 
-def image_dependencies(img)
-  case img.to_sym
-    #when :vendor_consul then []
-    #when :vendor_nsq then []
-    #when :starters_deckhouse then [:hull]
-    when :waypoint then []
-    when :harbor then []
-    when :ship then []
-    when :ferry then []
-    else raise "Unknown image: #{image_name}"
-  end
-end
+#def image_dependencies(img)
+#  []
+#end
 
 def files_in(folder_path)
   glob = "#{folder_path}/**/*"
@@ -22,10 +51,10 @@ end
 
 def cache_buster_dependencies(cache_file)
   img = cache_file.pathmap('%n').to_sym
-  dependencies = image_dependencies(img).map {|d| cache_buster_file(d)}
+  #dependencies = image_dependencies(img).map {|d| cache_buster_file(d)}
   image_files = files_in folder_for(img)
-  dependencies.push *image_files
-  return dependencies
+  #dependencies.push *image_files
+  return image_files #dependencies
 end
 
 def cache_buster_file(img)
