@@ -36,7 +36,7 @@
   shell: >
     /usr/bin/bash -l -c "export GOPATH={{gopath}} &&
     export GOBIN={{gopath}}/bin && cd {{geard}} &&
-    contrib/build -n"
+    contrib/build -s -n"
 
 - name: "geard: Removing previous version if present"
   when: geard_download|changed
