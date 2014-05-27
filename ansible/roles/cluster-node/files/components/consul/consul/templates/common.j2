@@ -4,7 +4,11 @@
     "log_level": "warn",
     "recursor": "{{consul_recursor}}",
     "leave_on_terminate": true,
-    "ui_dir": "/cluster/pkg/consul/ui",
+
+{% if consul_ui %}
+    "ui_dir": "/cluster/vendor/consul/ui",
+{% endif %}
+
     "ports": {
         "dns": 53
     }

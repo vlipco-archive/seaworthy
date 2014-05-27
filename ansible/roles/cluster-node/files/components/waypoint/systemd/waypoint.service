@@ -10,6 +10,7 @@ ExecStartPre=/usr/local/bin/docker-rm "%p"
 ExecStop=/usr/local/bin/docker-stop "%p"
 
 TimeoutStopSec=5
+RestartSec=5
 
 ExecStart=/usr/local/bin/docker run \
 	--name waypoint \

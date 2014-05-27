@@ -11,6 +11,7 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   config.vm.define "igniter" do |igniter|
     igniter.vm.hostname = "igniter"
     igniter.vm.network "private_network", ip: "10.0.77.10"
+    igniter.vm.network "forwarded_port", guest: 8500, host: 8500
   end
 
   config.vm.define "waypoint" do |waypoint|
@@ -28,28 +29,19 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
     ferry.vm.network "private_network", ip: "10.0.77.50"
 
     # Provisioning only on last machine since ansible deals with multiple hosts
-    config.vm.provision "ansible" do |ansible|
+    ferry.vm.provision "ansible" do |ansible|
       ansible.groups = {}
       ansible.groups["waypoints"] = ["waypoint"]
       ansible.groups["harbors"] = ["harbor-1"]
       ansible.groups["ferries"] = ["ferry"]
       ansible.playbook = "ansible/site.yml"
-      ansible.limit = 'all'
       #ansible.tags = "geard"
-      ansible.extra_vars = { vagrant_development: true, clean_vendor_install: true }
+      ansible.extra_vars = { 
+        vagrant_development: true, 
+        clean_vendor_install: false 
+      }
+      ansible.limit = 'all'
     end
-
   end
-
-  # TODO create ferry machine
-
-  # use cache proxy if available, e.g. polipo statusbar
-  #if Vagrant.has_plugin? "vagrant-proxyconf"
-  #  config.yum_proxy.http  = "http://10.0.2.2:3128"
-  #  #config.proxy.http  = "http://10.0.2.2:3128"
-  #  no_proxy = %w(10.0.2.2 10.0.77.30 10.0.77.20 10.0.77.10)
-  #  no_proxy.push *%w(localhost 127.0.0.1)
-  #  config.proxy.no_proxy = no_proxy.join ','
-  #end
 
 end

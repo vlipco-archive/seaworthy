@@ -8,6 +8,7 @@ After=consul.service
 
 Restart=always
 TimeoutStopSec=15
+RestartSec=5
 ExecStart=/bin/bash -c "/usr/local/bin/nsqd --broadcast-address=$(hostname).node.consul $(lookupd-params)"
 
 [Install]

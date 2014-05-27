@@ -6,6 +6,7 @@ Requires=vlipco.target
 [Service]
 
 Restart=always
+RestartSec=5
 ExecStartPre=/usr/local/bin/docker-rm "%p"
 ExecStop=/usr/local/bin/docker-stop "%p"
 

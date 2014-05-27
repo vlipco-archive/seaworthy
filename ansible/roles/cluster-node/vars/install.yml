@@ -3,7 +3,7 @@
 source_dir: "components/{{component}}"
 
 target_dir: "{{components_dir}}/{{component}}"
-package_target_dir: "/cluster/pkg/{{component}}"
+#package_target_dir: "/cluster/pkg/{{component}}"
 checks_dir: "{{components_dir}}/{{component}}/checks"
 event_handlers_dir: "{{components_dir}}/{{component}}/events"
 bin_dir: "{{components_dir}}/{{component}}/bin"

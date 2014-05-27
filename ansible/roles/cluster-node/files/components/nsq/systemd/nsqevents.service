@@ -10,6 +10,7 @@ After=consul.service
 # we rely on this to skip extra monitoring this unit to ensure it knows where to find event producers
 
 Restart=always
+RestartSec=5
 ExecStart=/bin/bash -c "/usr/local/bin/nsq_event_router --topic events --handlers-dir /cluster/etc/events --lookupd-http-address lookupd.service.consul:4161"
 
 [Install]
