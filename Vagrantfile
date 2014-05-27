@@ -34,9 +34,9 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
       ansible.groups["harbors"] = ["harbor-1"]
       ansible.groups["ferries"] = ["ferry"]
       ansible.playbook = "ansible/site.yml"
-      ansible.limit = 'igniter'
+      ansible.limit = 'waypoint'
       #ansible.tags = "geard"
-      ansible.extra_vars = { vagrant_development: true, clean_vendor_install: true }
+      ansible.extra_vars = { vagrant_development: true, clean_vendor_install: false }
     end
 
   end

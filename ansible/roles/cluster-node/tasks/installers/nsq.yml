@@ -10,25 +10,25 @@
 
 - when: random_dirname|changed
   set_fact:
-    tmp_dir: "/tmp/nsq.{{random_dirname.stdout}}"
+    nsq_tmp_dir: "/tmp/nsq.{{random_dirname.stdout}}"
     link_folder_script: "../../files/generic_install/link-folder"
 
 - name: "nsq: Creating temporary download folder"
-  when: tmp_dir is defined
-  file: "path={{tmp_dir}} state=directory"
+  when: nsq_tmp_dir is defined
+  file: "path={{nsq_tmp_dir}} state=directory"
 
 - name: "nsq: Downloading nsq"
-  when: tmp_dir is defined
+  when: nsq_tmp_dir is defined
   #when: "'{{nsq_version}}' not in version_found.stdout"
   register: nsq_download
   get_url:
     sha256sum: "{{nsq_sha256sum}}"
     url: "https://s3.amazonaws.com/bitly-downloads/nsq/{{nsq_pkg_name}}.tar.gz"
-    dest: "{{tmp_dir}}/{{nsq_pkg_name}}.tar.gz"
+    dest: "{{nsq_tmp_dir}}/{{nsq_pkg_name}}.tar.gz"
 
 - name: "nsq: Extracting nsq binaries"
   when: nsq_download|changed
-  shell: "cd {{tmp_dir}} && tar xf {{nsq_pkg_name}}.tar.gz"
+  shell: "cd {{nsq_tmp_dir}} && tar xf {{nsq_pkg_name}}.tar.gz"
 
 - name: "nsq: Removing previous version if present"
   when: nsq_download|changed
@@ -40,7 +40,7 @@
 
 - name: "nsq: Installing nsq binaries"
   when: nsq_download|changed
-  shell: "cd {{tmp_dir}} && mv {{nsq_pkg_name}}/bin/* /cluster/vendor/nsq"
+  shell: "cd {{nsq_tmp_dir}} && mv {{nsq_pkg_name}}/bin/* /cluster/vendor/nsq"
 
 - name: "nsq: Linking binaries to local path"
   script: "{{link_folder_script}} /cluster/vendor/nsq /usr/local/bin"
@@ -56,5 +56,5 @@
     that: "'{{nsq_version}}' in recent_version.stdout"
 
 - name: "consul: Deleting temporary download folder"
-  file: "path={{tmp_dir}} state=absent"
-  when: tmp_dir is defined
+  file: "path={{nsq_tmp_dir}} state=absent"
+  when: nsq_tmp_dir is defined

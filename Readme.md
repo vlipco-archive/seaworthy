@@ -42,3 +42,26 @@ sudo docker run --name public_harbor -i -t -d -p 7651:7651 -p 7651:7651/udp -e S
 
 sudo docker run --name internal_harbor -i -t -d -p 7652:7652 -p 7652:7652/udp -e SERF_ROUTABLE_IP=172.17.42.1 -e SERF_NODE_NAME=internal_harbor -e SERF_BIND_PORT=7652 -e SERF_TAGS=group=internal -e SERF_JOIN_NODE=172.17.42.1:7649 -e SERF_ROLE=harbor -v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket -v /var/lib/containers:/var/lib/containers -v /etc/systemd/system/container-active.target.wants:/etc/systemd/system/ vlipco/harbor
 
+
+#docker run --rm -ti -p 5000:5000 -p 5100:5100 --dns 8.8.8.8 --dns 8.8.4.4 vlipco/waypoint /bin/bash
+
+
+#Type=simple
+#EnvironmentFile=-/etc/default/gear
+
+# GearD defaults file
+
+# Modify the docker socket that GearD should connect to
+#GEARD_OPTS='--docker-socket="unix:///var/run/docker.sock"'
+
+# Enable if docker supports the experimental env-file directive
+#GEARD_OPTS="${GEARD_OPTS} --has-env-file"
+
+# Enable if docker supports the experimental foreground mode
+#GEARD_OPTS="${GEARD_OPTS} --has-foreground"
+
+# Specify the directory containing the server private key and trusted client public keys
+#GEARD_OPTS="${GEARD_OPTS} --key-path=''"
+
+# Set the address for the http endpoint to listen on
+#GEARD_OPTS="${GEARD_OPTS} --listen-address=':43273'"

@@ -11,24 +11,24 @@
 
 - when: random_dirname|changed
   set_fact:
-    tmp_dir: "/tmp/consul.{{random_dirname.stdout}}"
+    consul_tmp_dir: "/tmp/consul.{{random_dirname.stdout}}"
     link_folder_script: "../../files/generic_install/link-folder"
 
 - name: "consul: Creating temporary download folder"
-  when: tmp_dir is defined
-  file: "path={{tmp_dir}} state=directory"
+  when: consul_tmp_dir is defined
+  file: "path={{consul_tmp_dir}} state=directory"
 
 - name: "consul: Downloading consul"
-  when: tmp_dir is defined
+  when: consul_tmp_dir is defined
   register: consul_download
   get_url:
     sha256sum: "{{consul_sha256sum}}"
     url: "https://dl.bintray.com/mitchellh/consul/{{consul_pkg_name}}.zip"
-    dest: "{{tmp_dir}}/{{consul_pkg_name}}.zip"
+    dest: "{{consul_tmp_dir}}/{{consul_pkg_name}}.zip"
 
 - name: "consul: Extracting consul binaries"
   when: consul_download|changed
-  shell: "cd {{tmp_dir}} && unzip {{consul_pkg_name}}.zip"
+  shell: "cd {{consul_tmp_dir}} && unzip {{consul_pkg_name}}.zip"
 
 - name: "consul: Removing previous version if present"
   when: consul_download|changed
@@ -40,22 +40,22 @@
 
 - name: "consul: Installing consul binaries"
   when: consul_download|changed
-  shell: "cd {{tmp_dir}} && mv consul /cluster/vendor/consul"
+  shell: "cd {{consul_tmp_dir}} && mv consul /cluster/vendor/consul"
 
 - name: "consul: Downloading consul UI"
   when: consul_download|changed
   get_url:
     sha256sum: "{{consul_ui_sha256sum}}"
     url: "https://dl.bintray.com/mitchellh/consul/{{consul_ui_pkg_name}}.zip"
-    dest: "{{tmp_dir}}/{{consul_ui_pkg_name}}.zip"
+    dest: "{{consul_tmp_dir}}/{{consul_ui_pkg_name}}.zip"
 
 - name: "consul: Extracting consul UI"
   when: consul_download|changed
-  shell: "cd {{tmp_dir}} && unzip {{consul_ui_pkg_name}}.zip"
+  shell: "cd {{consul_tmp_dir}} && unzip {{consul_ui_pkg_name}}.zip"
 
 - name: "consul: Installing consul UI"
   when: consul_download|changed
-  shell: "cd {{tmp_dir}} && mv dist /cluster/vendor/consul/ui"
+  shell: "cd {{consul_tmp_dir}} && mv dist /cluster/vendor/consul/ui"
 
 - name: "consul: Linking binaries to local path"
   script: "{{link_folder_script}} /cluster/vendor/consul /usr/local/bin"
@@ -71,4 +71,5 @@
     that: "'{{consul_version}}' in recent_version.stdout"
 
 - name: "consul: Deleting temporary download folder"
-  file: "path={{tmp_dir}} state=absent"
+  when: consul_tmp_dir is defined
+  file: "path={{consul_tmp_dir}} state=absent"

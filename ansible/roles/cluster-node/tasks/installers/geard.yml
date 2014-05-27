@@ -9,19 +9,19 @@
 
 - when: random_dirname|changed
   set_fact:
-    tmp_dir: "/tmp/geard.{{random_dirname.stdout}}"
+    geard_tmp_dir: "/tmp/geard.{{random_dirname.stdout}}"
 
-- when: tmp_dir is defined
+- when: geard_tmp_dir is defined
   set_fact:
-    gopath: "{{tmp_dir}}"
-    geard: "{{tmp_dir}}/src/github.com/openshift/geard"
+    gopath: "{{geard_tmp_dir}}"
+    geard: "{{geard_tmp_dir}}/src/github.com/openshift/geard"
 
 - name: "geard: Creating temporary folders"
-  when: tmp_dir is defined
+  when: geard_tmp_dir is defined
   file: "path={{geard}} state=directory"
 
 - name: "geard: Cloning source repo"
-  when: tmp_dir is defined
+  when: geard_tmp_dir is defined
   register: geard_download
   git:
     repo: https://github.com/openshift/geard.git
@@ -73,10 +73,10 @@
   stat: path=/usr/local/bin/gear
   register: post_install_check 
 
-- when: post_install_check is defined
+- when: geard_download|changed
   assert:
     that: post_install_check.stat.exists == true
 
 - name: "geard: Deleting temporary download folder"
-  file: "path={{tmp_dir}} state=absent"
-  when: tmp_dir is defined
+  file: "path={{geard_tmp_dir}} state=absent"
+  when: geard_tmp_dir is defined
