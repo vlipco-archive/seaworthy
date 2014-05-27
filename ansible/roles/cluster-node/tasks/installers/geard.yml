@@ -1,17 +1,19 @@
 - name: "geard: Checking presence of gear binary"
-  stat: path=/usr/local/bin/gear
+  stat: path=/usr/bin/gear
   register: gear_stat
 
 - name: "geard: Choosing random string for download folder"
-  when: gear_stat.stat.exists == false
+  when: not gear_stat.stat.exists
   shell: date +%s.%N | sha256sum | base64 | head -c 32 ; echo
   register: random_dirname
 
-- when: random_dirname|changed
+- name: "geard: Setting temp dir for installation"
+  when: not gear_stat.stat.exists
   set_fact:
     geard_tmp_dir: "/tmp/geard.{{random_dirname.stdout}}"
 
-- when: geard_tmp_dir is defined
+- name: "geard: Defining misc. paths for installation"
+  when: geard_tmp_dir is defined
   set_fact:
     gopath: "{{geard_tmp_dir}}"
     geard: "{{geard_tmp_dir}}/src/github.com/openshift/geard"
@@ -29,12 +31,12 @@
     dest: "{{geard}}"
     depth: 1
 
-- name: "geard: Compiling geard with SELinux"
+- name: "geard: Compiling geard"
   when: geard_download|changed
   shell: >
     /usr/bin/bash -l -c "export GOPATH={{gopath}} &&
     export GOBIN={{gopath}}/bin && cd {{geard}} &&
-    contrib/build -s -n"
+    contrib/build -n"
 
 - name: "geard: Removing previous version if present"
   when: geard_download|changed
@@ -52,7 +54,7 @@
   when: geard_download|changed
   file: 
     src: "/cluster/vendor/geard/{{item}}"
-    dest: "/usr/local/bin/{{item}}"
+    dest: "/usr/bin/{{item}}"
     state: link
     force: yes
   with_items:
@@ -64,18 +66,21 @@
   when: geard_download|changed
   file: 
     src: "/cluster/vendor/geard/gear-auth-keys-command"
-    dest: "/usr/local/sbin/gear-auth-keys-command"
+    dest: "/usr/sbin/gear-auth-keys-command"
     state: link
     force: yes
 
 - name: "geard: Checking installation"
   when: geard_download|changed
-  stat: path=/usr/local/bin/gear
+  stat: path=/usr/bin/gear
   register: post_install_check 
 
 - when: geard_download|changed
   assert:
-    that: post_install_check.stat.exists == true
+    that: post_install_check.stat.exists
+
+- name: "geard: Triggering creation of file structure"
+  command: /usr/bin/gear list-units
 
 - name: "geard: Deleting temporary download folder"
   file: "path={{geard_tmp_dir}} state=absent"

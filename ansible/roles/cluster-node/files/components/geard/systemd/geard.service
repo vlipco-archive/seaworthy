@@ -1,9 +1,8 @@
 [Unit]
 Description=Gear Provisioning Daemon (geard)
-Documentation=https://github.com/openshift/geard
 
 [Service]
-ExecStart=/usr/local/bin/gear daemon
+ExecStart=/usr/bin/gear daemon --has-env-file -A 127.0.0.1:43273
 
 [Install]
 WantedBy=multi-user.target

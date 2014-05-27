@@ -11,4 +11,7 @@ function prune_folder() {
 
 prune_folder /cluster
 prune_folder /usr/local/bin
+prune_folder /usr/local/sbin
+prune_folder /usr/bin
+prune_folder /usr/sbin
 prune_folder /etc/systemd/system

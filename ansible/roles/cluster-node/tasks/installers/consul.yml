@@ -9,7 +9,8 @@
   shell: date +%s.%N | sha256sum | base64 | head -c 32 ; echo
   register: random_dirname
 
-- when: random_dirname|changed
+- name: "consul: Setting misc. variables for installation"
+  when: random_dirname|changed
   set_fact:
     consul_tmp_dir: "/tmp/consul.{{random_dirname.stdout}}"
     link_folder_script: "../../files/generic_install/link-folder"

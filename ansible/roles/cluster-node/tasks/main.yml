@@ -19,6 +19,9 @@
   when: clean_components_install | default(True)
   file: path=/cluster/components state=absent
 
+- name: "Pruning broken links (paths, cluster and systemd folders)"
+  script: generic_install/prune-links
+
 - include: installers/consul.yml tags=consul
 - include: generic_install.yml component=consul tags=consul
 

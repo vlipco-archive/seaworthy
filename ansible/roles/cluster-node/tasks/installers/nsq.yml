@@ -8,7 +8,8 @@
   shell: date +%s.%N | sha256sum | base64 | head -c 32 ; echo
   register: random_dirname
 
-- when: random_dirname|changed
+- name: "nsq: Setting misc. variables for installation"
+  when: random_dirname|changed
   set_fact:
     nsq_tmp_dir: "/tmp/nsq.{{random_dirname.stdout}}"
     link_folder_script: "../../files/generic_install/link-folder"
