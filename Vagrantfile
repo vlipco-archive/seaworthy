@@ -11,7 +11,6 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   config.vm.define "igniter" do |igniter|
     igniter.vm.hostname = "igniter"
     igniter.vm.network "private_network", ip: "10.0.77.10"
-    igniter.vm.network "forwarded_port", guest: 8500, host: 8500
   end
 
   config.vm.define "waypoint" do |waypoint|
