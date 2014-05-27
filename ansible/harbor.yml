@@ -1,0 +1,9 @@
+---
+
+- hosts: harbors
+  roles:
+    - cluster-node
+  tasks:
+    - include: >
+        roles/cluster-node/tasks/generic_install.yml
+        component=harbor

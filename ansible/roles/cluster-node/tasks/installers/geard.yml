@@ -1,0 +1,82 @@
+- name: "geard: Checking presence of gear binary"
+  stat: path=/usr/local/bin/gear
+  register: gear_stat
+
+- name: "geard: Choosing random string for download folder"
+  when: gear_stat.stat.exists == false
+  shell: date +%s.%N | sha256sum | base64 | head -c 32 ; echo
+  register: random_dirname
+
+- when: random_dirname|changed
+  set_fact:
+    tmp_dir: "/tmp/geard.{{random_dirname.stdout}}"
+
+- when: tmp_dir is defined
+  set_fact:
+    gopath: "{{tmp_dir}}"
+    geard: "{{tmp_dir}}/src/github.com/openshift/geard"
+
+- name: "geard: Creating temporary folders"
+  when: tmp_dir is defined
+  file: "path={{geard}} state=directory"
+
+- name: "geard: Cloning source repo"
+  when: tmp_dir is defined
+  register: geard_download
+  git:
+    repo: https://github.com/openshift/geard.git
+    version: 178db29f02b5d660b370956c920dd1d13484ede3
+    dest: "{{geard}}"
+    depth: 1
+
+- name: "geard: Compiling geard with SELinux"
+  when: geard_download|changed
+  shell: >
+    /usr/bin/bash -l -c "export GOPATH={{gopath}} &&
+    export GOBIN={{gopath}}/bin && cd {{geard}} &&
+    contrib/build -s -n"
+
+- name: "geard: Removing previous version if present"
+  when: geard_download|changed
+  file: path=/cluster/vendor/geard state=absent
+
+- name: "geard: Creating destination directory"
+  when: geard_download|changed
+  file: path=/cluster/vendor/geard state=directory
+
+- name: "geard: Installing geard binaries"
+  when: geard_download|changed
+  shell: "cd {{gopath}} && mv bin/* /cluster/vendor/geard"
+
+- name: "geard: Linking compiled binaries to local path"
+  when: geard_download|changed
+  file: 
+    src: "/cluster/vendor/geard/{{item}}"
+    dest: "/usr/local/bin/{{item}}"
+    state: link
+    force: yes
+  with_items:
+    - sti
+    - gear
+    - switchns
+
+- name: "geard: Linking gear-auth-keys-command to local sbin"
+  when: geard_download|changed
+  file: 
+    src: "/cluster/vendor/geard/gear-auth-keys-command"
+    dest: "/usr/local/sbin/gear-auth-keys-command"
+    state: link
+    force: yes
+
+- name: "geard: Checking installation"
+  when: geard_download|changed
+  stat: path=/usr/local/bin/gear
+  register: post_install_check 
+
+- when: post_install_check is defined
+  assert:
+    that: post_install_check.stat.exists == true
+
+- name: "geard: Deleting temporary download folder"
+  file: "path={{tmp_dir}} state=absent"
+  when: tmp_dir is defined

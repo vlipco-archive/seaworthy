@@ -1,11 +1,5 @@
 - name: "{{component}}: Loading installation variables"
-  include_vars: generic/vars.yml
-
-- name: "{{component}}: Removing previous folder"
-  when: clean_install | default(True)
-  file:
-    path: "{{target_dir}}"
-    state: absent
+  include_vars: install.yml
 
 - name: "{{component}}: Creating component folders"
   file:
@@ -14,10 +8,6 @@
   with_items:
     - "{{target_dir}}"
     - "{{consul_conf_dir}}"
-
-- name: "{{component}}: Running installer to verify version or install"
-  with_fileglob: installer_glob
-  script: "{{item}} {{package_target_dir}}"
 
 - name: "{{component}}: Copying bin"
   with_fileglob: binaries_glob
@@ -55,7 +45,7 @@
     dest: "{{systemd_dir}}/"
 
 - name: "{{component}}: Linking component parts"
-  script: "generic/bin/link-cluster-component {{component}}"
+  script: "generic_install/link-cluster-component {{component}}"
   notify: prune links
 
 - name: "{{component}}: Notifying component's systemd handler"

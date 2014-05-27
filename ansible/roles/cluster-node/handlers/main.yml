@@ -2,10 +2,16 @@
 
 - name: prune links
   notify: reload systemd daemon
-  script: "generic/bin/prune-links"
+  script: "generic_install/prune-links"
 
 - name: reload systemd daemon
   command: systemctl daemon-reload
+
+- name: restart geard
+  service: 
+    name: geard.service 
+    state: restarted
+    enabled: yes
 
 - name: restart consul
   notify: 

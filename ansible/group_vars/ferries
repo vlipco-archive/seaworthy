@@ -1,4 +1,3 @@
 ---
-install_ferry: True
 seaworthy_images:
   - ferry

@@ -1,0 +1,12 @@
+
+[Unit]
+Description=Container slice container
+
+[Slice]
+CPUAccounting=yes
+MemoryAccounting=yes
+MemoryLimit=512M
+
+
+[Install]
+WantedBy=container.target container-active.target

@@ -1,0 +1,34 @@
+- name: Save DNS backup
+  shell: >
+    cp /etc/resolv.conf /etc/resolv.conf.orig
+    creates=/etc/resolv.conf.orig
+
+- name: Disable NetworkManager DNS management
+  ini_file:
+    backup: yes
+    dest: /etc/NetworkManager/NetworkManager.conf
+    section: main
+    option: dns
+    value: none
+
+- name: Removing previous vendor folder
+  when: clean_vendor_install | default(False)
+  file: path=/cluster/vendor state=absent
+
+- name: Removing previous components folder
+  when: clean_components_install | default(True)
+  file: path=/cluster/components state=absent
+
+- include: installers/consul.yml tags=consul
+- include: generic_install.yml component=consul tags=consul
+
+- include: generic_install.yml component=common tags=common
+
+- include: installers/geard.yml tags=geard
+- include: generic_install.yml component=geard tags=geard
+
+- include: installers/nsq.yml tags=nsq
+- include: generic_install.yml component=nsq tags=nsq
+
+- include: generic_install.yml component=lookupd
+  when: install_lookupd | default(False)

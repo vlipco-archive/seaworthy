@@ -1,4 +1,3 @@
 ---
-install_waypoint: True
 seaworthy_images:
   - waypoint

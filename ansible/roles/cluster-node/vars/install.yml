@@ -1,6 +1,6 @@
 ---
 
-source_dir: "../components/{{component}}"
+source_dir: "components/{{component}}"
 
 target_dir: "/cluster/components/{{component}}"
 package_target_dir: "/cluster/pkg/{{component}}"
@@ -15,4 +15,4 @@ event_handlers_glob: "{{source_dir}}/events/*"
 consul_checks_glob: "{{source_dir}}/consul/checks/*"
 consul_templates_glob: "{{source_dir}}/consul/templates/*"
 systemd_units_glob: "{{source_dir}}/systemd/*"
-installer_glob: "{{source_dir}}/install.sh"
+#installer_glob: "{{source_dir}}/install.sh"
