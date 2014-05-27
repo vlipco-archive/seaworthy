@@ -8,6 +8,8 @@
     - include: vagrant/development.yml
       when: vagrant_development | default(False)
 
+
+    - include: geard.yml tags=geard
     - name: Save DNS backup
       shell: >
         cp /etc/resolv.conf /etc/resolv.conf.orig

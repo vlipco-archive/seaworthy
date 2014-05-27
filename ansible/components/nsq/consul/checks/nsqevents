@@ -44,7 +44,7 @@ if echo $trigger_result | grep -G "$nsqd_http: OK" &> /dev/null; then
 		echo "Closing with a warning"
 		exit 1
 	else
-		echo "Local nsqevent service OK"
+		echo "Local nsqevents service OK"
 		echo "ping event was processed within $(( 250 * $retries ))ms"
 		exit 0	
 	fi

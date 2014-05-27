@@ -19,3 +19,5 @@ ExecStart=/usr/local/bin/docker run \
 [Install]
 
 WantedBy=vlipco.target
+
+docker run --rm -ti -p 5000:5000 -p 5100:5100 --dns 8.8.8.8 --dns 8.8.4.4 vlipco/waypoint /bin/bash

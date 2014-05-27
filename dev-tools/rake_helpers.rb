@@ -33,7 +33,7 @@ end
 
 def push_app(app, as_name)
   info "Pushing #{app} as #{as_name}"
-  sh "dev-tools/fake-release #{app} #{as_name}", verbose: false
+  exec "dev-tools/fake-release #{app} #{as_name}"#, verbose: false
 end
 
 def folder_for(img)
