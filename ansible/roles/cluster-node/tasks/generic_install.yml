@@ -45,10 +45,10 @@
     dest: "{{systemd_dir}}/"
 
 - name: "{{component}}: Linking component parts"
-  script: "generic_install/link-cluster-component {{component}}"
+  script: "generic_install/link-component {{component}}"
   notify: prune links
 
 - name: "{{component}}: Notifying component's systemd handler"
   command: /bin/true
   with_fileglob: systemd_units_glob
-  notify: "restart {{component}}"
+  notify: "{{component}} systemd handler"

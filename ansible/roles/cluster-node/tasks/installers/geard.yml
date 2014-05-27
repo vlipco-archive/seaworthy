@@ -27,7 +27,7 @@
   register: geard_download
   git:
     repo: https://github.com/openshift/geard.git
-    version: 178db29f02b5d660b370956c920dd1d13484ede3
+    version: 3ba0057c4d8fc98a4794a88ce43e3fbb77434b65
     dest: "{{geard}}"
     depth: 1
 

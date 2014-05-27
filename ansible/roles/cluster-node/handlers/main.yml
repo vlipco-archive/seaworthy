@@ -7,20 +7,14 @@
 - name: reload systemd daemon
   command: systemctl daemon-reload
 
-- name: restart geard
-  service: 
-    name: geard.service 
-    state: restarted
-    enabled: yes
+- name: geard systemd handler
+  script: "generic_install/activate-unit geard"
 
-- name: restart consul
+- name: consul systemd handler
   notify: 
     - consul join
     - wait for leader
-  service: 
-    name: consul.service 
-    state: restarted
-    enabled: yes
+  script: "generic_install/activate-unit consul"
 
 - name: consul join
   notify: wait for leader
@@ -35,44 +29,26 @@
   retries: 12
   delay: 5
 
-- name: restart lookupd
-  service: 
-    name: lookupd.service 
-    state: restarted
-    enabled: yes
+- name: lookupd systemd handler
+  script: "generic_install/activate-unit lookupd"
 
-- name: restart nsq
-  service: 
-    name: "{{item}}.service"
-    state: restarted
-    enabled: yes
+- name: nsq systemd handler
+  script: "generic_install/activate-unit nsq {{item}}.service"
   with_items:
     - nsqd
     - nsqevents
 
-- name: restart nsqadmin
-  service: 
-    name: nsqadmin.service 
-    state: restarted
-    enabled: yes
+- name: nsqadmin systemd handler
+  script: "generic_install/activate-unit nsqadmin"
 
-- name: restart waypoint
-  service: 
-    name: waypoint.service 
-    state: restarted
-    enabled: yes
+- name: waypoint systemd handler
+  script: "generic_install/activate-unit waypoint"
 
-- name: restart harbor
-  service: 
-    name: harbor.service 
-    state: restarted
-    enabled: yes
+- name: harbor systemd handler
+  script: "generic_install/activate-unit harbor"
 
-- name: restart ferry
-  service: 
-    name: ferry.service 
-    state: restarted
-    enabled: yes
+- name: ferry systemd handler
+  script: "generic_install/activate-unit ferry"
 
 - name: systemd healthcheck
   shell: "sleep 5 && systemctl --failed"

@@ -10,6 +10,6 @@ consul_pkg_name: "{{consul_version}}_linux_amd64"
 consul_ui_sha256sum: 3a8b00499002b56f101abecb2df3bd8ae6f417b776d76059aaeb42dded378ba0
 consul_ui_pkg_name: "{{consul_version}}_web_ui"
 
-
+components_dir: /cluster/components
 
 

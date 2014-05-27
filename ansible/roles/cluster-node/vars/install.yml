@@ -2,13 +2,13 @@
 
 source_dir: "components/{{component}}"
 
-target_dir: "/cluster/components/{{component}}"
+target_dir: "{{components_dir}}/{{component}}"
 package_target_dir: "/cluster/pkg/{{component}}"
-checks_dir: "/cluster/components/{{component}}/checks"
-event_handlers_dir: "/cluster/components/{{component}}/events"
-bin_dir: "/cluster/components/{{component}}/bin"
-systemd_dir: "/cluster/components/{{component}}/systemd"
-consul_conf_dir: "/cluster/components/{{component}}/consul"
+checks_dir: "{{components_dir}}/{{component}}/checks"
+event_handlers_dir: "{{components_dir}}/{{component}}/events"
+bin_dir: "{{components_dir}}/{{component}}/bin"
+systemd_dir: "{{components_dir}}/{{component}}/systemd"
+consul_conf_dir: "{{components_dir}}/{{component}}/consul"
 
 binaries_glob: "{{source_dir}}/bin/*"
 event_handlers_glob: "{{source_dir}}/events/*"
