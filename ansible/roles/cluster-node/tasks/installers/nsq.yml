@@ -20,7 +20,6 @@
 
 - name: "nsq: Downloading nsq"
   when: nsq_tmp_dir is defined
-  #when: "'{{nsq_version}}' not in version_found.stdout"
   register: nsq_download
   get_url:
     sha256sum: "{{nsq_sha256sum}}"
