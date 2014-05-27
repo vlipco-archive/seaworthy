@@ -1,9 +1,5 @@
 ---
 
-#- include: vagrant/development.yml
-#  when: vagrant_development | default(False)
-
-- include: igniter.yml
-- include: waypoint.yml
-- include: harbor.yml
-- include: ferry.yml
+- hosts: all
+  roles:
+    - cluster-node
