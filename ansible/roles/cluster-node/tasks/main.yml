@@ -39,11 +39,11 @@
 - include: generic_install.yml component=nsqadmin
   when: install_nsqadmin | default(False)
 
-- include: generic_install.yml component=waypoint
-  when: install_waypoint | default(False)
-
-- include: generic_install.yml component=harbor
-  when: install_harbor | default(False)
-
-- include: generic_install.yml component=ferry
-  when: install_ferry | default(False)
+#- include: generic_install.yml component=waypoint
+#  when: install_waypoint | default(False)
+#
+#- include: generic_install.yml component=harbor
+#  when: install_harbor | default(False)
+#
+#- include: generic_install.yml component=ferry
+#  when: install_ferry | default(False)

@@ -9,8 +9,8 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   config.vm.box = "vlipco/fedora-20"
 
   config.vm.provider "virtualbox" do |v|
-    v.customize ["modifyvm", :id, "--cpuexecutioncap", "15"]
-    v.memory = 1024
+    #v.customize ["modifyvm", :id, "--cpuexecutioncap", "30"]
+    v.memory = 2048
   end
 
   config.vm.define "igniter" do |igniter|
@@ -18,13 +18,13 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
     igniter.vm.network "private_network", ip: "10.0.77.10"
   end
 
-  config.vm.define "waypoint" do |waypoint|
-    waypoint.vm.hostname = "waypoint"
-    waypoint.vm.network "private_network", ip: "10.0.77.20"
-  end
+  #config.vm.define "waypoint" do |waypoint|
+  #  waypoint.vm.hostname = "waypoint"
+  #  waypoint.vm.network "private_network", ip: "10.0.77.20"
+  #end
 
-  config.vm.define "harbor-1" do |harbor|
-    harbor.vm.hostname = "harbor-1"
+  config.vm.define "harbor" do |harbor|
+    harbor.vm.hostname = "harbor"
     harbor.vm.network "private_network", ip: "10.0.77.30"
   end
 
@@ -36,7 +36,7 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
     ferry.vm.provision "ansible" do |ansible|
       ansible.groups = {}
       ansible.groups["waypoints"] = ["waypoint"]
-      ansible.groups["harbors"] = ["harbor-1"]
+      ansible.groups["harbors"] = ["harbor"]
       ansible.groups["ferries"] = ["ferry"]
       ansible.extra_vars = { 
         vagrant_development: true, 
