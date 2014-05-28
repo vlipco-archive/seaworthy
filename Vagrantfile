@@ -8,6 +8,11 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
   config.vm.synced_folder ".", "/home/vagrant/seaworthy"
   config.vm.box = "vlipco/fedora-20"
 
+  config.vm.provider "virtualbox" do |v|
+    v.customize ["modifyvm", :id, "--cpuexecutioncap", "15"]
+    v.memory = 1024
+  end
+
   config.vm.define "igniter" do |igniter|
     igniter.vm.hostname = "igniter"
     igniter.vm.network "private_network", ip: "10.0.77.10"
