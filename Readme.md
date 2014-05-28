@@ -65,3 +65,8 @@ sudo docker run --name internal_harbor -i -t -d -p 7652:7652 -p 7652:7652/udp -e
 
 # Set the address for the http endpoint to listen on
 #GEARD_OPTS="${GEARD_OPTS} --listen-address=':43273'"
+
+fileserver on ruby buildpack folder
+ sti build . vlipco/hull ruby1 -shttp://10.0.77.50:5100/sti
+
+ http://localhost:5100/sti

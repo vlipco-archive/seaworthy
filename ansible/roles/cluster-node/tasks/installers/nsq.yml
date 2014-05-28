@@ -1,10 +1,10 @@
 - name: "nsq: Checking current nsq version"
   command: /usr/bin/bash -l -c "nsqd --version || echo null"
-  register: version_found
+  register: nsq_version_found
   changed_when: False
 
 - name: "nsq: Choosing random string for download folder"
-  when: "'{{nsq_version}}' not in version_found.stdout"
+  when: "'{{nsq_version}}' not in nsq_version_found.stdout"
   shell: date +%s.%N | sha256sum | base64 | head -c 32 ; echo
   register: random_dirname
 

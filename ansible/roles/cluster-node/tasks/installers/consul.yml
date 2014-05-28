@@ -1,11 +1,11 @@
 - name: "consul: Checking current consul version"
   shell: consul --version || echo null
   # this requires in ansible.cfg executable=/usr/bin/bash -l
-  register: version_found
+  register: consul_version_found
   changed_when: False
 
 - name: "consul: Choosing random string for download folder"
-  when: "'{{consul_version}}' not in version_found.stdout"
+  when: "'{{consul_version}}' not in consul_version_found.stdout"
   shell: date +%s.%N | sha256sum | base64 | head -c 32 ; echo
   register: random_dirname
 

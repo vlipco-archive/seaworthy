@@ -1,0 +1,35 @@
+#!/bin/bash
+set -eo pipefail
+
+error() {
+    echo >&2 " !! $* Aborting."
+    exit 1
+}
+
+group_output() {
+    sed -u 's/^/    │ /'
+}
+
+bundle_artifact="/tmp/artifacts/bundle.tgz"
+cp -Rf /tmp/src/* /app
+cd /app
+
+[[ -e Gemfile.lock ]] || error "No Gemfile.lock found."
+[[ -e Procfile ]] || error "No Procfile found. Aborting."
+[[ ! -e vendor/bundle ]] || error "vendor/bundle shouldn't be present."
+
+if [[ -e "$bundle_artifact" ]]; then
+  echo "Using previous bundle as starting point"
+  tar zxf $bundle_artifact
+fi
+
+echo "Running bundle install:"
+echo
+
+bundle install --deployment --jobs 4 --clean \
+  --without development:test \
+  --binstubs vendor/bundle/bin \
+  --path vendor/bundle | group_output
+
+echo
+echo "Build complete. Wait for docker to commit the changes."

@@ -1,14 +1,16 @@
-- name: "geard: Checking presence of gear binary"
-  stat: path=/usr/bin/gear
-  register: gear_stat
+- name: "consul: Checking current geard version"
+  shell: gear version || echo null
+  # this requires executable=/usr/bin/bash -l in in ansible.cfg
+  register: geard_version_found
+  changed_when: False
 
 - name: "geard: Choosing random string for download folder"
-  when: not gear_stat.stat.exists
+  when: "'{{geard_short_version}}' not in geard_version_found.stdout"
   shell: date +%s.%N | sha256sum | base64 | head -c 32 ; echo
   register: random_dirname
 
 - name: "geard: Setting temp dir for installation"
-  when: not gear_stat.stat.exists
+  when: random_dirname|changed
   set_fact:
     geard_tmp_dir: "/tmp/geard.{{random_dirname.stdout}}"
 
@@ -27,9 +29,8 @@
   register: geard_download
   git:
     repo: https://github.com/openshift/geard.git
-    version: 3ba0057c4d8fc98a4794a88ce43e3fbb77434b65
+    version: "{{geard_version}}"
     dest: "{{geard}}"
-    depth: 1
 
 - name: "geard: Compiling geard"
   when: geard_download|changed
@@ -70,14 +71,14 @@
     state: link
     force: yes
 
-- name: "geard: Checking installation"
+- name: "geard: Checking installed version"
   when: geard_download|changed
-  stat: path=/usr/bin/gear
-  register: post_install_check 
+  shell: gear version
+  register: geard_recent_version 
 
 - when: geard_download|changed
   assert:
-    that: post_install_check.stat.exists
+    that: "'{{geard_short_version}}' in geard_recent_version.stdout"
 
 - name: "geard: Triggering creation of file structure"
   command: /usr/bin/gear list-units

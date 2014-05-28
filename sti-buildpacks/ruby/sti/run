@@ -1,0 +1,20 @@
+#!/bin/bash
+set -eo pipefail
+
+export PORT=5000
+
+export RACK_ENV=${RACK_ENV:-"production"}
+export RAILS_ENV=${RAILS_ENV:-"$RACK_ENV"}
+
+export GEM_PATH="/app/vendor/bundle/ruby/2.1.0"
+export PATH="/app/bin:/app/vendor/bundle/bin:$PATH"
+
+# Allow users to inspect/debug the builder image itself, by using:
+# docker run -ti <image> --debug
+[[ "$1" == "--debug" ]] && exec /bin/bash
+
+cd /app
+
+echo "---> Starting Procfile with Shoreman"
+
+exec /usr/local/bin/shoreman

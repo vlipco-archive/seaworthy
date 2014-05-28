@@ -1,0 +1,16 @@
+#!/bin/bash
+set -eo pipefail
+
+function usage() {
+	echo "Usage: aes256 [enc,dec] password_file < input_file"
+	exit 1
+}
+
+[ -z "$2" ] && usage
+
+
+[ "$1" = "enc" ] && cat - | openssl enc -aes256 -a -salt -pass file:$2
+
+[ "$1" = "dec" ] && cat - | openssl enc -d -aes256 -a -pass file:$2
+
+exit $?

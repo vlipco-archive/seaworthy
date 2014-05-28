@@ -13,3 +13,6 @@ consul_ui_pkg_name: "{{consul_version}}_web_ui"
 components_dir: /cluster/components
 consul_ui: False
 
+geard_short_version: cdf84e9
+geard_version: cdf84e910371366ef4a0044abf4108ef4bec2f91
+
