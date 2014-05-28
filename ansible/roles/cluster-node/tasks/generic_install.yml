@@ -37,18 +37,13 @@
     dest: >
       {{consul_conf_dir}}/{{item|regex_replace('(.*\/)([^\.]*)(\..*)', '\\2') }}.json
 
-- name: "{{component}}: Copying systemd units"
-  with_fileglob: systemd_units_glob
-  register: units_install
+- name: "{{component}}: Copying systemd folder"
+  with_lines: "find {{source_dir}} -maxdepth 1 | grep systemd"
+  notify: "{{component}} systemd handler"
   copy:
     src: "{{item}}"
-    dest: "{{systemd_dir}}/"
+    dest: "{{target_dir}}/"
 
 - name: "{{component}}: Linking component parts"
   script: "generic_install/link-component {{component}}"
   notify: prune links
-
-- name: "{{component}}: Notifying component's systemd handler"
-  command: /bin/true
-  with_fileglob: systemd_units_glob
-  notify: "{{component}} systemd handler"

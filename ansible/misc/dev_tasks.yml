@@ -1,3 +1,8 @@
+- name: Stopping consul service if present
+  service: name=consul state=stopped
+
+- name: Cleaning previous consul data
+  file: path=/var/local/consul state=absent
 
 - name: Create docker group
   group: name=docker state=present
@@ -13,11 +18,11 @@
 - name: Pulling vlipco hull image
   command: docker pull vlipco/hull
 
-#- name: Installing seaworthy bundle
-#  shell: su vagrant -c "bundle install" chdir=/home/vagrant/seaworthy
+- name: Installing seaworthy bundle
+  shell: su vagrant -c "bundle install" chdir=/home/vagrant/seaworthy
 
-- name: Building seaworthy images
-  when: seaworthy_images is defined
-  shell: "su vagrant -c 'rake build:{{item}}' chdir=/home/vagrant/seaworthy"
-  with_items: seaworthy_images
+#- name: Building seaworthy images
+#  when: seaworthy_images is defined
+#  shell: "su vagrant -c 'rake build:{{item}}' chdir=/home/vagrant/seaworthy"
+#  with_items: seaworthy_images
 

@@ -7,6 +7,11 @@
 - name: reload systemd daemon
   command: systemctl daemon-reload
 
+# apply dns override
+- name: common systemd handler
+  service: name=docker state=restarted
+  
+
 - name: geard systemd handler
   script: "generic_install/activate-unit geard"
 
