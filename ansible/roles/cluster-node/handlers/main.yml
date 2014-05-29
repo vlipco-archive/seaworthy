@@ -43,11 +43,11 @@
     - nsqd
     - nsqevents
 
-- name: nsqadmin systemd handler
-  script: "generic_install/activate-unit nsqadmin"
-
 - name: waypoint systemd handler
   script: "generic_install/activate-unit waypoint"
+
+- name: nsqadmin systemd handler
+  script: "generic_install/activate-unit nsqadmin"
 
 - name: harbor systemd handler
   script: "generic_install/activate-unit harbor"

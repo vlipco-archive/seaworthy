@@ -23,7 +23,7 @@
   script: generic_install/prune-links
 
 - include: generic_install.yml component=waypoint tags=git
-- include: installers/git.yml tags=git
+- include: installers/waypoint.yml tags=git
   #when: install_waypoint | default(False)
 
 - include: installers/consul.yml tags=consul

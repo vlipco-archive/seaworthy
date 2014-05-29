@@ -18,7 +18,7 @@ if git remote | grep tester &> /dev/null; then
 	git remote remove tester
 fi
 
-git remote add tester git@localhost:$2.git
+git remote add tester git@localhost:$2
 
 export GIT_SSH="$dev_tools/git-ssh"
 

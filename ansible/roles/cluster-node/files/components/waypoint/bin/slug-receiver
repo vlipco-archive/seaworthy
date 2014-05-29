@@ -1,0 +1,10 @@
+#!/bin/bash
+
+repository="$1"
+revision="$2"
+slugname="${repository}-${revision}"
+echo "----> Processing $slugname"
+cd ~/slugs
+echo "----> Saving application slug in $(pwd)"
+cat > "$slugname.tar"
+echo "----> Thank your for pushing!"

@@ -1,7 +1,5 @@
 SyslogFacility AUTHPRIV
 
-#AuthorizedKeysCommand none
-#AuthorizedKeysCommand /bin/true
 AuthorizedKeysCommand /usr/local/bin/git-auth-command
 AuthorizedKeysCommandUser nobody
 
