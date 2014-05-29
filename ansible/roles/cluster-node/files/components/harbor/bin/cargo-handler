@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# marks the offer as accepted
+# gets the code
+# triggers the build
+# executes the install
+# notifies
+# checks app
+# register
+# roolback?

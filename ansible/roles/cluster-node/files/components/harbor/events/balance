@@ -1,0 +1,11 @@
+#!/bin/bash
+
+consulkv $(hostname)/balance "$(iso-date): $@"
+
+# check job offer that might be pending
+# find the max of each app that this node can run
+# if cna take slots, takes an offer: cargo handler
+
+# bind tis scropt to event handlers
+
+# verify if all owned offers are ok, e.g no failing units

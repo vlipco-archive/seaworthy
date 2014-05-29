@@ -35,7 +35,7 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
       ansible.groups["ferries"] = ["ferry"]
       ansible.extra_vars = { 
         vagrant_development: true, 
-        clean_vendor_install: true 
+        clean_vendor_install: false 
       }
       ansible.playbook = "ansible/site.yml"
       ansible.limit = "all"

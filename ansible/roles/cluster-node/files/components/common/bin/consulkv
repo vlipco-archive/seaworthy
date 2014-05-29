@@ -11,9 +11,14 @@ get_key() {
 	| jq -r '.[0].Value' \
 	| base64 --decode || curl_failed
 }
+put_data() {
+	curl -s "http://127.0.0.1:8500/v1/kv/$key" -X PUT --data @-
+}
 
 if [ -n "$1" ] && [ -n "$2" ]; then
-	curl -s "http://127.0.0.1:8500/v1/kv/$1" -X PUT --data $2 || curl_failed
+	key="$1"
+	shift # now $@ contains all other args besides the key
+	echo "$@" | put_data || curl_failed
 
 elif [ -n "$1" ]; then
 	echo $(get_key $1)
