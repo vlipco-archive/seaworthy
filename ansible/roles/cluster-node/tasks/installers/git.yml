@@ -1,0 +1,22 @@
+- name: Creating git group
+  group: name=git system=true
+
+- name: Creating git user
+  user:
+    createhome: yes
+    home: /var/git
+    name: git
+    shell: /bin/bash
+    system: true
+    group: git
+
+- name: Installing custom sshd_config
+  shell: >
+    conf_src=/cluster/components/waypoint/misc/sshd_config && 
+    [ -e "$conf_src" ] && 
+    cat $conf_src > /etc/ssh/sshd_config
+
+- name: Reloading sshd
+  shell: >
+    /usr/sbin/sshd -t && 
+    /bin/kill -HUP $(systemctl status sshd | grep PID | awk '{print $3}')

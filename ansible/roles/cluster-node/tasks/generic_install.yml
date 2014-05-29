@@ -38,8 +38,14 @@
       {{consul_conf_dir}}/{{item|regex_replace('(.*\/)([^\.]*)(\..*)', '\\2') }}.json
 
 - name: "{{component}}: Copying systemd folder"
-  with_lines: "find {{source_dir}} -maxdepth 1 | grep systemd"
+  with_lines: "find {{source_dir}} -maxdepth 1 | grep systemd || true"
   notify: "{{component}} systemd handler"
+  copy:
+    src: "{{item}}"
+    dest: "{{target_dir}}/"
+
+- name: "{{component}}: Copying misc folder"
+  with_lines: "find {{source_dir}} -maxdepth 1 | grep misc || true"
   copy:
     src: "{{item}}"
     dest: "{{target_dir}}/"

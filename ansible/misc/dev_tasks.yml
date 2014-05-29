@@ -1,5 +1,6 @@
 - name: Stopping consul service if present
   service: name=consul state=stopped
+  ignore_errors: yes
 
 - name: Cleaning previous consul data
   file: path=/var/local/consul state=absent
@@ -15,8 +16,8 @@
     path: /var/run/docker.sock
     group: docker
 
-- name: Pulling vlipco hull image
-  command: docker pull vlipco/hull
+#- name: Pulling vlipco hull image
+#  command: docker pull vlipco/hull
 
 - name: Installing seaworthy bundle
   shell: su vagrant -c "bundle install" chdir=/home/vagrant/seaworthy

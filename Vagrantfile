@@ -43,8 +43,8 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
         clean_vendor_install: false 
       }
       ansible.playbook = "ansible/site.yml"
-      #ansible.tags = "geard"
-      ansible.limit = 'all'
+      ansible.tags = "git"
+      ansible.limit = 'igniter'
     end
   end
 

@@ -22,6 +22,10 @@
 - name: "Pruning broken links (paths, cluster and systemd folders)"
   script: generic_install/prune-links
 
+- include: generic_install.yml component=waypoint tags=git
+- include: installers/git.yml tags=git
+  #when: install_waypoint | default(False)
+
 - include: installers/consul.yml tags=consul
 - include: generic_install.yml component=consul tags=consul
 

@@ -40,16 +40,15 @@ end
 namespace :push do
   desc "Pushes a sample-app/ruby to the cluster as ruby1"
   task :ruby1 do
-    push_app "sample-apps/ruby", "ruby1"
+    push_app "docker-images/sti-ruby", "ruby1"
   end
 
   desc "Pushes a sample-app/ruby to the cluster as ruby2"
   task :ruby2 do
     push_app "sample-apps/ruby", "ruby2"
   end
-
-  desc "Pushes a sample-app/static to the cluster as static1"
-  task :static1 do
-    push_app "sample-apps/static", "static1"
-  end
+  #desc "Pushes a sample-app/static to the cluster as static1"
+  #task :static1 do
+  #  push_app "sample-apps/static", "static1"
+  #end
 end
