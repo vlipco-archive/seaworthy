@@ -13,24 +13,19 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
     v.memory = 2048
   end
 
-  config.vm.define "igniter" do |igniter|
-    igniter.vm.hostname = "igniter"
-    igniter.vm.network "private_network", ip: "10.0.77.10"
+  config.vm.define "waypoint" do |waypoint|
+    waypoint.vm.hostname = "waypoint"
+    waypoint.vm.network "private_network", ip: "10.0.77.10"
   end
-
-  #config.vm.define "waypoint" do |waypoint|
-  #  waypoint.vm.hostname = "waypoint"
-  #  waypoint.vm.network "private_network", ip: "10.0.77.20"
-  #end
 
   config.vm.define "harbor" do |harbor|
     harbor.vm.hostname = "harbor"
-    harbor.vm.network "private_network", ip: "10.0.77.30"
+    harbor.vm.network "private_network", ip: "10.0.77.20"
   end
 
   config.vm.define "ferry" do |ferry|
     ferry.vm.hostname = "ferry"
-    ferry.vm.network "private_network", ip: "10.0.77.50"
+    ferry.vm.network "private_network", ip: "10.0.77.30"
 
     # Provisioning only on last machine since ansible deals with multiple hosts
     ferry.vm.provision "ansible" do |ansible|
@@ -40,11 +35,10 @@ Vagrant.configure VAGRANTFILE_API_VERSION do |config|
       ansible.groups["ferries"] = ["ferry"]
       ansible.extra_vars = { 
         vagrant_development: true, 
-        clean_vendor_install: false 
+        clean_vendor_install: true 
       }
       ansible.playbook = "ansible/site.yml"
-      ansible.tags = "git"
-      ansible.limit = 'igniter'
+      ansible.limit = "all"
     end
   end
 

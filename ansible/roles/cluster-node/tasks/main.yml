@@ -1,3 +1,7 @@
+# --------------
+#  Preparations
+# --------------
+
 - name: Save DNS backup
   shell: >
     cp /etc/resolv.conf /etc/resolv.conf.orig
@@ -22,9 +26,9 @@
 - name: "Pruning broken links (paths, cluster and systemd folders)"
   script: generic_install/prune-links
 
-- include: generic_install.yml component=waypoint tags=git
-- include: installers/waypoint.yml tags=git
-  #when: install_waypoint | default(False)
+# --------
+#  Common
+# --------
 
 - include: installers/consul.yml tags=consul
 - include: generic_install.yml component=consul tags=consul
@@ -37,15 +41,33 @@
 - include: installers/nsq.yml tags=nsq
 - include: generic_install.yml component=nsq tags=nsq
 
+# ---------
+#  Lookupd 
+# ---------
+
 - include: generic_install.yml component=lookupd
   when: install_lookupd | default(False)
 
-- include: generic_install.yml component=nsqadmin
+# ----------
+#  Waypoint 
+# ----------
+
+- include: generic_install.yml component=waypoint tags=waypoint
+  when: install_waypoint | default(False)
+
+- include: installers/waypoint.yml tags=waypoint
+  when: install_waypoint | default(False)
+
+# ----------
+#  NSQadmin 
+# ----------
+
+- include: generic_install.yml component=nsqadmin tags=nsqadmin
   when: install_nsqadmin | default(False)
 
-#- include: generic_install.yml component=waypoint
-#  when: install_waypoint | default(False)
-#
+
+
+
 #- include: generic_install.yml component=harbor
 #  when: install_harbor | default(False)
 #
