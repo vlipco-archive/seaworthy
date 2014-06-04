@@ -1,5 +1,0 @@
----
-consul_ui: True
-consul_bootstrap: "true"
-routable_addr: 10.0.77.10
-install_waypoint: True

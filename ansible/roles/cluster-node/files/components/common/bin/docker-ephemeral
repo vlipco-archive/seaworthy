@@ -1,7 +1,0 @@
-#!/usr/bin/bash
-
-# run's bash on a container of the given image
-
-docker="/usr/local/bin/docker"
-
-exec $docker run --rm -ti $@

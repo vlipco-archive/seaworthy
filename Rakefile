@@ -5,7 +5,7 @@ Bundler.require :default
 ROOT_DIR = File.dirname(__FILE__)
 TMPDIR = ENV['TMPDIR'] || '/tmp'
 
-require_relative 'dev-tools/rake_helpers.rb'
+require_relative 'misc/dev-tools/rake_helpers.rb'
 
 IMAGES=%w(waypoint harbor ship ferry)
 

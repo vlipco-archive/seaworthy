@@ -1,3 +1,0 @@
-#!/usr/bin/bash
-
-exec docker-ephemeral $1 /bin/bash

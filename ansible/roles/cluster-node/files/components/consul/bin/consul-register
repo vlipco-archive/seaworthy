@@ -1,9 +1,0 @@
-consul-register
-
-PUT /v1/agent/service/register
-
-{
-    "ID": "{{inventory_hostname}}-$1",
-    "Name": "$1",
-    "Port": $2
-}

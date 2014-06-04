@@ -1,4 +1,0 @@
-#!/usr/bin/bash
-docker="/usr/local/bin/docker"
-$docker rmi $(docker images | grep "^<none>" | awk "{print $3}")
-

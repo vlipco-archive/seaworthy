@@ -1,3 +1,6 @@
 [submodule "docker-images"]
 	path = docker-images
 	url = git@github.com:vlipco/docker-images.git
+[submodule "fedora-basebox"]
+	path = fedora-basebox
+	url = git@github.com:vlipco/fedora.git
