@@ -50,7 +50,7 @@
   script: "generic_install/activate-unit nsqadmin"
 
 - name: harbor systemd handler
-  script: "generic_install/activate-unit containers-api"
+  script: "generic_install/activate-unit harbor containers-api"
 
 - name: ferry systemd handler
   script: "generic_install/activate-unit ferry"

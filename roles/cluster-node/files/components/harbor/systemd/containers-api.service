@@ -7,9 +7,9 @@ Requires=docker.service
 
 Restart=always
 Environment="SCRIPTS=/cluster/components/harbor/misc/containers-api"
-ExecStartPre=/bin/bash -c "for scr in $(ls $SCRIPTS -1); do chmod +x $src; done"
-
-ExecStart=/usr/local/bin/scripts2http -address 172.172.17.42.1:80 -scripts-dir $SCRIPTS
+ExecStartPre=/bin/bash -c "chmod +x $SCRIPTS/*"
+RestartSec=5
+ExecStart=/usr/local/bin/scripts2http -address 172.17.42.1:80 -scripts-dir $SCRIPTS
 
 [Install]
 
