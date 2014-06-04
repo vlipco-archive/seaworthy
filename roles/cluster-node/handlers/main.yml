@@ -49,8 +49,8 @@
 - name: nsqadmin systemd handler
   script: "generic_install/activate-unit nsqadmin"
 
-#- name: harbor systemd handler
-#  script: "generic_install/activate-unit harbor"
+- name: harbor systemd handler
+  script: "generic_install/activate-unit containers-api"
 
 - name: ferry systemd handler
   script: "generic_install/activate-unit ferry"
