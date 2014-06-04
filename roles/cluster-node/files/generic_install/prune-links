@@ -1,0 +1,21 @@
+#!/bin/bash
+set -eo pipefail
+
+function prune_folder() {
+	if [[ -d "$1" ]]; then
+		cd $1
+		for broken in $(find -L . -type l); do
+			echo "Removing broken link $broken"
+			rm $broken
+		done
+	else
+		echo "$1 doesn't exist, skipping"
+	fi
+}
+
+prune_folder /cluster
+prune_folder /usr/local/bin
+prune_folder /usr/local/sbin
+prune_folder /usr/bin
+prune_folder /usr/sbin
+prune_folder /etc/systemd/system

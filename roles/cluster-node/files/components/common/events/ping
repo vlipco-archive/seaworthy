@@ -1,0 +1,3 @@
+#!/bin/bash
+touch /tmp/ping_events
+echo "$(date +%s) $@" >> /tmp/ping_events

@@ -1,0 +1,10 @@
+[Unit]
+Description=Gear Provisioning Daemon (geard)
+
+[Service]
+Restart=always
+RestartSec=5
+ExecStart=/usr/bin/gear daemon --has-env-file -A 127.0.0.1:43273
+
+[Install]
+WantedBy=multi-user.target

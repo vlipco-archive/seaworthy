@@ -1,0 +1,89 @@
+- name: "nsqevents: Checking presence of nsq_event_router binary"
+  stat: path=/usr/bin/nsq_event_router
+  register: router_stat
+
+- name: "nsqevents: Choosing random string for download folder"
+  when: not router_stat.stat.exists
+  shell: date +%s.%N | sha256sum | base64 | head -c 32 ; echo
+  register: random_dirname
+
+- name: "nsqevents: Setting temp dir for installation"
+  when: not router_stat.stat.exists
+  set_fact:
+    nsqevents_tmp_dir: "/tmp/nsqevents.{{random_dirname.stdout}}"
+
+- name: "nsqevents: Defining misc. paths for installation"
+  when: nsqevents_tmp_dir is defined
+  set_fact:
+    gopath: "{{nsqevents_tmp_dir}}"
+    nsqevents: "{{nsqevents_tmp_dir}}/src/github.com/vlipco/nsq-events"
+
+- name: "nsqevents: Creating temporary folders"
+  when: nsqevents_tmp_dir is defined
+  file: "path={{nsqevents}} state=directory"
+
+- name: "nsqevents: Cloning source repo"
+  when: nsqevents_tmp_dir is defined
+  register: nsqevents_download
+  git:
+    repo: https://github.com/vlipco/nsq-events.git
+    dest: "{{nsqevents}}"
+    depth: 1
+
+- name: "nsqevents: Compiling nsqevents"
+  when: nsqevents_download|changed
+  shell: >
+    /usr/bin/bash -l -c "export GOPATH={{gopath}} &&
+    export GOBIN={{gopath}}/bin && cd {{nsqevents}} &&
+    go get github.com/bitly/go-nsq &&
+    go get github.com/bitly/nsq/util &&
+    go build nsq_event_router.go &&
+    go nsq_trigger.go"
+
+- name: "nsqevents: Removing previous version if present"
+  when: nsqevents_download|changed
+  file: path=/cluster/vendor/nsqevents state=absent
+
+- name: "nsqevents: Creating destination directory"
+  when: nsqevents_download|changed
+  file: path=/cluster/vendor/nsqevents state=directory
+
+- name: "nsqevents: Installing nsqevents binaries"
+  when: nsqevents_download|changed
+  shell: "cd {{gopath}} && mv bin/* /cluster/vendor/nsqevents"
+
+- name: "nsqevents: Linking compiled binaries to local path"
+  when: nsqevents_download|changed
+  file: 
+    src: "/cluster/vendor/nsqevents/{{item}}"
+    dest: "/usr/bin/{{item}}"
+    state: link
+    force: yes
+  with_items:
+    - sti
+    - gear
+    - switchns
+
+- name: "nsqevents: Linking gear-auth-keys-command to local sbin"
+  when: nsqevents_download|changed
+  file: 
+    src: "/cluster/vendor/nsqevents/gear-auth-keys-command"
+    dest: "/usr/sbin/gear-auth-keys-command"
+    state: link
+    force: yes
+
+- name: "nsqevents: Checking installation"
+  when: nsqevents_download|changed
+  stat: path=/usr/bin/gear
+  register: post_install_check 
+
+- when: nsqevents_download|changed
+  assert:
+    that: post_install_check.stat.exists
+
+- name: "nsqevents: Triggering creation of file structure"
+  command: /usr/bin/gear list-units
+
+- name: "nsqevents: Deleting temporary download folder"
+  file: "path={{nsqevents_tmp_dir}} state=absent"
+  when: nsqevents_tmp_dir is defined

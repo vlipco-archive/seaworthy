@@ -1,0 +1,60 @@
+- name: "nsq: Checking current nsq version"
+  command: /usr/bin/bash -l -c "nsqd --version || echo null"
+  register: nsq_version_found
+  changed_when: False
+
+- name: "nsq: Choosing random string for download folder"
+  when: "'{{nsq_version}}' not in nsq_version_found.stdout"
+  shell: date +%s.%N | sha256sum | base64 | head -c 32 ; echo
+  register: random_dirname
+
+- name: "nsq: Setting misc. variables for installation"
+  when: random_dirname|changed
+  set_fact:
+    nsq_tmp_dir: "/tmp/nsq.{{random_dirname.stdout}}"
+    link_folder_script: "../../files/generic_install/link-folder"
+
+- name: "nsq: Creating temporary download folder"
+  when: nsq_tmp_dir is defined
+  file: "path={{nsq_tmp_dir}} state=directory"
+
+- name: "nsq: Downloading nsq"
+  when: nsq_tmp_dir is defined
+  register: nsq_download
+  get_url:
+    sha256sum: "{{nsq_sha256sum}}"
+    url: "https://s3.amazonaws.com/bitly-downloads/nsq/{{nsq_pkg_name}}.tar.gz"
+    dest: "{{nsq_tmp_dir}}/{{nsq_pkg_name}}.tar.gz"
+
+- name: "nsq: Extracting nsq binaries"
+  when: nsq_download|changed
+  shell: "cd {{nsq_tmp_dir}} && tar xf {{nsq_pkg_name}}.tar.gz"
+
+- name: "nsq: Removing previous version if present"
+  when: nsq_download|changed
+  file: path=/cluster/vendor/nsq state=absent
+
+- name: "nsq: Creating destination directory"
+  when: nsq_download|changed
+  file: path=/cluster/vendor/nsq state=directory
+
+- name: "nsq: Installing nsq binaries"
+  when: nsq_download|changed
+  shell: "cd {{nsq_tmp_dir}} && mv {{nsq_pkg_name}}/bin/* /cluster/vendor/nsq"
+
+- name: "nsq: Linking binaries to local path"
+  script: "{{link_folder_script}} /cluster/vendor/nsq /usr/local/bin"
+  when: nsq_download|changed
+
+- name: "nsq: Checking installed version"
+  when: nsq_download|changed
+  shell: nsqd --version
+  register: recent_version 
+
+- when: nsq_download|changed
+  assert:
+    that: "'{{nsq_version}}' in recent_version.stdout"
+
+- name: "consul: Deleting temporary download folder"
+  file: "path={{nsq_tmp_dir}} state=absent"
+  when: nsq_tmp_dir is defined

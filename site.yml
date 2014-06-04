@@ -1,0 +1,11 @@
+---
+
+- hosts: all
+
+  pre_tasks:
+
+    - include: misc/dev_tasks.yml
+      when: vagrant_development | default(False)
+
+  roles:
+    - cluster-node

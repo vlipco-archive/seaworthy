@@ -1,0 +1,53 @@
+- name: "consul: Checking current geard version"
+  shell: gear version || echo null
+  # this requires executable=/usr/bin/bash -l in in ansible.cfg
+  register: geard_version_found
+  changed_when: False
+
+- name: "geard: Choosing random string for download folder"
+  when: "'{{geard_short_version}}' not in geard_version_found.stdout"
+  shell: date +%s.%N | sha256sum | base64 | head -c 32 ; echo
+  register: random_dirname
+
+- name: "geard: Setting temp dir for installation"
+  when: random_dirname|changed
+  set_fact:
+    geard_tmp_dir: "/tmp/geard.{{random_dirname.stdout}}"
+
+- name: "geard: Defining misc. paths for installation"
+  when: geard_tmp_dir is defined
+  set_fact:
+    gopath: "{{geard_tmp_dir}}"
+    geard: "{{geard_tmp_dir}}/src/github.com/openshift/geard"
+
+- name: "geard: Creating temporary folders"
+  when: geard_tmp_dir is defined
+  file: "path={{geard}} state=directory"
+
+- name: "geard: Cloning source repo"
+  when: geard_tmp_dir is defined
+  register: geard_download
+  git:
+    repo: https://github.com/openshift/geard.git
+    version: "{{geard_version}}"
+    dest: "{{geard}}"
+
+- name: "geard: Compiling geard"
+  when: geard_download|changed
+  shell: >
+    /usr/bin/bash -l -c "export GOPATH={{gopath}} &&
+    export GOBIN={{gopath}}/bin && cd {{geard}} &&
+    contrib/build -s"
+
+- name: "geard: Checking installed version"
+  when: geard_download|changed
+  shell: gear version
+  register: geard_recent_version 
+
+- when: geard_download|changed
+  assert:
+    that: "'{{geard_short_version}}' in geard_recent_version.stdout"
+
+- name: "geard: Deleting temporary download folder"
+  file: "path={{geard_tmp_dir}} state=absent"
+  when: geard_tmp_dir is defined

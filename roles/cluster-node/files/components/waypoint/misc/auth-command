@@ -1,0 +1,17 @@
+#!/usr/local/bin/ruby
+# TODO: use typhoues for parallelism
+# Faraday.default_adapter = :typhoeus
+if ARGV.first == "git"
+  require 'net/http'
+  require 'uri'
+  require 'json'
+
+  puts Net::HTTP.get_response(URI('https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub')).body
+
+  %w(davidpelaez fpinzn).each do |user|
+    keys_url="https://api.github.com/users/#{user}/keys"
+    res = Net::HTTP.get_response URI(keys_url)
+    puts JSON.parse(res.body).map {|k| "#{k["key"]} #{user}"}
+  end
+end
+exit 0

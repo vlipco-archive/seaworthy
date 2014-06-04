@@ -1,0 +1,4 @@
+---
+consul_ui: True
+install_waypoint: True
+install_lookupd: True

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+dev_tools="$(pwd)/$(dirname $0)"
+cd $1
+
+if [[ ! -d ".git" ]]; then 
+	git init
+fi
+
+git config --global user.email "test@example.com"
+git config --global user.name "Fake Dev"
+
+echo "Last fake commit date: $(date)" > date
+git add -A .
+git commit -am "Fake commit"
+
+if git remote | grep tester &> /dev/null; then
+	git remote remove tester
+fi
+
+git remote add tester git@107.170.147.83:external/$2
+
+export GIT_SSH="$dev_tools/git-ssh"
+
+echo
+git push tester master

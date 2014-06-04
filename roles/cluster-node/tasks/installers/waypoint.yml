@@ -1,0 +1,33 @@
+- name: "waypoint: Installing custom sshd_config"
+  shell: >
+    conf_src=/cluster/components/waypoint/misc/sshd_config && 
+    [ -e "$conf_src" ] && 
+    cat $conf_src > /etc/ssh/sshd_config
+
+- name: Placing auth-cmd
+  shell: >
+    src_auth_cmd=/cluster/components/waypoint/misc/auth-command && 
+    dest_auth_cmd=/etc/ssh/auth-command && 
+    [ -e "$src_auth_cmd" ] && cat $src_auth_cmd > $dest_auth_cmd && 
+    chmod +x $dest_auth_cmd && restorecon -v $dest_auth_cmd
+
+# this has nothing to do with yubikey, is simply that yubico's boolean
+# allows authlogin to get internet access
+#- name: Set SELINUX boolean to allow auth-command internet access
+#  shell: setsebool -P authlogin_yubikey 1
+
+- name: "waypoint: Reloading sshd to support git pushes"
+  shell: >
+    /usr/sbin/sshd -t && 
+    /bin/kill -HUP $(systemctl status sshd | grep PID | awk '{print $3}')
+
+- name: "waypoint: Initializing git user"
+  shell: /usr/local/bin/gitreceive init
+
+# TODO test that ssh works
+
+- name: "waypoint: Creating slugs folder"
+  file: 
+    path: /var/local/git/slugs 
+    state: directory
+    owner: git

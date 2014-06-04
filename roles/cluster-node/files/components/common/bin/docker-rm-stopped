@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+docker="/usr/local/bin/docker"
+$docker rm $(docker ps -a -q)

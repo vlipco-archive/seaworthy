@@ -1,0 +1,65 @@
+---
+
+- name: prune links
+  notify: reload systemd daemon
+  script: "generic_install/prune-links"
+
+- name: reload systemd daemon
+  command: systemctl daemon-reload
+
+# apply dns override
+- name: common systemd handler
+  service: name=docker state=restarted
+  
+
+- name: geard systemd handler
+  script: "generic_install/activate-unit geard"
+
+- name: consul systemd handler
+  notify: 
+    - consul join
+    - wait for leader
+  script: "generic_install/activate-unit consul"
+
+- name: consul join
+  notify: wait for leader
+  when: consul_start_join is defined
+  command: "consul join {{consul_start_join}}"
+
+- name: wait for leader
+  notify: systemd healthcheck
+  shell: /usr/local/bin/consul-leader
+  register: leade_result
+  until: not (leade_result.stdout | search('null'))
+  retries: 12
+  delay: 5
+
+- name: lookupd systemd handler
+  script: "generic_install/activate-unit lookupd"
+
+- name: nsq systemd handler
+  script: "generic_install/activate-unit nsq {{item}}.service"
+  with_items:
+    - nsqd
+    - nsqevents
+
+- name: waypoint systemd handler
+  script: "generic_install/activate-unit waypoint"
+
+- name: nsqadmin systemd handler
+  script: "generic_install/activate-unit nsqadmin"
+
+#- name: harbor systemd handler
+#  script: "generic_install/activate-unit harbor"
+
+- name: ferry systemd handler
+  script: "generic_install/activate-unit ferry"
+
+- name: systemd healthcheck
+  register: healthcheck_result
+  until: healthcheck_result.stdout | search('0 loaded units listed')
+  retries: 10
+  delay: 2
+  shell: >
+    sleep 5 && for service in $(systemd-failed-services);
+    do systemctl restart $service; done; systemctl --failed

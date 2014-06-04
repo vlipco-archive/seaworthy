@@ -1,0 +1,14 @@
+---
+
+source_dir: "components/{{component}}"
+
+target_dir: "{{components_dir}}/{{component}}"
+checks_dir: "{{components_dir}}/{{component}}/checks"
+event_handlers_dir: "{{components_dir}}/{{component}}/events"
+bin_dir: "{{components_dir}}/{{component}}/bin"
+consul_conf_dir: "{{components_dir}}/{{component}}/consul"
+
+binaries_glob: "{{source_dir}}/bin/*"
+event_handlers_glob: "{{source_dir}}/events/*"
+consul_checks_glob: "{{source_dir}}/consul/checks/*"
+consul_templates_glob: "{{source_dir}}/consul/templates/*"
