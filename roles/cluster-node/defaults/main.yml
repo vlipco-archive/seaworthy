@@ -13,7 +13,7 @@ consul_ui_pkg_name: "{{consul_version}}_web_ui"
 components_dir: /cluster/components
 consul_ui: False
 
-geard_short_version: 7f861a5
-geard_version: 7f861a5d1f709bf339dc43cb665402a89a9bceea
+geard_short_version: 93003e9
+geard_version: 93003e9d9e368f4830a608dd6226277b5265e878
 
 consul_recursor: 8.8.8.8

@@ -2,6 +2,7 @@
     "service": {
         "name": "harbor",
         "id": "{{inventory_hostname}}-harbor",
+        "tags": ["{{harbor_role}}"],
         "check": {
             "notes": "Every 10s check nothing...",
             "script": "/bin/true",
