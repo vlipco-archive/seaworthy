@@ -57,9 +57,10 @@
 
 - name: systemd healthcheck
   register: healthcheck_result
-  until: healthcheck_result.stdout | search('0 loaded units listed')
+  until: healthcheck_result.stdout | search('number of units failing = 0')
   retries: 10
   delay: 2
   shell: >
     sleep 5 && for service in $(systemd-failed-services);
-    do systemctl restart $service; done; systemctl --failed
+    do systemctl restart $service; done; 
+    systemd-failed-services | wc -l | awk '{print "number of units failing = " $1 '}

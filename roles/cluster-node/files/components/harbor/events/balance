@@ -3,48 +3,52 @@ set -eo pipefail
 
 role="$1"
 app="$2"
-# TODO check if balance applies to this machine's role
 
-echo "Getting current machine count for $role role"
-role_url="127.0.0.1:8500/v1/catalog/service/harbor"
-machines_in_role=$(curl -s "$role_url" | jq '.|length')
+if cat /cluster/etc/harbor_role | grep -G "$role" &> /dev/null; then
 
-if [[ "0" == "$machines_in_role" ]]; then
-	echo "No machines registered in catalog for $role role. Aborting."
-	exit 1
-fi
+	echo "Getting current machine count for $role role"
+	role_url="127.0.0.1:8500/v1/catalog/service/harbor"
+	machines_in_role=$(curl -s "$role_url" | jq '.|length')
 
-echo "Getting total desired instances for $app app"
-desired_intances=$(consulkv "apps/$role/$app/desired_instances")
-
-max_instances=$(( $desired_intances / $machines_in_role + 1 ))
-echo "This machine can handle $max_instances instances of $app app"
-consulkv "harbors/$(hostname)/apps/$app/max_instances" "$max_instances" &> /dev/null
-
-valid_indexes=$(seq 1 $max_instances)
-
-# clean any gears that shouldn't be running
-for ctr in $(gearls | grep $app); do
-	# todo remove
-	true
-done
-
-#
-#
-# DONT USE LIST-UNITS SINCE IT'S NOT A RELIABLE SOURCE OF INFO
-# https://github.com/openshift/geard/issues/173
-#
-
-# install/restart the missing gears
-for number in $valid_indexes; do
-	target_name="$app.$number"
-	if gearls | grep -G "$target_name" &> /dev/null; then
-		# it exists, restart
-		gear restart "$target_name"
-	else
-		gear install "$app" "$target_name" -p 5000:0
-		gear start "$target_name"
+	if [[ "0" == "$machines_in_role" ]]; then
+		echo "No machines registered in catalog for $role role. Aborting."
+		exit 1
 	fi
-	# prevent geard bug where quick change causes a hang
-	sleep 1
-done
+
+	echo "Getting total desired instances for $app app"
+	desired_intances=$(consulkv "apps/$role/$app/desired_instances")
+
+	max_instances=$(( $desired_intances / $machines_in_role + 1 ))
+	echo "This machine can handle $max_instances instances of $app app"
+	consulkv "harbors/$(hostname)/apps/$app/max_instances" "$max_instances" &> /dev/null
+
+	valid_indexes=$(seq 1 $max_instances)
+
+	# clean any gears that shouldn't be running
+	for ctr in $(gearls | grep $app); do
+		# todo remove
+		true
+	done
+
+	#
+	#
+	# DONT USE LIST-UNITS SINCE IT'S NOT A RELIABLE SOURCE OF INFO
+	# https://github.com/openshift/geard/issues/173
+	#
+
+	# install/restart the missing gears
+	for number in $valid_indexes; do
+		target_name="$app.$number"
+		if gearls | grep -G "$target_name" &> /dev/null; then
+			# it exists, restart
+			gear restart "$target_name"
+		else
+			gear install "$app" "$target_name" -p 5000:0
+			gear start "$target_name"
+		fi
+		# prevent geard bug where quick change causes a hang
+		sleep 1
+	done
+else
+	echo "Skipping event because of role mismatch"
+fi
