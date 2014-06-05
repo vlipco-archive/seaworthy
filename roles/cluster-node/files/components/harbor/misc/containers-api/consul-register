@@ -1,0 +1,18 @@
+#!/bin/bash
+set -eo pipefail
+
+cid="$1"
+freq="$2"
+
+instance=$(docker inspect -f '{{.Name}}' "$cid" | sed 's/\///' )
+name=$(echo $instance | sed 's/\..*$//' )
+number=$(echo $instance | sed 's/^.*\.//' )
+
+echo "Registering service $name with id=$cid"
+
+registration_data=$(printf '{ "id": "%s", "name": "%s", "check": { "ttl": "%s", "id": "%s", "notes": "%s" }, "port": 5000 }' "$cid" "$name" "$freq" "$cid" "Healthchek for $instance TTL=$freq")
+
+curl -f -s -w "\n" --data "$registration_data" localhost:8500/v1/agent/service/register
+
+echo "Done"
+

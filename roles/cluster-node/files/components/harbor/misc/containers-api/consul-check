@@ -1,0 +1,5 @@
+#!/bin/bash
+set -eo pipefail
+cid="$1"
+encoded_msg=$(echo -e "$(date)\nThe container marked the check as passing" | escape-url)
+curl -s "localhost:8500/v1/agent/check/pass/service:$cid?note=$encoded_msg"
