@@ -9,7 +9,7 @@ else
   unit="$2"
 fi
 
-echo "Enabling $unit from $component cluster component"
+echo "Enabling $unit from $component component"
 systemctl enable "/cluster/components/$component/systemd/$unit"
 
 echo "Restarting $unit"

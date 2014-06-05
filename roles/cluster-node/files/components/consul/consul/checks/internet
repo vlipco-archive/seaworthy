@@ -1,1 +1,14 @@
-check-internet
+#!/bin/bash
+set -eo pipefail
+
+date
+
+url="http://icanhazepoch.com/"
+
+if curl -s --write-out "%{http_code}" "$url" --output /dev/null | grep -G 200 &> /dev/null; then
+  echo "Succesfully got the current unix time from icanhazepoch.com"
+  exit 0
+else
+  echo "Get of $url didn't respond with 200 OK. Failing test."
+  exit 1
+fi

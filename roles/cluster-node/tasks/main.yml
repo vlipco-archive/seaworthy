@@ -75,6 +75,10 @@
 #  Harbor
 # --------
 
+- name: Saving Harbor role
+  copy: "content={{harbor_role}} dest=/cluster/etc/harbor_role"
+  when: install_harbor | default(False)
+
 - include: generic_install.yml component=harbor tags=harbor
   when: install_harbor | default(False)
 #
