@@ -1,0 +1,10 @@
+{
+    "service": {
+        "name": "lookupd",
+        "check": {
+            "notes": "Every 30s checks lookupd ping endpoint",
+            "script": "/usr/cluster/checks/lookupd",
+            "interval": "30s"
+        }
+    }
+}

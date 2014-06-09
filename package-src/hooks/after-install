@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [[ ! -e "/etc/resolv.conf.orig" ]]; then
+	echo "Saving copy of resolv.conf"
+	cat /etc/resolv.conf > /etc/resolv.conf.orig
+fi
+
+echo
+echo "Seaworthy installation completed"
+echo "Enabling basic units on boot"
+
+common_units=( consul nsqd nsqevents )
+for unit in "${common_units[@]}"; do
+	systemctl enable "/usr/cluster/systemd/$unit.service"
+done
+
+echo
+echo "NOTICE"
+echo "======"
+echo
+echo "Activation of the desired components/units has to be done"
+echo "manually after adding node specific configuration"

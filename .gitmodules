@@ -1,9 +1,0 @@
-[submodule "docker-images"]
-	path = external/docker-images
-	url = git@github.com:vlipco/docker-images.git
-[submodule "fedora-basebox"]
-	path = external/fedora-basebox
-	url = git@github.com:vlipco/fedora.git
-[submodule "external/nsq-rpc"]
-	path = external/nsq-rpc
-	url = git@github.com:davidpelaez/nsq-rpc.git
