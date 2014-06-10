@@ -1,5 +1,6 @@
 function btask.components.enable.run  {
-
+	# handle --force flag to allow reinstall?
+	
 	# assign reusable global vars
 	component=$(sanitize_arg $1); shift
 	target_dir="$COMP_TARGETS/$component"
@@ -39,7 +40,6 @@ function _enable_units {
 	if b.path.dir? "$units_dir"; then
 		for unit in $(find $units_dir -type f); do
 			echo "Enabling $(b.path.filename $unit)"
-			# TODO replace? force?
 			systemctl enable "$unit"
 		done
 		echo "Reloading systemd daemon"
@@ -56,7 +56,6 @@ function _link_binaries {
 			local filename=$(b.path.filename "$file")
 			local target_file="/usr/$executable_dir/$filename"
 			if b.path.exists? "$target_file"; then
-				# TODO replace? force?
 				b.abort "$target_file exists and collides with $file"
 			fi
 			echo "Linking $filename in /usr/$executable_dir"

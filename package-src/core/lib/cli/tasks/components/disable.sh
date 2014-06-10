@@ -1,50 +1,33 @@
+function btask.components.disable.run {
+	# assign reusable global vars
+	component=$(sanitize_arg $1); shift
+	target_dir="$COMP_TARGETS/$component"
 
+	_common.run_hook "before-disable"
+	_disable_units
+	_remove_dir
+	# in this case there's not after-disable hook
+	# because the file's already gone
+	_common.clean_broken_links
+}
 
-function component.disable_units() {
-	local target=`component.target_path`
-	local units_dir="$target/units"
+function _disable_units {
+	local units_dir="$target_dir/units"
 	if b.path.dir? "$units_dir"; then
-		local units=`find $units_dir`
-
-		echo "Disabling and stopping systemd units"
-		for unit in find "$units_dir" -type f; do
-			echo -n "  Stopping $unit ... "
-			systemctl stop $unit
-			echo "Disabling $unit"
-			systemctl disable $unit
+		for unit in $(find $units_dir -type f); do
+			local unit_name=$(b.path.filename $unit)
+			echo -n "Stopping $unit_name ... "
+			systemctl stop "$unit_name"
+			echo "Disabling"
+			systemctl disable "$unit_name"
 		done
-		
 		echo "Reloading systemd daemon"
 		systemctl daemon-reload
 	fi
 }
 
-function component.remove_dir() {
-	local target=`component.target_path`
-	if b.path.dir? "$target"; then
-		echo "Removing $target"
-		rm -rf "$target"
-	else
-		b.done "Component is not enabled, skipping"
-	fi
-
-}
-
-function btask.components.disable.run: () {
-	component=$(sanitize_arg $1); shift
-	b.set "swrth.target_component" "$component"
-	
-	echo "Disabling $component component"
-	component.run_hook "before-disable"
-	component.remove_dir
-	component.remove_links
-	component.disable_units
-	component.run_hook "after-disable"
-}
-
-
-
-
-function component.remove_links() {
-	echo "!! component.remove_links"
+function _remove_dir {
+	b.path.dir? "$target_dir" || b.done "Component is not enabled, skipping"
+	echo "Removing $target_dir"
+	rm -rf "$target_dir"
 }
