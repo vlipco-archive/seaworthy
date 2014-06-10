@@ -1,3 +1,0 @@
-#!/bin/bash
-#http://support.internetconnection.net/CODE_LIBRARY/Perl_URL_Encode_and_Decode.shtml
-cat - | perl -p -e 's/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg'

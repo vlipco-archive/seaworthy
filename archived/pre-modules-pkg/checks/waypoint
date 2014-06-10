@@ -1,4 +1,0 @@
-#!/bin/bash
-
-echo "not checking anything for now...stay tuned"
-exit 0

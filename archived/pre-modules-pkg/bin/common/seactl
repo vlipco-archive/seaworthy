@@ -1,6 +1,0 @@
-#!/bin/bash
-
-echo "SEACTL does nothing"
-
-# seactl component enable 
-# seactl component disable

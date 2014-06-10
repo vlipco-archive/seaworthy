@@ -2,7 +2,7 @@
 set -eo pipefail
 
 echo
-echo "Seaworthy installation completed. Performing post-install tasks:"
+echo "Performing Seaworthy after-install tasks:"
 echo
 
 if [[ ! -e "/etc/resolv.conf.orig" ]]; then
@@ -22,5 +22,7 @@ for component in "${common_components[@]}"; do
 	swrth components enable "$component"
 done
 
+echo
 echo "Done."
+
 exit 0

@@ -15,6 +15,9 @@ function _unkown_task() {
 }
 
 b.task.add components "Manage local cluster components"
+b.task.add units "Components systemd units commands"
+#b.task.add info "Information retrieving commands"
+b.task.add consul "Consul component operations"
 
 task="$1"; shift
 

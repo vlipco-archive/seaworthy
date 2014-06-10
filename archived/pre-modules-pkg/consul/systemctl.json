@@ -1,7 +1,0 @@
-{
-    "check": {
-        "name": "Systemctl units status check",
-        "script": "/usr/cluster/checks/systemctl",
-        "interval": "10s"
-    }
-}

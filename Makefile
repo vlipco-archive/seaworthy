@@ -15,6 +15,16 @@ rpm: clean
 		rpm -qcp $$pkg >> $$info; \
 	done
 
+uninstall: 
+	@echo
+	@if rpm -qi seaworthy &> /dev/null; \
+		echo "Uninstalling previous Seaworthy version"; \
+		then sudo rpm --erase seaworthy --allmatches; \
+	fi
+
 install: rpm
-	@echo "Installing packages (with force option)"
-	@sudo rpm --install --force release/*.rpm
+	@echo
+	@echo "Installing Seaworthy package"
+	@sudo rpm --install release/seaworthy-*.rpm
+
+cycle: clean rpm uninstall install
