@@ -1,0 +1,5 @@
+#!/bin/bash
+set -eo pipefail
+# WARNING: be careful with escaping to prevent injections
+container_id="$1"
+docker inspect --format='{{json .Config}}' "$container_id"

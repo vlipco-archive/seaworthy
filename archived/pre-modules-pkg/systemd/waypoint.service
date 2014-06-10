@@ -1,0 +1,14 @@
+[Unit]
+
+Description=Waypoint
+Requires=vlipco.target
+
+[Service]
+
+Restart=always
+
+ExecStart=/usr/local/bin/fileserver -port 80 -root /var/local/git/slugs
+
+[Install]
+
+WantedBy=vlipco.target

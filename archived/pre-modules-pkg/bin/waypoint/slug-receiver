@@ -1,0 +1,114 @@
+#!/usr/bin/env ruby
+require 'methadone'
+require 'fileutils'
+
+require 'time' # for ISO dates
+require 'json'
+
+include Methadone::Main
+include Methadone::CLILogging
+
+class PushHandler
+	
+	KNOWN_ROLES = %w( external internal )
+
+	def kv_put(key,val)
+		%x(consulkv #{key} '#{val}')
+	end
+
+	def kv_get(key)
+		%x(consulkv #{key})
+	end
+
+	attr_reader :repo_raw_name, :revision, 
+		:repo_name, :repo_kv_path, :role,
+		:repo_folder
+
+	def log_section(*msgs)
+		puts "--> #{msgs.join ' '}"
+	end
+
+	def log(*msgs)
+		puts "    #{msgs.join ' '}"
+	end
+
+	def save_piped_archive
+		log_section "Saving revision archive"
+		dest = "#{repo_folder}/#{revision}.tar"
+		archive = File.new dest, 'w'
+		archive.write STDIN.read
+		archive.close
+	end
+
+	def promote_revision_to_latest
+		log_section "Marking pushed revision as the latest"
+		previous = kv_get "#{repo_kv_path}/latest"
+		kv_put "#{repo_kv_path}/versions/previous", previous
+		kv_put "#{repo_kv_path}/versions/latest", revision 
+	end
+
+	def save_revision_information
+		log_section "Saving revision information in distributed key/value storage"
+		rev_info = {
+			receiver_hostname: %x(hostname).chop, 
+			received_at: Time.now.utc.iso8601
+		}
+		kv_put "#{repo_kv_path}/versions/#{revision}", rev_info.to_json
+	end
+
+	def initialize(repo_raw_name, revision)
+		@repo_raw_name = repo_raw_name
+		@revision = revision
+		parse_repo_raw_name
+		@repo_kv_path = "apps/#{role}/#{repo_name}"
+		@repo_folder = "#{Dir.home}/slugs/#{role}/#{repo_name}"
+		FileUtils.mkdir_p repo_folder
+		handle_push
+	end
+
+	def handle_push
+		log_section "Processing app #{repo_name} in #{role} role"	
+		save_piped_archive
+		save_revision_information
+		promote_revision_to_latest
+		
+		desired_instances = 1
+		kv_put "#{repo_kv_path}/desired_instances", desired_instances
+		
+		log_section "Triggerin deploy"
+		event_data = {role: role, app: repo_name, revision: revision}.to_json
+		%x(nsq_trigger receive '#{event_data}')
+
+		#log_section "Balancing cluster"
+		#{}%x(nsq_trigger balance '#{role}')
+		
+		#poll_status
+	end
+
+	def parse_repo_raw_name
+		name_parts = repo_raw_name.split('/')
+		if name_parts.length > 2
+			log_section "WARN: name has too many parts, ignoring: #{name_parts[2..-1]}"
+		end
+		@role = name_parts[0]
+		@repo_name = name_parts[1]
+		unless KNOWN_ROLES.include? role
+			log_section "ERROR: Invalid repo role."
+			log_section "The repo path should have the format <role>/<repo>"
+			log_section "with role being one of: #{KNOWN_ROLES}"
+			exit 1
+		end
+	end
+end
+
+
+main do |repo, revision|
+	handler = PushHandler.new repo, revision
+end
+
+version     '0.0.1'
+description 'Push handler for gitreceived'
+arg         :repo, :required
+arg         :revision, :required
+
+go!

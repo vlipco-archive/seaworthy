@@ -1,0 +1,24 @@
+#!/bin/bash
+set -eo pipefail
+
+version="0.0.1"
+
+echo "Setting permissions for executables"
+
+chmod +x bin/*/*
+chmod +x events/*/*
+chmod +x checks/*
+chmod +x hooks/*
+
+# prevents fpm complains
+find . -name ".DS_Store" -print0 | xargs -0 rm -rf
+
+echo "Building RPM"
+fpm -s dir -t rpm -n seaworthy -v "$version" \
+  --url "https://github.com/vlipco/seaworthy" \
+  --description "Vlipco's Seaworthy minimal cluster components" \
+  --vendor "Misc." \
+  --epoch "$(date +%s)" \
+  --after-install "hooks/after-install" \
+  --before-remove "hooks/before-remove" \
+  --inputs "inputs_manifest"

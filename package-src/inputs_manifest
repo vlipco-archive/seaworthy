@@ -1,9 +1,4 @@
-bin/common/=/usr/bin
-bin/external/=/usr/bin
-bin/vendor/=/usr/bin
-bin/waypoint/=/usr/bin
-systemd/=/usr/cluster/systemd
-checks/=/usr/cluster/checks
-events/common/=/usr/cluster/events
-consul/=/usr/cluster/consul
-extras/=/usr/cluster/extras
+core/bin/=/usr/bin
+core/etc/=/etc/cluster
+core/lib/=/usr/lib/seaworthy
+components/=/usr/lib/seaworthy/components

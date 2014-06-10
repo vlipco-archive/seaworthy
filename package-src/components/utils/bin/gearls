@@ -1,0 +1,20 @@
+#!/bin/bash
+
+cd /var/lib/containers/units
+units=$(find . -maxdepth 2 | grep '.service' | awk -F'/' '{print $3}')
+
+keys=( LoadState ActiveState SubState UnitFileState )
+
+result=""
+
+for unit in $units; do
+  unit_info=$(systemctl show "$unit")
+  result="${result}${unit}"
+  #echo -n "$unit"
+  for query_key in "${keys[@]}"; do
+        result="$result $(echo "$unit_info" | grep $query_key | awk -F'=' '{printf " %s", $2}')"
+  done
+  result="$result\n"
+done
+
+echo -e "$result" | column -t -s ' '

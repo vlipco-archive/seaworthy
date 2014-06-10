@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+SCRIPT_PATH="$(dirname $0)"
+source "$SCRIPT_PATH/bangsh/bang.sh"
+
+b.set bang.working_dir "$PWD"
+
+cd "$SCRIPT_PATH" > /dev/null
+
+b.module.require task
+b.task.add hello "Description"
+b.task.add usage "Usage"
+
+task="$1"
+shift
+
+if [ -n "$task" ]; then
+	b.task.run $task "$@"
+else
+	b.task.run "usage"
+fi

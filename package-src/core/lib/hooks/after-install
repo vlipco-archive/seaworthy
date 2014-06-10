@@ -1,0 +1,26 @@
+#!/bin/bash
+set -eo pipefail
+
+echo
+echo "Seaworthy installation completed. Performing post-install tasks:"
+echo
+
+if [[ ! -e "/etc/resolv.conf.orig" ]]; then
+	echo "Saving copy of current resolv.conf to /etc/resolv.conf.orig"
+	cat /etc/resolv.conf > /etc/resolv.conf.orig
+fi
+
+echo "Creating local configuration directories/files"
+
+mkdir -p /usr/local/lib/seaworthy/components
+mkdir -p /etc/cluster/consul
+mkdir -p /etc/cluster/checks
+mkdir -p /etc/cluster/units
+
+common_components=(utils consul nsq)
+for component in "${common_components[@]}"; do
+	swrth components enable "$component"
+done
+
+echo "Done."
+exit 0
