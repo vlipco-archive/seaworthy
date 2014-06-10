@@ -3,7 +3,7 @@ function btask.components.run () {
 	cmd="$1"; shift
 	if in_array? "$cmd" subcomands_array; then
 		local fname=$(sanitize_arg "_${cmd}_cmd")
-		eval "$fname" $@
+		$fname $@
 	else
 		print_e "Unknown subcommand '$cmd'."
 		echo -n "Try one of: "
@@ -20,7 +20,6 @@ function btask.components.run () {
 function _enable_cmd () {
 	component="$1"; shift
 	echo "Enabling $component component"
-	return 0
 }
 
 ## stop & disable units, remove the links entirely form systemd
@@ -29,7 +28,6 @@ function _enable_cmd () {
 function _disable_cmd () {
 	component="$1"; shift
 	echo "Disabling $component component"
-	return 0	
 }
 
 ## for all active components, all source files are
@@ -37,5 +35,4 @@ function _disable_cmd () {
 ## this is equivalent to disable/enable for every component
 function _refresh_cmd () {
 	echo "Refresh all active components"
-	return 0	
 }

@@ -11,19 +11,21 @@ cd "$SCRIPT_PATH" > /dev/null
 b.module.require task
 
 function _unkown_task() {
-	echo "No such command, try swrth help"
+	echo "Unknown command '$task'"
 }
 
 b.task.add components "Manage local cluster components"
 
-task="$1"
-shift
+task="$1"; shift
 
-if [ -n "$task" ]; then
-	b.try.do b.task.run $task "$@"
-	b.catch TaskNotFound _unkown_task
+if [[ -n "$task" ]]; then
+	b.try.do b.task.run $task $@
+	b.catch TaskNotKnown _unkown_task
+	b.finally exit
 	b.try.end
 else
 	# todo show the usage
 	echo "---"
 fi
+
+exit 0
