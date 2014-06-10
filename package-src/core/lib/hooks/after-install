@@ -2,7 +2,7 @@
 set -eo pipefail
 
 echo
-echo "Performing Seaworthy after-install tasks:"
+echo "Performing after-install tasks"
 echo
 
 if [[ ! -e "/etc/resolv.conf.orig" ]]; then
@@ -17,6 +17,10 @@ mkdir -p /etc/cluster/consul
 mkdir -p /etc/cluster/checks
 mkdir -p /etc/cluster/units
 mkdir -p /etc/cluster/components
+
+echo
+echo "Enabling common components"
+echo
 
 common_components=(utils consul nsq)
 for component in "${common_components[@]}"; do

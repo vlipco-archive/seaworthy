@@ -20,8 +20,8 @@ function _copy_component {
 	if [[ -z "$source_dir" ]]; then
 		b.abort "Unable to find $1 in: ${COMP_SOURCES[@]}"
 	fi
-	echo "Component found in $source_dir"
-	b.path.dir? "$target_dir" && b.done "Component target exists, skipping"
+	echo "Component $component found in $source_dir"
+	b.path.dir? "$target_dir" && b.done "Component is already enabled, skipping"
 	echo "Copying to $target_dir"
 	cp -R "$source_dir" "$target_dir/"
 }

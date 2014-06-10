@@ -17,9 +17,9 @@ function _disable_units {
 		for unit in $(find $units_dir -type f); do
 			local unit_name=$(b.path.filename $unit)
 			echo -n "Stopping $unit_name ... "
-			systemctl stop "$unit_name"
-			echo "Disabling"
-			systemctl disable "$unit_name"
+			systemctl stop "$unit_name" || echo "... ignoring"
+			echo "Disabling $unit_name ... "
+			systemctl disable "$unit_name" || echo "... ignoring"
 		done
 		echo "Reloading systemd daemon"
 		systemctl daemon-reload
