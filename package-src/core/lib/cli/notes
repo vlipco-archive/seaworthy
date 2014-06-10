@@ -15,3 +15,7 @@ sctl lookupd params
 sctl lookupd producers
 
 sctl help
+
+
+resolve path checks for existance, not regular file
+also .sh isn't assumed, that should be indicated in the first arg

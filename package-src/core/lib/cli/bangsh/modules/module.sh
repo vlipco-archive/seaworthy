@@ -28,7 +28,7 @@ function b.module.prepend_lookup_dir () {
 ## Resolves a module name for its path
 ## @param module - the name of the module
 function b.module.resolve_path () {
-  b.resolve_path "$1" "${_BANG_MODULE_DIRS[@]}"
+  b.resolve_path "$1.sh" "${_BANG_MODULE_DIRS[@]}"
 }
 
 ## Check whether a given module name exists and is loadable

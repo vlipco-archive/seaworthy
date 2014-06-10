@@ -16,13 +16,14 @@ mkdir -p /usr/local/lib/seaworthy/components
 mkdir -p /etc/cluster/consul
 mkdir -p /etc/cluster/checks
 mkdir -p /etc/cluster/units
+mkdir -p /etc/cluster/components
 
 common_components=(utils consul nsq)
 for component in "${common_components[@]}"; do
 	swrth components enable "$component"
+	echo
 done
 
-echo
 echo "Done."
 
 exit 0

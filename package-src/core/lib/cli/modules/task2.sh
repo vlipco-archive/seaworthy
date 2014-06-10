@@ -1,5 +1,7 @@
 _BANG_TASK_DIRS=(./tasks "$BANG_PATH/tasks")
 
+b.module.require path
+
 ## Adds a new task. It is possible to add a description which is used when
 ## describing it.
 ## @param name - the name of the task
@@ -22,8 +24,23 @@ function b.task.run () {
 
   if b.task.exists? "$task"; then
     local task_path="$(b.task.resolve_path $task)"
-    source "$task_path"
-    "btask.$task.run" "$@"
+    if b.path.dir? "$task_path"; then
+      # this is a group of tasks
+      source "$task_path/common.sh"
+      "btask.$task.common.run"
+      local subtask="$1"
+      shift
+      if [ -n "$subtask" ]; then
+        source "$task_path/$subtask.sh" 
+        "btask.$task.$subtask.run" "$@"
+      else
+        "btask.$task.default.run" "$@"
+      fi
+    else
+      # this is a single task
+      source "$task_path"
+      "btask.$task.run" "$@"
+    fi
   else
     b.raise TaskNotKnown "Task '$task' is unknown"
   fi
@@ -38,5 +55,6 @@ function b.task.exists? () {
 ## Resolves a given task name to its filename
 ## @param task - the name of the task
 function b.task.resolve_path () {
-  b.resolve_path "$1.sh" "${_BANG_TASK_DIRS[@]}"
+  b.resolve_path "$1" "${_BANG_TASK_DIRS[@]}" \
+  || b.resolve_path "$1.sh" "${_BANG_TASK_DIRS[@]}"
 }

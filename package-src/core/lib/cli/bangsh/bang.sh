@@ -170,12 +170,15 @@ function b.try.end () {
   b.unset Bang.Exception
 }
 
+## Using a list of search paths, try to find the indicated file
+## @param filename - the file or dirname to look for
+## @params lookupdir ... - space separated list of directories to look into
 function b.resolve_path () {
   local file="$1"
   shift
   while [ -n "$1" ]; do
-    local file_path="$1/$file.sh"
-    test -f "$file_path" && echo -n "$file_path" && return 0
+    local file_path="$1/$file"
+    test -e "$file_path" && echo -n "$file_path" && return 0
     shift
   done
   return 1
