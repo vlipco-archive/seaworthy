@@ -17,10 +17,10 @@ chmod +x "core/lib/cli/swrth"
 echo "Setting permissions for components executables"
 
 for component in $(ls components -1); do
-	make_bin "$component/bin"
-	make_bin "$component/events"
-	make_bin "$component/checks"
-	make_bin "$component/hooks"
+	make_bin "components/$component/bin"
+	make_bin "components/$component/events"
+	make_bin "components/$component/checks"
+	make_bin "components/$component/hooks"
 done
 
 # prevents fpm complains if host machine is osx

@@ -21,7 +21,7 @@ function _common.run_hook {
 
 function _common.clean_broken_links {
 	#b.info "Cleaning symlinks"
-	for folder in /etc/systemd/system /usr/bin /usr/sbin /var/lib/seaworthy; do
+	for folder in /etc/systemd/system /usr/bin /usr/sbin /var/checks /var/lib/seaworthy; do
 		b.path.dir? $folder || break
 		for broken in $(find -L "$folder" -type l); do
 			# TODO add verbose flag to print this

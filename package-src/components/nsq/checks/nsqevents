@@ -90,4 +90,6 @@ else
 	exit 1
 fi
 
+# TODO handle case of ERROR: lookupd lookupd.service.consul:4161 - Get http://lookupd.service.consul:4161/lookup?topic=events: dial tcp: lookup lookupd.service.consul: no such host
+
 journalctl -u nsqevents -l -e -n20

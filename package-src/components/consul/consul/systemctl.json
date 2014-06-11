@@ -1,7 +1,7 @@
 {
     "check": {
         "name": "Systemctl units status check",
-        "script": "/var/lib/seaworthy/components/consul/checks/systemctl",
+        "script": "/var/checks/systemctl",
         "interval": "10s"
     }
 }

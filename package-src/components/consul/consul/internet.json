@@ -1,7 +1,7 @@
 {
     "check": {
         "name": "Internet connectivity check",
-        "script": "/var/lib/seaworthy/components/consul/checks/internet",
+        "script": "/var/checks/internet",
         "interval": "10s"
     }
 }

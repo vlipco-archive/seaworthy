@@ -8,12 +8,17 @@ function btask.init.run {
 		cat /etc/resolv.conf > /etc/resolv.conf.orig
 	fi
 
-	echo "Creating local configuration directories/files"
+	echo "Creating local configuration directories/files and links"
 
 	mkdir -p /usr/local/lib/seaworthy/components
 	mkdir -p /var/lib/seaworthy/consul
 	mkdir -p /var/lib/seaworthy/events
+	mkdir -p /var/lib/seaworthy/checks
 	mkdir -p /var/lib/seaworthy/components
+	
+	if [[ ! -e "/var/checks" ]]; then
+		ln -s /var/lib/seaworthy/checks /var/checks
+	fi
 
 	echo
 	echo "Enabling common components"

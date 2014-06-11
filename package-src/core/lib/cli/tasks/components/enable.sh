@@ -12,6 +12,7 @@ function btask.components.enable.run  {
  	_check_consul_config
  	_link_consul_config
  	_link_events
+ 	_link_checks
  	_link_binaries
  	_enable_units
  	_common.run_hook "after-enable"
@@ -55,10 +56,61 @@ function _link_consul_config {
 	done
 }
 
+function _link_binaries {
+	for executable_dir in bin sbin; do
+		local bin_dir="$target_dir/$executable_dir"
+		b.path.dir? "$bin_dir" || break
+		b.info "Linking exectuables to /usr/$executable_dir"
+		for file in $(find "$bin_dir" -type f -executable); do
+			local filename=$(b.path.filename "$file")
+			local target_file="/usr/$executable_dir/$filename"
+			if b.path.exists? "$target_file"; then
+				_fail_with_cleanup "$target_file exists and collides with $file"
+			fi
+			echo "  $filename"
+			ln -s "$file" "$target_file"
+		done
+	done
+}
+
+function _link_events {
+	local events_dir="$target_dir/events"
+	b.path.dir? "$events_dir" || return 0
+	for event_bin in $(find "$events_dir" -type f -executable); do
+		local filename="$(b.path.filename $event_bin)"
+		local destination_file="$CLUSTER_DIR/events/$filename"
+		b.info "Linking '$event_bin' event handler"
+		ln -s "$event_bin" "$destination_file"
+	done
+}
+
+function _link_checks {
+	local checks_dir="$target_dir/checks"
+	b.path.dir? "$checks_dir" || return 0
+	for check_bin in $(find "$checks_dir" -type f -executable); do
+		local filename="$(b.path.filename $check_bin)"
+		local destination_file="$CLUSTER_DIR/checks/$filename"
+		b.info "Linking '$check_bin' check"
+		ln -s "$check_bin" "$destination_file"
+	done
+}
+
+
+function _link_events {
+	local events_dir="$target_dir/events"
+	b.path.dir? "$events_dir" || return 0
+	for event_bin in $(find "$events_dir" -type f -executable); do
+		local filename="$(b.path.filename $event_bin)"
+		local destination_file="$CLUSTER_DIR/events/$filename"
+		b.info "Linking '$event_bin' event handler"
+		ln -s "$event_bin" "$destination_file"
+	done
+}
+
 function _copy_component {
 	if b.resolve_dir_path "$component" ${COMP_SOURCES[@]} &> /dev/null; then
 		local source_dir=$(b.resolve_dir_path "$component" ${COMP_SOURCES[@]})
-		b.info "Component $component found in $source_dir"
+		b.info "Source of $component component found in $source_dir"
 		b.path.dir? "$target_dir" && b.done "Component is already enabled, skipping"
 		b.info "Copying to $target_dir"
 		cp -R "$source_dir" "$target_dir/"
@@ -92,33 +144,4 @@ function _enable_units {
 		b.info "Reloading systemd daemon"
 		systemctl daemon-reload
 	fi
-}
-
-
-function _link_binaries {
-	for executable_dir in bin sbin; do
-		local bin_dir="$target_dir/$executable_dir"
-		b.path.dir? "$bin_dir" || break
-		b.info "Linking exectuables to /usr/$executable_dir"
-		for file in $(find "$bin_dir" -type f -executable); do
-			local filename=$(b.path.filename "$file")
-			local target_file="/usr/$executable_dir/$filename"
-			if b.path.exists? "$target_file"; then
-				_fail_with_cleanup "$target_file exists and collides with $file"
-			fi
-			echo "  $filename"
-			ln -s "$file" "$target_file"
-		done
-	done
-}
-
-function _link_events {
-	local events_dir="$target_dir/events"
-	b.path.dir? "$events_dir" || return 0
-	for event_bin in $(find "$events_dir" -type f -executable); do
-		local filename="$(b.path.filename $event_bin)"
-		local destination_file="$CLUSTER_DIR/events/$filename"
-		b.info "Linking '$event_bin' event handler"
-		ln -s "$event_bin" "$destination_file"
-	done
 }

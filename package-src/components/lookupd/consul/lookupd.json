@@ -3,7 +3,7 @@
         "name": "lookupd",
         "check": {
             "notes": "Every 30s checks lookupd ping endpoint",
-            "script": "/var/lib/seaworthy/components/consul/checks/lookupd",
+            "script": "/var/checks/lookupd",
             "interval": "30s"
         }
     }

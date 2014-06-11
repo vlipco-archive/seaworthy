@@ -27,7 +27,10 @@ install: rpm
 	@echo "Installing Seaworthy package"
 	@sudo rpm --install release/seaworthy-*.rpm
 
+# the first run of the stop cluster.target will fail
+# handle that in an elegant way!
 dev_clean:
+	@sudo systemctl stop cluster.target || echo "... ignoring"
 	@if [[ -d "/var/lib/seaworthy/components" ]] && which swrth &> /dev/null; then \
 		echo "Disabling local components for clean cycle"; \
 		for comp in $$(ls /var/lib/seaworthy/components -1); do \
@@ -37,7 +40,16 @@ dev_clean:
 	fi
 	@if [[ -d "/var/lib/seaworthy" ]]; then \
 		echo "Cleaning cluster dir"; \
-		rm -rf "/var/lib/seaworthy/*"; \
+		sudo rm -rf "/var/lib/seaworthy"; \
+	fi
+	@if [[ -d "/var/local/consul" ]]; then \
+		echo "Cleaning cluster data"; \
+		sudo rm -rf "/var/local/consul"; \
 	fi
 
-cycle: clean rpm dev_clean uninstall install
+start:
+	@sudo swrth components enable lookupd
+	@sudo swrth components enable admin
+	@sudo systemctl restart cluster.target
+
+cycle: clean rpm dev_clean uninstall install start

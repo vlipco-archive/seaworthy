@@ -3,7 +3,7 @@
         "name": "waypoint",
         "check": {
             "notes": "Every 30s checks that waypoint's slug server is running",
-            "script": "/var/lib/seaworthy/components/waypoint/checks/waypoint",
+            "script": "/var/checks/waypoint",
             "interval": "10s"
         }
     }
