@@ -28,16 +28,16 @@ install: rpm
 	@sudo rpm --install release/seaworthy-*.rpm
 
 dev_clean:
-	@if [[ -d "/var/lib/cluster/components" ]] && which swrth &> /dev/null; then \
+	@if [[ -d "/var/lib/seaworthy/components" ]] && which swrth &> /dev/null; then \
 		echo "Disabling local components for clean cycle"; \
-		for comp in $$(ls /var/lib/cluster/components -1); do \
+		for comp in $$(ls /var/lib/seaworthy/components -1); do \
 			echo "Disabling $$comp"; \
 			sudo swrth components disable $$comp; \
 		done; \
 	fi
-	@if [[ -d "/var/lib/cluster" ]]; then \
+	@if [[ -d "/var/lib/seaworthy" ]]; then \
 		echo "Cleaning cluster dir"; \
-		rm -rf "/var/lib/cluster/*"; \
+		rm -rf "/var/lib/seaworthy/*"; \
 	fi
 
 cycle: clean rpm dev_clean uninstall install

@@ -11,9 +11,9 @@ function btask.init.run {
 	echo "Creating local configuration directories/files"
 
 	mkdir -p /usr/local/lib/seaworthy/components
-	mkdir -p /var/lib/cluster/consul
-	mkdir -p /var/lib/cluster/events
-	mkdir -p /var/lib/cluster/components
+	mkdir -p /var/lib/seaworthy/consul
+	mkdir -p /var/lib/seaworthy/events
+	mkdir -p /var/lib/seaworthy/components
 
 	echo
 	echo "Enabling common components"

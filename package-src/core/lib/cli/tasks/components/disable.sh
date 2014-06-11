@@ -9,6 +9,9 @@ function btask.components.disable.run {
 	# in this case there's not after-disable hook
 	# because the file's already gone
 	_common.clean_broken_links
+	
+	echo
+	echogreen "Successfully disabled $component component"
 }
 
 function _disable_units {

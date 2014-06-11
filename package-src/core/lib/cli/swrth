@@ -35,10 +35,14 @@ b.task.add consul "Consul component operations"
 task="$1"; shift
 
 if [[ -n "$task" ]]; then
-	b.try.do b.task.run $task $@
-	b.catch TaskNotKnown _unkown_task
-	b.finally exit
-	b.try.end
+	# exception handling isnt nested!!
+	# so this cannot be used here or the children
+	# wont have those exceptions
+	b.task.run $task $@
+	#b.try.do 
+	#b.catch TaskNotKnown _unkown_task
+	#b.finally exit
+	#b.try.end
 else
 	# todo show the usage
 	echo "---"

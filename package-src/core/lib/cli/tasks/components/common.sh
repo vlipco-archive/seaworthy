@@ -1,6 +1,6 @@
 
 ## stuff exposed to all components subcommands
-CLUSTER_DIR="/var/lib/cluster"
+CLUSTER_DIR="/var/lib/seaworthy"
 COMP_TARGETS="$CLUSTER_DIR/components"
 COMP_SOURCES[0]="/usr/local/lib/seaworthy/components"
 COMP_SOURCES[1]="/usr/lib/seaworthy/components"
@@ -20,9 +20,9 @@ function _common.run_hook {
 }
 
 function _common.clean_broken_links {
-
-	b.info "Cleaning old links"
-	for folder in /etc/systemd/system /usr/bin /usr/sbin /var/lib/cluster; do
+	#b.info "Cleaning symlinks"
+	for folder in /etc/systemd/system /usr/bin /usr/sbin /var/lib/seaworthy; do
+		b.path.dir? $folder || break
 		for broken in $(find -L "$folder" -type l); do
 			# TODO add verbose flag to print this
 			#echo "Removing broken link $broken"

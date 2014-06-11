@@ -30,3 +30,7 @@ function b.path.exists? () {
 function b.info {
   echoyellow "$@"
 }
+
+function b.error {
+  print_e $(echored "$@")
+}

@@ -5,25 +5,32 @@ function btask.components.enable.run  {
 	component=$(sanitize_arg $1); shift
 	target_dir="$COMP_TARGETS/$component"
 
-	
-
-	# todo handle rollback
-	
 	_copy_component
-	_common.clean_broken_links
+ 	_common.clean_broken_links
+ 	_common.run_hook "before-enable"
+ 	_compile_templates
+ 	_check_consul_config
+ 	_link_consul_config
+ 	_link_events
+ 	_link_binaries
+ 	_enable_units
+ 	_common.run_hook "after-enable"
 
-	_common.run_hook "before-enable"
+ 	echo
+ 	echogreen "Successfully enabled $component component"
+ 	exit 0
 	
-	_compile_templates
+}
 
-	_check_consul_config
-	_link_consul_config
-
-	_link_events
-	_link_binaries
-
-	_enable_units
-	_common.run_hook "after-enable"
+function _fail_with_cleanup {
+	b.error "Error: $1"
+	if b.path.dir? "$target_dir"; then
+		echo "Force removing copied component directory"
+		rm -rf "$target_dir"
+	fi
+	_common.clean_broken_links
+	echo "Component activation failed"
+	exit 1
 }
 
 function _check_consul_config {
@@ -31,7 +38,8 @@ function _check_consul_config {
 	b.path.dir? "$consul_dir" || return 0
 	b.info "Checking syntax of consul config files"
 	for config_file in $(find "$consul_dir" -name "*.json"); do
-		jq -n -f "$config_file" &> /dev/null || b.abort "$config_file isn't valid JSON"
+		jq -n -f "$config_file" &> /dev/null \
+		|| _fail_with_cleanup "$config_file isn't valid JSON"
 	done	
 }
 
@@ -48,14 +56,15 @@ function _link_consul_config {
 }
 
 function _copy_component {
-	local source_dir=$(b.resolve_dir_path "$component" ${COMP_SOURCES[@]})
-	if [[ -z "$source_dir" ]]; then
-		b.abort "Unable to find $1 in: ${COMP_SOURCES[@]}"
+	if b.resolve_dir_path "$component" ${COMP_SOURCES[@]} &> /dev/null; then
+		local source_dir=$(b.resolve_dir_path "$component" ${COMP_SOURCES[@]})
+		b.info "Component $component found in $source_dir"
+		b.path.dir? "$target_dir" && b.done "Component is already enabled, skipping"
+		b.info "Copying to $target_dir"
+		cp -R "$source_dir" "$target_dir/"
+	else
+		_fail_with_cleanup "Unable to find $component in: ${COMP_SOURCES[@]}"
 	fi
-	b.info "Component $component found in $source_dir"
-	b.path.dir? "$target_dir" && b.done "Component is already enabled, skipping"
-	b.info "Copying to $target_dir"
-	cp -R "$source_dir" "$target_dir/"
 }
 
 function _compile_templates {
@@ -95,7 +104,7 @@ function _link_binaries {
 			local filename=$(b.path.filename "$file")
 			local target_file="/usr/$executable_dir/$filename"
 			if b.path.exists? "$target_file"; then
-				b.abort "$target_file exists and collides with $file"
+				_fail_with_cleanup "$target_file exists and collides with $file"
 			fi
 			echo "  $filename"
 			ln -s "$file" "$target_file"
