@@ -1,7 +1,7 @@
 
 ## stuff exposed to all components subcommands
-
-COMP_TARGETS="/etc/cluster/components"
+CLUSTER_DIR="/var/lib/seaworthy"
+COMP_TARGETS="$CLUSTER_DIR/components"
 COMP_SOURCES[0]="/usr/local/lib/seaworthy/components"
 COMP_SOURCES[1]="/usr/lib/seaworthy/components"
 
@@ -20,9 +20,12 @@ function _common.run_hook {
 }
 
 function _common.clean_broken_links {
-	for folder in /etc/systemd/system /usr/bin /usr/sbin; do
+
+	b.info "Cleaning old links"
+	for folder in /etc/systemd/system /usr/bin /usr/sbin /var/lib/seaworthy; do
 		for broken in $(find -L "$folder" -type l); do
-			echo "Removing broken link $broken"
+			# TODO add verbose flag to print this
+			#echo "Removing broken link $broken"
 			rm $broken
 		done
 	done

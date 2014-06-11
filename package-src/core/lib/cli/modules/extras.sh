@@ -25,3 +25,8 @@ function b.path.exists? () {
 }
 
 # todo add extension helper too
+
+# requires rainbow.sh
+function b.info {
+  echoyellow "$@"
+}

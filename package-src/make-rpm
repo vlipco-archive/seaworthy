@@ -35,5 +35,5 @@ fpm -s dir -t rpm -n seaworthy -v "$version" --rpm-os "linux" \
   --after-install "core/lib/hooks/after-install" \
   --before-remove "core/lib/hooks/before-remove" \
   --directories "/usr/lib/seaworthy" \
-  --config-files "/etc/cluster/default.conf" \
+  --config-files "/var/lib/seaworthy/default.conf" \
   --inputs "inputs_manifest"

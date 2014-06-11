@@ -16,18 +16,18 @@ function _disable_units {
 	if b.path.dir? "$units_dir"; then
 		for unit in $(find $units_dir -type f); do
 			local unit_name=$(b.path.filename $unit)
-			echo -n "Stopping $unit_name ... "
+			b.info "Stopping $unit_name ... "
 			systemctl stop "$unit_name" || echo "... ignoring"
-			echo "Disabling $unit_name ... "
+			b.info "Disabling $unit_name ... "
 			systemctl disable "$unit_name" || echo "... ignoring"
 		done
-		echo "Reloading systemd daemon"
+		b.info "Reloading systemd daemon"
 		systemctl daemon-reload
 	fi
 }
 
 function _remove_dir {
 	b.path.dir? "$target_dir" || b.done "Component is not enabled, skipping"
-	echo "Removing $target_dir"
+	b.info "Removing $target_dir"
 	rm -rf "$target_dir"
 }

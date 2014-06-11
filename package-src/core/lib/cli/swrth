@@ -20,6 +20,7 @@ function _unkown_task() {
 }
 
 b.module.require task2
+b.module.require rainbow
 
 # registers tasks/components as a group of task under components
 # namespace. e.g swrth components list -> tasks/components/list.sh

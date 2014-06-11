@@ -17,9 +17,9 @@ rpm: clean
 
 uninstall: 
 	@echo
-	@if rpm -qi seaworthy &> /dev/null; \
+	@if rpm -qi seaworthy &> /dev/null; then \
 		echo "Uninstalling previous Seaworthy version"; \
-		then sudo rpm --erase seaworthy --allmatches; \
+		sudo rpm --erase seaworthy --allmatches; \
 	fi
 
 install: rpm
@@ -27,4 +27,17 @@ install: rpm
 	@echo "Installing Seaworthy package"
 	@sudo rpm --install release/seaworthy-*.rpm
 
-cycle: clean rpm uninstall install
+dev_clean:
+	@if [[ -d "/var/lib/seaworthy/components" ]] && which swrth &> /dev/null; then \
+		echo "Disabling local components for clean cycle"; \
+		for comp in $$(ls /var/lib/seaworthy/components -1); do \
+			echo "Disabling $$comp"; \
+			sudo swrth components disable $$comp; \
+		done; \
+	fi
+	@if [[ -d "/var/lib/seaworthy" ]]; then \
+		echo "Cleaning cluster dir"; \
+		rm -rf "/var/lib/seaworthy/*"; \
+	fi
+
+cycle: clean rpm dev_clean uninstall install

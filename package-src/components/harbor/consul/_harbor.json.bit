@@ -1,7 +1,7 @@
 {
     "service": {
         "name": "harbor",
-        "tags": ["{{HARBOR_ROLE}}"],
+        "tags": ["{{echo 'public'}}"],
         "check": {
             "notes": "Every 10s check nothing...",
             "script": "/bin/true",
