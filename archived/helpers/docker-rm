@@ -3,7 +3,7 @@
 # Tries to delete a container only if it exists
 # the first argument is the container name/id
 
-docker="/usr/local/bin/docker"
+docker="/usr/bin/docker"
 
 echo "Checking if $1 is running"
 

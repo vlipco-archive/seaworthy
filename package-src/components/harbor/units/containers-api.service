@@ -1,7 +1,7 @@
 [Unit]
 
 Description=Exposes container-api scripts for instrospection
-Requires=docker.service
+Requires=cluster.target
 
 [Service]
 
@@ -9,8 +9,8 @@ Restart=always
 Environment="SCRIPTS=/cluster/components/harbor/misc/containers-api"
 ExecStartPre=/bin/bash -c "chmod +x $SCRIPTS/*"
 RestartSec=5
-ExecStart=/usr/local/bin/scripts2http -address 172.17.42.1:80 -scripts-dir $SCRIPTS
+ExecStart=/usr/bin/scripts2http -address 172.17.42.1:80 -scripts-dir $SCRIPTS
 
 [Install]
 
-WantedBy=vlipco.target
+WantedBy=cluster.target

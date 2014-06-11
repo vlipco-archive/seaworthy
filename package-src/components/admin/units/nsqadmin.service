@@ -1,7 +1,7 @@
 [Unit]
 
 Description=Nsq admin web UI
-Requires=vlipco.target
+Requires=cluster.target
 Wants=lookupd.service
 
 [Service]
@@ -9,8 +9,7 @@ Wants=lookupd.service
 Restart=always
 RestartSec=5
 TimeoutStopSec=15
-ExecStart=/bin/bash -c "/usr/local/bin/nsqadmin `lookupd-params http`"
+ExecStart=/bin/bash -c "/usr/bin/nsqadmin `lookupd-params http`"
 
 [Install]
-
-WantedBy=vlipco.target
+WantedBy=cluster.target

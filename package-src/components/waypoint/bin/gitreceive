@@ -7,7 +7,7 @@
 
 GITUSER="git"
 GITHOME="/var/local/git"
-SELF="/usr/local/bin/gitreceive"
+SELF="/usr/bin/gitreceive"
 
 case "$1" in
 # Public commands
@@ -18,7 +18,7 @@ case "$1" in
     #touch $GITHOME/.ssh/authorized_keys
     cat > $GITHOME/receiver <<EOF
 #!/bin/bash
-exec /usr/local/bin/slug-receiver \$@
+exec /usr/bin/slug-receiver \$@
 EOF
     chmod +x $GITHOME/receiver
     chown -R $GITUSER $GITHOME

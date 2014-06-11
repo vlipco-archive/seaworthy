@@ -3,7 +3,7 @@
         "name": "nsqevents",
         "check": {
             "notes": "Every 30s checks nsqevent ping writes to the tail of a file",
-            "script": "/usr/cluster/checks/nsqevents",
+            "script": "/var/lib/seaworthy/components/nsq/checks/nsqevents",
             "interval": "30s"
         }
     }

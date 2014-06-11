@@ -25,5 +25,12 @@ function btask.init.run {
 		echo
 	done
 
+	echo
+	echo "Enabling cluster.target"
+	echo
+
+	systemctl enable /var/lib/seaworthy/cluster.target
+
+	echo
 	echo "Done."
 }

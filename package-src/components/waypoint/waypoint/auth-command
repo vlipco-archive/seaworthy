@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby
+#!/usr/bin/ruby
 # TODO: use typhoues for parallelism
 # Faraday.default_adapter = :typhoeus
 if ARGV.first == "git"

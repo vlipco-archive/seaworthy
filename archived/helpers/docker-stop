@@ -4,7 +4,7 @@
 # the first argument is the container name/id
 # the optional second argument is a timeout (default: 15s)
 
-docker="/usr/local/bin/docker"
+docker="/usr/bin/docker"
 
 echo "Checking if $1 is running"
 

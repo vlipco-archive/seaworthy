@@ -1,7 +1,7 @@
 [Unit]
 
 Description=Nsq daemon
-Requires=vlipco.target
+Requires=cluster.target
 After=consul.service
 
 [Service]
@@ -9,8 +9,8 @@ After=consul.service
 Restart=always
 TimeoutStopSec=15
 RestartSec=5
-ExecStart=/bin/bash -c "/usr/local/bin/nsqd --broadcast-address=$(hostname).node.consul $(lookupd-params)"
+ExecStart=/bin/bash -c "/usr/bin/nsqd --broadcast-address=$(hostname).node.consul $(lookupd-params)"
 
 [Install]
 
-WantedBy=vlipco.target
+WantedBy=cluster.target

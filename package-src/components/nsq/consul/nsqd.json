@@ -3,7 +3,7 @@
         "name": "nsqd",
         "check": {
             "notes": "Every 30s checks nsqd ping endpoint and makes sure all known lookupd instances are aware of the local nsqd",
-            "script": "/usr/cluster/checks/nsqd",
+            "script": "/var/lib/seaworthy/components/nsq/checks/nsqd",
             "interval": "30s"
         }
     }

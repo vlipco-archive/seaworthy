@@ -22,4 +22,4 @@ UseDNS no
 LogLevel VERBOSE
 
 Match User git
-    ForceCommand /usr/local/bin/gitreceive run -- --
+    ForceCommand /usr/bin/gitreceive run -- --
