@@ -1,0 +1,39 @@
+#!/bin/bash
+set -eo pipefail
+
+# sligthly modified version of 
+# Progrium's conulkv:based in http://git.io/XLm7JA
+
+CONSUL="127.0.0.1:8500"
+
+main() {
+	local key="$(echo "$2" | sed 's|^/||')"
+	case "$1" in
+		info)
+			curl -s "$CONSUL/v1/kv/$key" | jq -r .[]
+			;;
+		get)
+			curl -s "$CONSUL/v1/kv/$key" | jq -r .[].Value | base64 -d | sed 's/$/\n/'
+			;;
+		set)
+			curl -s -X PUT -d "$3" "$CONSUL/v1/kv/$key" > /dev/null
+			;;
+		del)
+			curl -s -X DELETE -d "$3" "$CONSUL/v1/kv/$key" > /dev/null
+			;;
+		ls)
+			if [[ "$key" == "" ]]; then
+				curl -s "$CONSUL/v1/kv/?keys" | jq -r .[]
+			else
+				curl -s "$CONSUL/v1/kv/$key/?keys" | jq -r .[] | sed "s|$key/||"
+			fi
+			;;
+	esac
+}
+
+if consul-leader &> /dev/null; then
+	main "$@"
+else
+	echo "no cluster leader"
+	exit 128
+fi

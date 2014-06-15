@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# nsqevent ping is triggered with a random string
+# we then check the tail of $tail_file includes it
+
+date
+
+expected_random=`date +%s.%N | sha256sum | base64 | head -c 32 ; echo`
+
+echo "Sending random: $expected_random"
+
+tail_file="/tmp/ping_events"
+
+if [[ -e "$tail_file" ]]; then
+	echo "Truncating the ping_events file to prevent growth"
+	lc=`wc -l $tail_file | awk '{print $1}'`
+	last_line="$(( $lc - 20 ))"
+	sed -i "1,$last_line d" $tail_file
+fi
+
+echo "Sending ping event to a random nsqd instance"
+
+nsqd_http="nsqd.service.consul:4151"
+
+trigger_result=`nsq_trigger --nsqd-http-address $nsqd_http \
+  --topic events ping "$(hostname): $expected_random"`
+
+function ping_received() {
+	if [[ -e "$tail_file" ]]; then
+		tail -n 20 $tail_file | grep -G "$expected_random" &> /dev/null
+		return $?
+	else
+		return 1
+	fi
+}
+
+
+# check if there where DNS errors printed in the last minute
+function recent_dns_error() {
+	journalctl -u nsqevents -l -e -n20 --since -1m \
+	| grep -G 'no DNS servers' &> /dev/null
+	return $?
+}
+
+if echo $trigger_result | grep -G "$nsqd_http: OK" &> /dev/null; then
+
+	# 8 retries, sleeps 250ms between waits
+	retries=1
+
+	until ping_received || [ $retries -eq 5 ]; do
+		(( retries++ ))
+		sleep 0.25
+	done
+
+	if [ $retries -eq 5 ]; then
+		
+		echo "Tried for 2 seconds but the the ping event wasn't detected:"
+		
+		if [[ -e "$tail_file" ]]; then
+			echo " - the payload wasn't present in the tail of $tail_file"
+		else
+			echo " - $tail_file was not event present during the test"
+		fi
+
+		echo "Checking if it's a DNS problem"
+
+		if recent_dns_error; then
+			echo "Detected DNS errors in the last minute"
+			echo "Trying to auto correct the issue by forcing service restart"
+			systemctl restart nsqevents
+			echo "Closing with a warning"
+			exit 1
+		else
+			echo "No DNS errors found in the last minute"
+			echo "!! unknown failure reason. Failing check"
+			exit 128
+		fi
+		
+	else
+
+		echo "Local nsqevents service OK"
+		echo "ping event was processed within $(( 250 * $retries ))ms"
+		exit 0	
+
+	fi
+else
+	echo "Failed to trigger the event"
+	echo "Trigger command result was: $trigger_result"
+	echo "Closing with a warning"
+	exit 1
+fi
+
+# TODO handle case of ERROR: lookupd lookupd.service.consul:4161 - Get http://lookupd.service.consul:4161/lookup?topic=events: dial tcp: lookup lookupd.service.consul: no such host
+
+journalctl -u nsqevents -l -e -n20

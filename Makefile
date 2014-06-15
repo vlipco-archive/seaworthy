@@ -48,8 +48,9 @@ dev_clean:
 	fi
 
 start:
-	@sudo swrth components enable lookupd
+	@sudo swrth components enable waypoint
 	@sudo swrth components enable admin
+	@sudo systemctl restart docker.service
 	@sudo systemctl restart cluster.target
 
 cycle: clean rpm dev_clean uninstall install start

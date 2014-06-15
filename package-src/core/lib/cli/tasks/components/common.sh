@@ -12,9 +12,9 @@ function btask.components.common.run {
 
 function _common.run_hook {
 	local hook_name="$1"
-	local hook_path="$target_dir/$hook_name"
+	local hook_path="$target_dir/hooks/$hook_name"
 	if b.path.file? "$hook_path"; then
-		echo "Running $hook_name hook"
+		b.info "Running $hook_name hook"
 		$hook_path || b.abort "$hook_name didn't exit with 0"
 	fi
 }

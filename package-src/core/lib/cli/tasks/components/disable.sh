@@ -10,7 +10,6 @@ function btask.components.disable.run {
 	# because the file's already gone
 	_common.clean_broken_links
 	
-	echo
 	echogreen "Successfully disabled $component component"
 }
 

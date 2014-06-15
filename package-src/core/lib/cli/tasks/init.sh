@@ -24,7 +24,7 @@ function btask.init.run {
 	echo "Enabling common components"
 	echo
 
-	common_components=(utils consul nsq)
+	common_components=(base)
 	for component in "${common_components[@]}"; do
 		swrth components enable "$component"
 		echo

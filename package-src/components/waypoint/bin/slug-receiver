@@ -1,114 +1,87 @@
-#!/usr/bin/env ruby
-require 'methadone'
-require 'fileutils'
+#!/bin/bash
+set -eo pipefail
 
-require 'time' # for ISO dates
-require 'json'
-
-include Methadone::Main
-include Methadone::CLILogging
-
-class PushHandler
-	
-	KNOWN_ROLES = %w( external internal )
-
-	def kv_put(key,val)
-		%x(consulkv #{key} '#{val}')
-	end
-
-	def kv_get(key)
-		%x(consulkv #{key})
-	end
-
-	attr_reader :repo_raw_name, :revision, 
-		:repo_name, :repo_kv_path, :role,
-		:repo_folder
-
-	def log_section(*msgs)
-		puts "--> #{msgs.join ' '}"
-	end
-
-	def log(*msgs)
-		puts "    #{msgs.join ' '}"
-	end
-
-	def save_piped_archive
-		log_section "Saving revision archive"
-		dest = "#{repo_folder}/#{revision}.tar"
-		archive = File.new dest, 'w'
-		archive.write STDIN.read
-		archive.close
-	end
-
-	def promote_revision_to_latest
-		log_section "Marking pushed revision as the latest"
-		previous = kv_get "#{repo_kv_path}/latest"
-		kv_put "#{repo_kv_path}/versions/previous", previous
-		kv_put "#{repo_kv_path}/versions/latest", revision 
-	end
-
-	def save_revision_information
-		log_section "Saving revision information in distributed key/value storage"
-		rev_info = {
-			receiver_hostname: %x(hostname).chop, 
-			received_at: Time.now.utc.iso8601
-		}
-		kv_put "#{repo_kv_path}/versions/#{revision}", rev_info.to_json
-	end
-
-	def initialize(repo_raw_name, revision)
-		@repo_raw_name = repo_raw_name
-		@revision = revision
-		parse_repo_raw_name
-		@repo_kv_path = "apps/#{role}/#{repo_name}"
-		@repo_folder = "#{Dir.home}/slugs/#{role}/#{repo_name}"
-		FileUtils.mkdir_p repo_folder
-		handle_push
-	end
-
-	def handle_push
-		log_section "Processing app #{repo_name} in #{role} role"	
-		save_piped_archive
-		save_revision_information
-		promote_revision_to_latest
-		
-		desired_instances = 1
-		kv_put "#{repo_kv_path}/desired_instances", desired_instances
-		
-		log_section "Triggerin deploy"
-		event_data = {role: role, app: repo_name, revision: revision}.to_json
-		%x(nsq_trigger receive '#{event_data}')
-
-		#log_section "Balancing cluster"
-		#{}%x(nsq_trigger balance '#{role}')
-		
-		#poll_status
-	end
-
-	def parse_repo_raw_name
-		name_parts = repo_raw_name.split('/')
-		if name_parts.length > 2
-			log_section "WARN: name has too many parts, ignoring: #{name_parts[2..-1]}"
-		end
-		@role = name_parts[0]
-		@repo_name = name_parts[1]
-		unless KNOWN_ROLES.include? role
-			log_section "ERROR: Invalid repo role."
-			log_section "The repo path should have the format <role>/<repo>"
-			log_section "with role being one of: #{KNOWN_ROLES}"
-			exit 1
-		end
-	end
-end
+function announce { 
+  msg="---> $1"
+  echo -e "\e[1;33m${msg}\e[0m"
+}
+function indent_output { 
+  sed -u 's/^/     /'
+}
 
 
-main do |repo, revision|
-	handler = PushHandler.new repo, revision
-end
+consul-leader || (echo "no cluster leader. Aborting" && exit 1)
 
-version     '0.0.1'
-description 'Push handler for gitreceived'
-arg         :repo, :required
-arg         :revision, :required
+#if cat /cluster/etc/harbor_role | grep -G "$role" &> /dev/null; then
 
-go!
+role="$(echo "$1" | awk -F'/' '{print $1}')"
+repository="$(echo "$1" | awk -F'/' '{print $2}')"
+
+# revision uses only 7 chars
+revision="${2:0:7}"
+
+
+# TODO extract it from repo name
+
+
+# TODO check repo's in format role/app
+announce "Processing $repository"
+app_folder="$HOME/slugs/$role/$repository"
+revision_folder="$app_folder/$revision"
+mkdir -p "$revision_folder"
+cd "$revision_folder"
+
+announce "Saving revision source"
+
+cat - | tar xf -
+
+builder="$(cat Seafile | grep builder | awk '{print $2}')"
+
+announce "Getting last version of builder image"
+docker -H "tcp://localhost:2375" pull "$builder" 1> /dev/null
+
+announce "Building $image_name with $builder"
+image_name="$role/$repository"
+sti build . "$builder" "$image_name" -U "tcp://localhost:2375" 2>&1 | indent_output
+
+registry_image_name="localhost:5000/$image_name:$revision"
+docker -H "tcp://localhost:2375" tag "$image_name" "$registry_image_name"
+
+announce "Pushing resulting image to the cluster's registry"
+
+docker -H "tcp://localhost:2375" push "$registry_image_name" 1> /dev/null | indent_output
+
+announce "Saving information to distributed KV storage"
+
+# consul namespaces
+app_cns="app/$repository"
+revisions_cns="$app_cns/revisions"
+latest_revision_key="$revisions_cns/latest"
+previous_revision_key="$revisions_cns/previous"
+
+consulkv set $previous_revision_key $(consulkv get $latest_revision_key)
+consulkv set $latest_revision_key $revision
+
+function revision_data() {
+  printf '{"receiver":"%s","role":"%s", "date":"%s"}' \
+    "$(hostname)" "$(iso-date)" "$role"
+}
+
+consulkv set $revisions_cns/$revision "$(revision_data)"
+
+consulkv set "$app_cns/instances" 1
+
+# TODO confirm the app is deployed by the consul kv watchers
+
+#announce "Annoucing new revision to the cluster"
+#nsq_trigger received "$repository"
+
+#announce "Triggering cluster balance event"
+#nsq_trigger balance $role
+
+announce "Thank your for pushing!"
+
+
+# poll the cluster for information
+# check the status is ok and app's been announced
+# exit
