@@ -53,6 +53,9 @@ pre {
 .bold {
   font-weight: 700; }
 
+.light {
+  color: #777777; }
+
 .panel {
   border-width: 2px;
   border-color: #e6e6e6;
@@ -62,9 +65,29 @@ pre {
   -o-transition: background-color 0.3s ease-in-out;
   transition: background-color 0.3s ease-in-out; }
   .panel .panel-heading {
+    padding: 10px 7px;
     background-color: transparent;
     border-width: 2px;
     border-color: #e6e6e6; }
+  .panel h4.panel-title {
+    padding: 4px 10px 4px 10px;
+    font-size: 20px;
+    color: #939393;
+    color: #555555;
+    border-radius: 3px;
+    opacity: 0.8; }
+    .panel h4.panel-title small {
+      font-size: 14px;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-left: 5px;
+      padding-top: 2px; }
+    .panel h4.panel-title .panel-note {
+      margin-top: 5px;
+      float: right;
+      font-weight: 600;
+      color: #939393;
+      font-size: 14px; }
   .panel h3.panel-title {
     padding: 4px 0px 4px 0px;
     font-size: 20px;
@@ -80,13 +103,17 @@ pre {
       font-weight: 600;
       color: #939393;
       font-size: 14px; }
-  .panel .panel-body p {
-    font-size: 14px;
-    color: #555555; }
-  .panel .panel-body h5 {
-    font-size: 12px; }
-  .panel .panel-body h4.check {
-    font-size: 16px; }
+  .panel .panel-body {
+    padding: 0px 7px 0px 7px; }
+    .panel .panel-body p {
+      font-size: 14px;
+      color: #555555; }
+    .panel .panel-body h5 {
+      font-size: 12px; }
+    .panel .panel-body h4.check {
+      font-size: 16px; }
+    .panel .panel-body.panel-form {
+      padding-bottom: 15px; }
   .panel .panel-bar {
     width: 100%;
     height: 20px;
@@ -97,6 +124,17 @@ pre {
     transition: background-color 0.1s linear; }
   .panel.panel-link {
     border-bottom-width: 2px; }
+  .panel.panel-list ul {
+    margin: 0; }
+    .panel.panel-list ul li {
+      margin: 0;
+      border: 0; }
+  .panel .panel-bar-horizontal {
+    width: 20px;
+    float: left;
+    height: 50px;
+    margin-right: 10px;
+    display: block; }
   .panel.panel-short {
     border-bottom-width: 0px; }
   .panel.panel-link:hover {
@@ -128,8 +166,10 @@ pre {
 
 .topbar {
   padding: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   margin-bottom: 20px;
-  min-height: 100px;
+  min-height: 95px;
   border-bottom: 1px #eee solid; }
   .topbar .btn {
     margin-top: 20px;
@@ -213,12 +253,20 @@ pre {
     .btn.btn-danger:hover {
       background-color: #fcf1f1;
       color: #d02834; }
+  .btn.btn-mini {
+    font-size: 10px;
+    padding: 8px; }
+  .btn.btn-list {
+    font-size: 10px;
+    padding: 3px 5px 3px 5px;
+    margin-right: 5px;
+    border-radius: 3px; }
 
 .list-group-item {
   padding: 0;
   border-width: 2px;
   border-bottom-width: 2px;
-  border-radius: 0px;
+  border-radius: 2px;
   margin-bottom: 15px;
   margin-top: 15px;
   -webkit-transition: background-color 0.3s ease-in-out;
@@ -243,12 +291,40 @@ pre {
       font-size: 14px; }
   .list-group-item .list-bar {
     width: 100%;
-    height: 20px;
-    border-top-right-radius: 2px;
-    border-top-left-radius: 2px; }
+    height: 20px; }
   .list-group-item.list-link:hover {
     cursor: pointer;
     background-color: #fafafa; }
+  .list-group-item.list-condensed-link:hover {
+    cursor: pointer;
+    background-color: #fafafa; }
+  .list-group-item.list-condensed-link, .list-group-item.list-condensed {
+    border-color: #e6e6e6;
+    margin-bottom: 4px;
+    margin-top: 4px;
+    height: 40px;
+    font-weight: 700; }
+    .list-group-item.list-condensed-link.double-line, .list-group-item.list-condensed.double-line {
+      height: 54px; }
+    .list-group-item.list-condensed-link .name, .list-group-item.list-condensed .name {
+      font-size: 15px;
+      padding-top: 6px; }
+      .list-group-item.list-condensed-link .name small, .list-group-item.list-condensed .name small {
+        padding-right: 8px;
+        padding-top: 2px;
+        font-size: 12px;
+        color: #939393; }
+    .list-group-item.list-condensed-link ul.sub, .list-group-item.list-condensed ul.sub {
+      margin: 0;
+      font-size: 12px;
+      color: #939393; }
+      .list-group-item.list-condensed-link ul.sub li, .list-group-item.list-condensed ul.sub li {
+        padding: 0; }
+  .list-group-item .list-bar-horizontal {
+    width: 20px;
+    float: left;
+    height: 100%;
+    margin-right: 10px; }
   .list-group-item.active {
     -webkit-transition: border-color 0.1s linear;
     -moz-transition: border-color 0.1s linear;
@@ -256,7 +332,7 @@ pre {
     -o-transition: border-color 0.1s linear;
     transition: border-color 0.1s linear;
     border-color: #9e84c5; }
-    .list-group-item.active .list-bar {
+    .list-group-item.active .list-bar, .list-group-item.active .list-bar-horizontal {
       -webkit-transition: background-color 0.1s linear;
       -moz-transition: background-color 0.1s linear;
       -ms-transition: background-color 0.1s linear;
@@ -280,19 +356,18 @@ pre {
   -ms-transition: border-color 0.2s ease-in-out;
   -o-transition: border-color 0.2s ease-in-out;
   transition: border-color 0.2s ease-in-out; }
+  .form-group .form-control.form-control-mini {
+    font-size: 12px; }
 .form-group.valid .form-control {
   border-color: #bbf085;
   box-shadow: 0 0 5px #bbf085; }
 .form-group .input-group-addon {
   background-color: #e6e6e6; }
 
-@media (min-width: 768px) {
+@media (min-width: 1120px) {
   .container {
-    width: 750px; } }
-@media (min-width: 970px) {
-  .container {
-    width: 970px; } }
-@media (min-width: 1230px) {
+    width: 1100px; } }
+@media (min-width: 1200px) {
   .container {
     width: 1200px; } }
 @media (min-width: 1438px) {
@@ -304,14 +379,13 @@ a button:active {
 .buffer-small {
   height: 50px; }
 
-.border-left {
-  display: block;
-  height: 700px; }
-  .border-left .line {
-    margin: 0 auto;
-    background-color: #e6e6e6;
-    height: 100%;
-    width: 1px; }
+@media (min-width: 991px) {
+  .border-left {
+    border-left: 1px #e6e6e6 solid; }
+    .border-left .padded-border {
+      padding-left: 30px; } }
+.padded-right-middle {
+  padding-right: 30px; }
 
 .no-margin {
   margin: 0; }
@@ -348,3 +422,22 @@ a button:active {
 
 .bg-light-gray {
   background-color: #e6e6e6; }
+
+.action-bar {
+  min-height: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px; }
+
+.ember-list-view {
+  overflow: auto;
+  position: relative;
+  margin-bottom: 30px; }
+
+.ember-list-item-view {
+  position: absolute;
+  width: 100%; }
+
+.scrollable {
+  overflow: auto;
+  height: 800px;
+  margin-bottom: 30px; }

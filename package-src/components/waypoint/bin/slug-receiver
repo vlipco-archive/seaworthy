@@ -9,52 +9,48 @@ function indent_output {
   sed -u 's/^/     /'
 }
 
-
 consul-leader || (echo "no cluster leader. Aborting" && exit 1)
 
-#if cat /cluster/etc/harbor_role | grep -G "$role" &> /dev/null; then
+# variables definition
 
 role="$(echo "$1" | awk -F'/' '{print $1}')"
 repository="$(echo "$1" | awk -F'/' '{print $2}')"
-
 # revision uses only 7 chars
 revision="${2:0:7}"
-
-
-# TODO extract it from repo name
-
-
-# TODO check repo's in format role/app
-announce "Processing $repository"
 app_folder="$HOME/slugs/$role/$repository"
 revision_folder="$app_folder/$revision"
-mkdir -p "$revision_folder"
-cd "$revision_folder"
+
+# TODO fail is the role isn't covered in the cluster
 
 announce "Saving revision source"
+
+mkdir -p "$revision_folder"
+cd "$revision_folder"
 
 cat - | tar xf -
 
 builder="$(cat Seafile | grep builder | awk '{print $2}')"
 
 announce "Getting last version of builder image"
+
 docker -H "tcp://localhost:2375" pull "$builder" 1> /dev/null
 
 announce "Building $image_name with $builder"
+
 image_name="$role/$repository"
 sti build . "$builder" "$image_name" -U "tcp://localhost:2375" 2>&1 | indent_output
 
 registry_image_name="localhost:5000/$image_name:$revision"
 docker -H "tcp://localhost:2375" tag "$image_name" "$registry_image_name"
 
-announce "Pushing resulting image to the cluster's registry"
+announce "Pushing resulting image to the cluster's registry, be patient..."
 
 docker -H "tcp://localhost:2375" push "$registry_image_name" 1> /dev/null | indent_output
 
 announce "Saving information to distributed KV storage"
 
-# consul namespaces
-app_cns="app/$repository"
+# cns stand for consul namespace
+app_cns="app/$role/$repository"
 revisions_cns="$app_cns/revisions"
 latest_revision_key="$revisions_cns/latest"
 previous_revision_key="$revisions_cns/previous"
@@ -62,26 +58,20 @@ previous_revision_key="$revisions_cns/previous"
 consulkv set $previous_revision_key $(consulkv get $latest_revision_key)
 consulkv set $latest_revision_key $revision
 
-function revision_data() {
-  printf '{"receiver":"%s","role":"%s", "date":"%s"}' \
-    "$(hostname)" "$(iso-date)" "$role"
-}
 
-consulkv set $revisions_cns/$revision "$(revision_data)"
+revision_data="$(printf '{"receiver":"%s","role":"%s", "date":"%s"}' \
+    "$(hostname)" "$(iso-date)" "$role")"
 
-consulkv set "$app_cns/instances" 1
+consulkv set $revisions_cns/$revision "$revision_data"
+
+desired_instances="$(consulkv get "$app_cns/instances")"
+
+if [[ -z "$desired_instances" ]]; then
+	consulkv set "$app_cns/instances" 1
+fi
+
+announce "Assigning instances existing to harbors"
 
 # TODO confirm the app is deployed by the consul kv watchers
 
-#announce "Annoucing new revision to the cluster"
-#nsq_trigger received "$repository"
-
-#announce "Triggering cluster balance event"
-#nsq_trigger balance $role
-
 announce "Thank your for pushing!"
-
-
-# poll the cluster for information
-# check the status is ok and app's been announced
-# exit
