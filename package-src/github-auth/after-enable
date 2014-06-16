@@ -1,6 +1,6 @@
 echo "Installing ssh configuration"
 
-cd /var/lib/seaworthy/components/waypoint/misc
+cd /var/active/components/waypoint/misc
 
 destination="/etc/ssh/sshd_config"
 [[ -e "$destination.orig" ]] || cp "$destination" "$destination.orig"

@@ -1,12 +1,8 @@
-#!/bin/bash
-set -eo pipefail
-
 # sligthly modified version of 
 # Progrium's conulkv:based in http://git.io/XLm7JA
 
-CONSUL="127.0.0.1:8500"
-
-main() {
+function btask.consul.kv.run {
+	_ensure_leader_exists
 	# remove / in the beginning of the key
 	local key="$(echo "$2" | sed 's|^/||')"
 	case "$1" in
@@ -42,10 +38,3 @@ main() {
 			exit 1
 	esac
 }
-
-if consul-leader &> /dev/null; then
-	main "$@"
-else
-	echo "no cluster leader"
-	exit 128
-fi

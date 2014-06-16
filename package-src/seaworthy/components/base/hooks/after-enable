@@ -1,5 +1,5 @@
 #!/bin/bash
 set -eo pipefail
 echo "Linking docker.service overrides"
-ln -s /var/lib/seaworthy/components/base/misc/docker.service.d \
+ln -s /var/active/components/base/misc/docker.service.d \
   /etc/systemd/system/docker.service.d

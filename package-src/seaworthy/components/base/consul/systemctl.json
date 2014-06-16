@@ -1,7 +1,7 @@
 {
     "check": {
         "name": "Systemctl units status check",
-        "script": "/var/checks/systemctl",
+    "script": "/var/active/checks/systemctl",
         "interval": "10s"
     }
 }

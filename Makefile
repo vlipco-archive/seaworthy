@@ -31,16 +31,16 @@ install: rpm
 # handle that in an elegant way!
 dev_clean:
 	@sudo systemctl stop cluster.target || echo "... ignoring"
-	@if [[ -d "/var/lib/seaworthy/components" ]] && which swrth &> /dev/null; then \
+	@if [[ -d "/var/active/components" ]] && which swrth &> /dev/null; then \
 		echo "Disabling local components for clean cycle"; \
-		for comp in $$(ls /var/lib/seaworthy/components -1); do \
+		for comp in $$(ls /var/active/components -1); do \
 			echo "Disabling $$comp"; \
 			sudo swrth components disable $$comp; \
 		done; \
 	fi
-	@if [[ -d "/var/lib/seaworthy" ]]; then \
+	@if [[ -d "/var/active" ]]; then \
 		echo "Cleaning cluster dir"; \
-		sudo rm -rf "/var/lib/seaworthy"; \
+		sudo rm -rf "/var/active"; \
 	fi
 	@if [[ -d "/var/local/consul" ]]; then \
 		echo "Cleaning cluster data"; \

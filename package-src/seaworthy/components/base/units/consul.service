@@ -11,7 +11,7 @@ RestartSec=5
 
 ExecReload=/bin/kill -HUP $MAINPID
 
-ExecStart=/usr/bin/consul agent -config-dir /var/lib/seaworthy/consul
+ExecStart=/usr/bin/consul agent -config-dir /var/active/consul
 
 ExecStartPost=/bin/bash -c "echo 'nameserver 127.0.0.1' > /etc/resolv.conf"
 
