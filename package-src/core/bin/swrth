@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-# pass over to the CLI tool entrypoint
-exec /usr/lib/seaworthy/cli/swrth $@

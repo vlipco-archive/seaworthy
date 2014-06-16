@@ -1,4 +1,2 @@
-core/bin/=/usr/bin
-core/etc/=/var/lib/seaworthy
-core/lib/=/usr/lib/seaworthy
-components/=/usr/lib/seaworthy/components
+bin/=/usr/bin
+seaworthy/=/usr/lib/seaworthy

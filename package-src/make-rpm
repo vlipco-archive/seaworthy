@@ -11,16 +11,17 @@ function make_bin () {
 
 echo "Setting permissions for core executables"
 
-make_bin "core/bin"
-chmod +x "core/lib/cli/swrth"
+make_bin "bin"
+chmod +x "seaworthy/clitool/swrth"
 
 echo "Setting permissions for components executables"
 
-for component in $(ls components -1); do
-	make_bin "components/$component/bin"
-	make_bin "components/$component/events"
-	make_bin "components/$component/checks"
-	make_bin "components/$component/hooks"
+components_dir="seaworthy/components"
+for component in $(ls $components_dir -1); do
+	make_bin "$components_dir/$component/bin"
+	make_bin "$components_dir/$component/events"
+	make_bin "$components_dir/$component/checks"
+	make_bin "$components_dir/$component/hooks"
 done
 
 # prevents fpm complains if host machine is osx
@@ -32,8 +33,6 @@ fpm -s dir -t rpm -n seaworthy -v "$version" --rpm-os "linux" \
   --maintainer "David Peláez <david@vlipco.co>" \
   --url "https://github.com/vlipco/seaworthy" \
   --description "vlipco's minimal cluster toolkit" \
-  --after-install "core/lib/hooks/after-install" \
-  --before-remove "core/lib/hooks/before-remove" \
+  --after-install "hooks/after-install" \
   --directories "/usr/lib/seaworthy" \
-  --config-files "/var/lib/seaworthy/default.conf" \
   --inputs "inputs_manifest"

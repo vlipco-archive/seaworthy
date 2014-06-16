@@ -1,0 +1,3 @@
+[submodule "package-src/tamal"]
+	path = package-src/tamal
+	url = git@github.com:davidpelaez/tamal.git

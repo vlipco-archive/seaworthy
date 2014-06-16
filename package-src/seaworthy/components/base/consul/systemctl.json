@@ -1,0 +1,7 @@
+{
+    "check": {
+        "name": "Systemctl units status check",
+        "script": "/var/checks/systemctl",
+        "interval": "10s"
+    }
+}

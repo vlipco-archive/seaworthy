@@ -1,0 +1,7 @@
+{
+    "check": {
+        "name": "Internet connectivity check",
+        "script": "/var/checks/internet",
+        "interval": "10s"
+    }
+}

@@ -1,0 +1,21 @@
+misc escape-url
+misc iso-date
+
+sctl components enable
+sctl components disable
+sctl components refresh
+
+sctl consul leader
+sctl consul register
+sctl consul deregister
+sctl consul set
+sctl consul get
+
+sctl lookupd params
+sctl lookupd producers
+
+sctl help
+
+
+resolve path checks for existance, not regular file
+also .sh isn't assumed, that should be indicated in the first arg

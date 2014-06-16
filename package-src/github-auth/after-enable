@@ -1,0 +1,17 @@
+echo "Installing ssh configuration"
+
+cd /var/lib/seaworthy/components/waypoint/misc
+
+destination="/etc/ssh/sshd_config"
+[[ -e "$destination.orig" ]] || cp "$destination" "$destination.orig"
+
+cat sshd_config > "$destination"
+
+if /usr/sbin/sshd -t; then
+	echo "Restarting sshd"
+	systemctl restart sshd
+else
+	echo "SSH config check failed, restoring"
+	cp "$destination.orig" "$destination"
+	exit 1
+fi

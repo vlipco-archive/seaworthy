@@ -1,0 +1,6 @@
+{
+	"server": {{echo 'true'}},
+	"bootstrap": {{echo 'true'}},
+	"node_name": "{{echo 'sample-host'}}",
+	"bind_addr": "{{echo '0.0.0.0'}}"
+}

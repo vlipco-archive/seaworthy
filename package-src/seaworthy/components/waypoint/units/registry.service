@@ -1,0 +1,17 @@
+[Unit]
+
+Description=Docker registry
+Requires=cluster.target
+
+[Service]
+
+Restart=always
+TimeoutStopSec=15
+RestartSec=5
+
+
+ExecStart=/usr/local/bin/docker run -e SETTINGS_FLAVOR=local -p 5000:5000 \
+        -e STORAGE_PATH=/registry -v /var/local/registry:/registry registry
+
+[Install]
+WantedBy=cluster.target
