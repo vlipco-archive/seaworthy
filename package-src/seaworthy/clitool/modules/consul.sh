@@ -24,7 +24,7 @@ function consul.ensure_leader_exists {
 }
 
 function consul.kv.set {
-	curl -s -X PUT -d "$3" "$CONSUL/v1/kv/$1" > /dev/null
+	curl -s -X PUT -d "$2" "$CONSUL/v1/kv/$1" > /dev/null
 }
 
 function consul.kv.get {
@@ -44,5 +44,9 @@ function consul.kv.del {
 }
 
 function consul.kv.raw_get {
-	curl -s "$CONSUL/v1/kv/$1" | jq -r .[]
+	consul.api.raw_get "kv/$1" | jq -r .[]
+}
+
+function consul.api.raw_get {
+	curl -s "$CONSUL/v1/$1"
 }

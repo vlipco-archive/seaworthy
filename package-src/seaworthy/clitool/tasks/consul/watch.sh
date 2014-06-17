@@ -20,7 +20,7 @@ _watch_loop() {
 }
 
 function btask.consul.watch.run {
-	_ensure_leader_exists
+	consul.ensure_leader_exists
 
 	# remove / in the beginning of the key
 	key="$(echo "$1" | sed 's|^/||')" ; shift

@@ -43,3 +43,7 @@ function escape_url {
 function iso_date {
   date --iso-8601=seconds
 }
+
+function _netlog {
+  echo "$*" | nc localhost 9090 || true
+}

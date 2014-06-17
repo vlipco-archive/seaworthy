@@ -6,9 +6,7 @@ Requires=cluster.target
 [Service]
 
 Restart=always
-RestartSec=5
-
-ExecStart=/usr/bin/consul-watcher apps/$role /usr/bin/balance-harbor
+ExecStart=/usr/bin/swrth consul watch containers/external "swrth harbor balance"
 
 [Install]
 WantedBy=cluster.target

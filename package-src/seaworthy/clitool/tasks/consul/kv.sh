@@ -6,7 +6,7 @@ function btask.consul.kv.run {
 	# remove / in the beginning of the key
 	local key="$(echo "$2" | sed 's|^/||')"
 	case "$1" in
-		info)
+		raw_get)
 			consul.kv.raw_get "$key" ;;
 		get)
 			consul.kv.get "$key" ;;

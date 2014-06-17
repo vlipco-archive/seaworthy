@@ -8,6 +8,3 @@ function btask.waypoint.common.run () {
 	b.module.require extras
 }
 
-function _netlog {
-	echo "$*" | nc localhost 9090 || true
-}

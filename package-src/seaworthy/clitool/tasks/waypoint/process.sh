@@ -107,22 +107,34 @@ function _save_app_data {
 	fi
 }
 
+function _running_instances_of {
+	echo 0
+}
+
 function _handle_containers {
 	# containers ns
-	ctr_cns="containers/$role/$repository"
+	ctr_cns="containers/$role/$repository:$revision"
 	for i in $(seq "$desired_instances"); do
 		consul.kv.set "$ctr_cns.$i/state" "init"
 	done
 
 	_announce "Waiting for instances to start"
 
+	running=0
 	wait_cycles=0
-	until [[ "$running" != "$desired_instances" ]] || [ $wait_cycles -eq 4 ]; do
+
+	# indent output with the rest
+	echo -n "     "
+	until [[ "$running" == "$desired_instances" ]] || [ $wait_cycles -eq 30 ]; do
 	   	# sleep at the beginning, allows instances to boot
-	   	sleep 5
-		$(( wait_cycles++ ))
-		echo "Some units missing, sleeping 5s"
+	   	sleep 1
+		wait_cycles=$(( $wait_cycles + 1 ))
+		running="$(_running_instances_of "$role/$repository")"
+		echo -n "."
 	done
+
+	# break the line for correct format
+	echo
 
 	if [[ "$running" != "$desired_instances" ]]; then
 		echo "     ERROR: Some units didn't boot properly, manual intervention required"
