@@ -4,3 +4,5 @@ tmp/
 .bundle/
 .vagrant/
 release
+go-vendor/pkg
+go-vendor/bin

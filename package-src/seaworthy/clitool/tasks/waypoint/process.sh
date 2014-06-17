@@ -113,7 +113,7 @@ function _running_instances_of {
 
 function _handle_containers {
 	# containers ns
-	ctr_cns="containers/$role/$repository:$revision"
+	ctr_cns="containers/$role/$repository.$revision"
 	for i in $(seq "$desired_instances"); do
 		consul.kv.set "$ctr_cns.$i/state" "init"
 	done

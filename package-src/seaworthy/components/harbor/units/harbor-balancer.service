@@ -1,0 +1,13 @@
+[Unit]
+
+Description=Harbor balancer
+Requires=cluster.target
+
+[Service]
+
+Restart=always
+RestartSec=5
+ExecStart=/usr/bin/swrth consul watch "containers/external" "swrth harbor balance"
+
+[Install]
+WantedBy=cluster.target
