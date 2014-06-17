@@ -29,6 +29,8 @@ b.module.require rainbow
 b.task.add components "Manage local cluster components"
 b.task.add consul "Consul cluster operations"
 
+b.task.add waypoint "Waypoint component operations"
+
 #b.task.add units "Components systemd units commands"
 #b.task.add info "Information retrieving commands"
 

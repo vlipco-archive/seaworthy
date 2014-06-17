@@ -1,7 +1,7 @@
 {
     "check": {
         "name": "Internet connectivity check",
-        "script": "/var/active/checks/internet",
+        "script": "/var/cluster/active/checks/internet",
         "interval": "10s"
     }
 }

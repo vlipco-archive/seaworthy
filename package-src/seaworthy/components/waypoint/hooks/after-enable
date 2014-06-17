@@ -2,7 +2,7 @@
 set -eo pipefail
 
 echo "Initializing gitreceive"
-gitreceive init
+swrth waypoint init
 
 echo "Ensuring registry folder exists"
-mkdir -p /var/local/registry
+mkdir -p /var/cluster/registry

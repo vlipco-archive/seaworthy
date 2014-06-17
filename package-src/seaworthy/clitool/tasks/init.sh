@@ -8,10 +8,10 @@ function btask.init.run {
 
 	mkdir -p /usr/local/lib/seaworthy/components
 	
-	mkdir -p /var/active/consul
-	mkdir -p /var/active/events
-	mkdir -p /var/active/checks
-	mkdir -p /var/active/components
+	mkdir -p /var/cluster/active/consul
+	mkdir -p /var/cluster/active/events
+	mkdir -p /var/cluster/active/checks
+	mkdir -p /var/cluster/active/components
 	
 	echo
 	echo "Enabling base component"

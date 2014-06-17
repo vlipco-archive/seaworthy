@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 # pass over to the CLI tool entrypoint
-exec /usr/lib/seaworthy/clitool/swrth $@
+#exec /usr/lib/seaworthy/clitool/swrth $@
+# temporary for dev
+exec /vagrant/package-src/seaworthy/clitool/swrth $@
