@@ -1,0 +1,14 @@
+[Unit]
+
+Description=Ferry load balancer
+Requires=cluster.target
+
+[Service]
+
+Restart=always
+RestartSec=5
+ExecStartPre=-/usr/local/bin/docker rm ferry
+ExecStart=/usr/local/bin/docker run --net host -t --name ferry vlipco/srv-router
+
+[Install]
+WantedBy=cluster.target

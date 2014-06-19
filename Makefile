@@ -51,6 +51,7 @@ start:
 	@sudo swrth components enable waypoint
 	@sudo swrth components enable admin
 	@sudo swrth components enable harbor
+	@sudo swrth components enable ferry
 	@sudo systemctl restart docker.service
 	@sudo systemctl restart cluster.target
 

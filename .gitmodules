@@ -1,0 +1,3 @@
+[submodule "external/docker-images"]
+	path = external/docker-images
+	url = git@github.com:vlipco/seaworthy-docker.git

@@ -1,0 +1,10 @@
+{
+    "service": {
+        "name": "ferry",
+        "check": {
+            "notes": "Every 10s check nothing...",
+            "script": "/bin/true",
+            "interval": "10s"
+        }
+    }
+}
