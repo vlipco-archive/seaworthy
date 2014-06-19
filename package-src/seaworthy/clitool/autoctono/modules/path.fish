@@ -3,9 +3,9 @@
 ## If it is a file, the path will also be expanded to realpath
 ## It does not return a trailling '/' for directories
 ## @param path - a path to be expanded
-#function atn.path.expand
-#  set -l _DIR "$argv[1]" set _FILE ""
-#  if [ -f "$argv[1]" ]
+#function path.expand
+#  set -l _DIR $filepath set _FILE ""
+#  if [ -f $filepath ]
 #    set _DIR "${1%/*}/"
 #    set _FILE "${1/$_DIR/}"
 #  end
@@ -20,9 +20,9 @@
 ## Using a list of search paths, try to find the indicated file
 ## @param filename - the file or dirname to look for
 ## @params lookupdir ... - space separated list of directories to look into
-function atn.path.resolve
-  set -l file "$argv[1]"
-  for folder in $argv[2..-1]
+function path.resolve -a filepath
+  atn.set_rargs $argv
+  for folder in $rargs
     set -l file_path "$folder/$file"
     test -e "$file_path" ; and echo "$file_path" ; and return 0
   end
@@ -31,49 +31,57 @@ end
 
 ## Returns true if the passed path is a directory, false otherwise
 ## @param path - the path to be checked
-function atn.path.is_dir
-  test -d "$argv[1]"
+function path.is_dir -a filepath
+  test -d $filepath
 end
 
 ## Returns true if the passed path is a file, false otherwise
 ## @param path - the path to be checked
-function atn.path.is_file
-  test -f "$argv[1]"
+function path.is_file -a filepath
+  test -f $filepath
 end
 
 ## Returns whether the path is a file
 ## @param path - the path to be checked
-function atn.path.is_block
-  test -b "$argv[1]"
+function path.is_block -a filepath
+  test -b $filepath
 end
 
 ## Returns whether the path is readable
 ## @param path - the path to be checked
-function atn.path.is_readable
-  test -r "$argv[1]"
+function path.is_readable -a filepath
+  test -r $filepath
 end
 
 ## Returns whether the path is writable
 ## @param path - the path to be checked
-function atn.path.is_writable
-  test -w "$argv[1]"
+function path.is_writable -a filepath
+  test -w $filepath
 end
 ## Returns whether the path is executable
 ## @param path - the path to be checked
-function atn.path.is_executable
-  test -x "$argv[1]"
+function path.is_executable -a filepath
+  test -x $filepath
+end
+
+function path.exists -a filepath
+  test -e $filepath
+end
+
+function path.not_found -a filepath
+  not path.exists $filepath
 end
 
 ## Returns whether the path is older than another path
 ## @param path - the path to be checked
 ## @param another_path - the path to be checked against
-function atn.path.is_older
-  test "$argv[1]" -ot "$argv[2]"
+function path.is_older -a filepath_a filepath_b
+  test $filepath_a -ot $filepath_b
 end
 
 ## Returns whether the path is newer than another path
 ## @param path - the path to be checked
 ## @param another_path - the path to be checked against
-function atn.path.is_newer
-  test "$argv[1]" -nt "$argv[2]"
+function path.is_newer -a filepath_a filepath_b
+  test $filepath_a -nt $filepath_b
 end

@@ -15,7 +15,7 @@ end
 
 function _disable_units
 	set -l units_dir "$target_dir/units"
-	if atn.path.dir? "$units_dir"
+	if path.dir? "$units_dir"
 		for unit in (find $units_dir -type f)
 			set -l unit_name (basename $unit)
 			atn.info "Stopping $unit_name ... "
@@ -29,7 +29,7 @@ function _disable_units
 end
 
 function _remove_dir
-	atn.path.dir? "$target_dir" ; or atn.end "Component is not enabled, skipping"
+	path.dir? "$target_dir" ; or atn.end "Component is not enabled, skipping"
 	atn.info "Removing $target_dir"
 	rm -rf "$target_dir"
 end

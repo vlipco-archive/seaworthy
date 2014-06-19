@@ -11,7 +11,7 @@
 
 ## Returns whether the path exists
 ## @param path - the path to be checked
-function atn.path.exists
+function path.exists
   test -e $argv[1]
 end
 

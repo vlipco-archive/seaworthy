@@ -1,47 +1,27 @@
-# requires rainbow.fish
-function atn.log.info
-  echoyellow "$argv"
+# don't use rargs here, it'll cause a loop
+function echo.color -a color
+  set_color $color
+  echo $argv[2..-1]
+  set_color normal
 end
-
-function atn.log.error
-  echored "$argv" 1>&2
-end
-
-
-#  Copyright 2013 Manuel Gutierrez <dhunterkde@gmail.com>
-#  https://githuatn.com/xr09/rainbow.fish
-#  Bash helper functions to put colors on your scripts
-#
-#  Usage example:
-#  set vargreen (echogreen "Grass is green")
-#  echo "Coming next: $vargreen"
-#
-
-function _colortext
-  echo -e " \e[1;$argv[2]m$argv[1]\e[0m"
-end
-
  
-function echogreen
-  echo (_colortext "$argv[1]" 32)
+# todo convert this to a loop
+function echo.red;     echo.color red $argv;      end
+function echo.green;   echo.color green $argv;    end
+function echo.yellow;  echo.color yellow $argv;   end
+function echo.blue;    echo.color blue $argv;     end
+function echo.magenta;  echo.color magenta $argv;   end
+function echo.cyan;    echo.color cyan $argv;     end
+
+# requires rainbow.fish
+function log.info
+  echo.yellow "$argv"
 end
 
-function echored
-  echo (_colortext "$argv[1]" 31)
+function log.error
+  echo.red "$argv" 1>&2
 end
 
-function echoblue
-  echo (_colortext "$argv[1]" 34)
-end
-
-function echopurple
-  echo (_colortext "$argv[1]" 35)
-end
-
-function echoyellow
-  echo (_colortext "$argv[1]" 33)
-end
-
-function echocyan
-  echo (_colortext "$argv[1]" 36)
+function log.debug
+  echo.blue "$argv"
 end

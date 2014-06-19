@@ -2,21 +2,17 @@
 
 source (dirname (status --current-filename))/autoctono/atn.fish
 
-#atn.set atn.working_dir $PWD
-
-#cd $script_path > /dev/null
-
-#atn.module.require task
-#atn.module.require rainbow
-
 atn.task.add "consul" "Consul cluster operations"
 #atn.task.add components 	"Manage local cluster components"
 #atn.task.add waypoint 	"Waypoint component operations"
 
-
-if set -q argv[1]
-	set -l task $argv[1]; set -e argv[1]
-	atn.task.run $task $argv
-else
-	echo "No task was given"
+function main -a task
+	if test $task
+		atn.set_rargs $argv
+		atn.task.run $task $rargs
+	else
+		echo "No task was given"
+	end
 end
+
+main $argv

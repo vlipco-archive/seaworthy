@@ -14,7 +14,7 @@ end
 function _common.run_hook
 	set -l hook_name "$argv[1]"
 	set -l hook_path "$target_dir/hooks/$hook_name"
-	if atn.path.file? "$hook_path"
+	if path.file? "$hook_path"
 		atn.info "Running $hook_name hook"
 		$hook_path ; or atn.abort "$hook_name didn't exit with 0"
 	end
@@ -23,7 +23,7 @@ end
 function _common.clean_broken_links
 	#atn.info "Cleaning symlinks"
 	for folder in /etc/systemd/system /usr/bin /usr/sbin /var/cluster/active/checks /var/cluster/active
-		atn.path.dir? $folder ; or break
+		path.dir? $folder ; or break
 		for broken in (find -L "$folder" -type l)
 			# TODO add verbose flag to print this
 			#echo "Removing broken link $broken"

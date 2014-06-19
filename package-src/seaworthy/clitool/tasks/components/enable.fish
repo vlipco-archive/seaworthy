@@ -25,7 +25,7 @@ end
 
 function _fail_with_cleanup
 	atn.error "Error: $argv[1]"
-	if atn.path.dir? "$target_dir"
+	if path.dir? "$target_dir"
 		echo "Force removing copied component directory"
 		rm -rf "$target_dir"
 	end
@@ -36,7 +36,7 @@ end
 
 function _check_consul_config
 	set -l consul_dir "$target_dir/consul"
-	atn.path.dir? "$consul_dir" ; or return 0
+	path.dir? "$consul_dir" ; or return 0
 	atn.info "Checking syntax of consul config files"
 	for config_file in (find "$consul_dir" -name "*.json")
 		jq -n -f "$config_file" > /dev/null \
@@ -46,7 +46,7 @@ end
 
 function _link_consul_config
 	set -l consul_dir "$target_dir/consul"
-	atn.path.dir? "$consul_dir" ; or return 0
+	path.dir? "$consul_dir" ; or return 0
 	atn.info "Linking consul config files:"
 	for config_file in (find "$consul_dir" -name "*.json")
 		set -l filename (basename $config_file)
@@ -59,12 +59,12 @@ end
 function _link_binaries
 	for executable_dir in bin sbin
 		set -l bin_dir "$target_dir/$executable_dir"
-		atn.path.dir? "$bin_dir" ; or break
+		path.dir? "$bin_dir" ; or break
 		atn.info "Linking exectuables to /usr/$executable_dir"
 		for file in (find "$bin_dir" -type f -executable)
 			set -l filename (basename "$file")
 			set -l target_file "/usr/$executable_dir/$filename"
-			if atn.path.exists "$target_file"
+			if path.exists "$target_file"
 				_fail_with_cleanup "$target_file exists and collides with $file"
 			end
 			echo "  $filename"
@@ -75,7 +75,7 @@ end
 
 function _link_events
 	set -l events_dir "$target_dir/events"
-	atn.path.dir? "$events_dir" ; or return 0
+	path.dir? "$events_dir" ; or return 0
 	for event_bin in (find "$events_dir" -type f -executable)
 		set -l filename (basename $event_bin)
 		set -l destination_file "$CLUSTER_DIR/events/$filename"
@@ -86,7 +86,7 @@ end
 
 function _link_checks
 	set -l checks_dir "$target_dir/checks"
-	atn.path.dir? "$checks_dir" ; or return 0
+	path.dir? "$checks_dir" ; or return 0
 	for check_bin in (find "$checks_dir" -type f -executable)
 		set -l filename (basename $check_bin)
 		set -l destination_file "$CLUSTER_DIR/checks/$filename"
@@ -98,7 +98,7 @@ end
 
 function _link_events
 	set -l events_dir "$target_dir/events"
-	atn.path.dir? "$events_dir" ; or return 0
+	path.dir? "$events_dir" ; or return 0
 	for event_bin in (find "$events_dir" -type f -executable)
 		set -l filename (basename $event_bin)
 		set -l destination_file "$CLUSTER_DIR/events/$filename"
@@ -111,7 +111,7 @@ function _copy_component
 	if atn.resolve_dir_path "$component" ${COMP_SOURCES[@]} > /dev/null
 		set -l source_dir (atn.resolve_dir_path "$component" ${COMP_SOURCES[@]})
 		atn.info "Source of $component component found in $source_dir"
-		atn.path.dir? "$target_dir" ; and atn.end "Component is already enabled, skipping"
+		path.dir? "$target_dir" ; and atn.end "Component is already enabled, skipping"
 		atn.info "Copying to $target_dir"
 		cp -R "$source_dir" "$target_dir/"
 	else
@@ -136,7 +136,7 @@ end
 
 function _enable_units
 	set -l units_dir "$target_dir/units"
-	if atn.path.dir? "$units_dir"
+	if path.dir? "$units_dir"
 		for unit in (find $units_dir -type f)
 			atn.info "Enabling (basename $unit)"
 			systemctl enable "$unit"

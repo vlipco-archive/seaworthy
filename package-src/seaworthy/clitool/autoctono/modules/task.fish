@@ -4,44 +4,40 @@
 ## describing it.
 ## @param name - the name of the task
 ## @param description - a brief description for the task
-function atn.task.add
-#  echo "---> adding task $argv[1]"
-  if atn.task.exists $argv[1]
-    #echo "---> found task $argv[1]"
-    atn.set "atn.tasks.$argv[1]" "$argv[2]"
+function atn.task.add -a task description
+  atn.debug "adding task $argv[1]"
+  if atn.task.exists $task
+    atn.set "atn.tasks.$task" $description
+    atn.debug "task $task is now defined"
   else
     # TODO make TaskNotFound exception
-    atn.abort "Task '$argv[1]' was not found"
+    atn.abort "Task '$task' was not found"
   end
 end
 
 ## Run a given task name. It raises an exception if the task was not added
 ## @param task - the name of the task to run
-function atn.task.run
-
-  set -l task $argv[1]
-  set -e argv[1]
-
-  if atn.task.exists "$task"
+function atn.task.run -a task
+  atn.set_rargs $argv
+  if atn.task.exists $task
     set -l task_path (atn.task.resolve_path $task)
-    if atn.path.is_dir "$task_path"
+    if path.is_dir $task_path
       # this is a group of tasks
       source "$task_path/common.fish"
       eval "task.$task.common.run"
-      if set -q argv[1]
-        set -l subtask $argv[1]
-        set -e argv[1]
-        #echo "---> sourcing $task_path/$subtask.fish" 
+      if test "$rargs"
+        set -l subtask $rargs[1]; set -e rargs[1]
+        atn.debug "sourcing $task_path/$subtask.fish" 
         source "$task_path/$subtask.fish" 
-        eval "task.$task.$subtask.run" $argv
+        eval "task.$task.$subtask.run" $rargs
       else
-        #echo "---> running default task"
+        atn.debug "running default task"
         eval "task.$task.default.run"
       end
     else
       # this is a single task
       source "$task_path"
-      eval "task.$task.run" $argv
+      eval "task.$task.run" $rargs
     end
   else
     atn.abort "Task '$task' is unknown" #TaskNotKnown
@@ -52,13 +48,13 @@ end
 ## @param task - the name of the task
 function atn.task.exists
   set -l found_path (atn.task.resolve_path "$argv[1]")
-  #echo "---> task $argv[1] found in $found_path"
+  atn.debug "task $argv[1] found in $found_path"
   test -n "$found_path" ; return $status
 end
 
 ## Resolves a given task name to its filename
 ## @param task - the name of the task
 function atn.task.resolve_path
-  atn.path.resolve "$argv[1].fish" $atn_tasks_path
-  or atn.path.resolve "$argv[1]" $atn_tasks_path
+  path.resolve "$argv[1].fish" $atn_tasks_path
+  or path.resolve "$argv[1]" $atn_tasks_path
 end

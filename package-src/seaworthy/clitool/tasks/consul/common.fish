@@ -4,5 +4,5 @@ function task.consul.common.run
 end
 
 function task.consul.default.run
-	echo "no command was given"
+	atn.abort "no command was given to consul subcmd"
 end

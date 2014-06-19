@@ -1,0 +1,7 @@
+#!./parser.fish
+
+function exists?
+	echo "yes!"
+end
+
+exists?

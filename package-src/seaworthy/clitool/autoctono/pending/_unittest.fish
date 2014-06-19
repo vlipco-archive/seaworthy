@@ -20,8 +20,8 @@ end
 ## @param return code - return code of the command
 function atn.unittest.assert_success
   if [ $argv[1] -gt 0 ]
-    atn.log.error "'$argv'... FAIL"
-    atn.log.error "Expected TRUE, but exit code is NOT 0"
+    log.error "'$argv'... FAIL"
+    log.error "Expected TRUE, but exit code is NOT 0"
     let _atn_ASSERTIONS_FAILED++
     return 1
   end
@@ -33,8 +33,8 @@ end
 ## @param func_name - Name of the function
 function atn.unittest.assert_error
   if [ $argv[1] -eq 0 ]
-    atn.log.error "'$argv'... FAIL"
-    atn.log.error "Expected FALSE, but exit code is 0"
+    log.error "'$argv'... FAIL"
+    log.error "Expected FALSE, but exit code is 0"
     let _atn_ASSERTIONS_FAILED++
     return 1
   end
@@ -50,8 +50,8 @@ function atn.unittest.assert_equal
   shift
   set -l result "$argv[1]"
   if [ "$val" !set   "$result" ]
-    atn.log.error "'$argv' equals to '$val'... FAIL"
-    atn.log.error "Expected '$val', but it was returned '$result'"
+    log.error "'$argv' equals to '$val'... FAIL"
+    log.error "Expected '$val', but it was returned '$result'"
     let _atn_ASSERTIONS_FAILED++
     return 1
   end
@@ -72,7 +72,7 @@ function atn.unittest.assert_raise
     let _atn_ASSERTIONS_PASSED++
   else
     let _atn_ASSERTIONS_FAILED++
-    atn.log.error "'$argv[1]' has not raised '$argv[2]' as expected..."
+    log.error "'$argv[1]' has not raised '$argv[2]' as expected..."
   end
   unset -f catch_exception
 end
