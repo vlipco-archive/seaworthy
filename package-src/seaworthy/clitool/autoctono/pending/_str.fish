@@ -7,6 +7,10 @@ function atn.str.replace
   echo ${varname/$search/$replace}
 end
 
+###
+# egt with default? fallback string value
+##
+
 ## Returns a part of the string. If no length is given,
 ## it will return until the last char of the string. Negative
 ## lengths are relative from the back of the string

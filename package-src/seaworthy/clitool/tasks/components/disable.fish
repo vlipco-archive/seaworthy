@@ -1,7 +1,7 @@
 function task.components.disable.run
 	# assign reusable global vars
 	set component (sanitize_arg $argv[1]); shift
-	set target_dir "$COMP_TARGETS/$component"
+	set target_dir "$components_target/$component"
 
 	_common.run_hook "before-disable"
 	_disable_units

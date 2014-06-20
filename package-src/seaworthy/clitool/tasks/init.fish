@@ -1,5 +1,6 @@
 function task.init.run
-	if path.not_found "/etc/resolv.conf.orig"
+
+	if path.is.absent "/etc/resolv.conf.orig"
 		echo "Saving copy of current resolv.conf to /etc/resolv.conf.orig"
 		cat /etc/resolv.conf > /etc/resolv.conf.orig
 	end

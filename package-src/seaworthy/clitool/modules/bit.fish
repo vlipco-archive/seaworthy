@@ -29,7 +29,7 @@ function bit.compile_string
 	# read each line, the OR is in case the file's missing
 	# a new line in the end. more info: http://bit.ly/1xFVHKU
 	# set IFS '' preserves whitespace when reading the lines
-	while set IFS '' read line ; or [ -n "$line" ]
+	while read line #; or [ -n "$line" ]
 
 		if echo "$line" | grep -G "$pattern" -q
 			# this line has expressions in it
@@ -54,8 +54,6 @@ function bit.compile_string
 	end
 end
 
-function bit.compile_template
-	set -l template_file "$argv[1]"
-	set -l output_file "$argv[2]"
+function bit.compile_template -a template_file output_file
 	cat "$template_file" | bit.compile_string > "$output_file"
 end

@@ -31,36 +31,36 @@ end
 
 ## Returns true if the passed path is a directory, false otherwise
 ## @param path - the path to be checked
-function path.is_dir -a filepath
+function path.is.dir -a filepath
   test -d $filepath
 end
 
 ## Returns true if the passed path is a file, false otherwise
 ## @param path - the path to be checked
-function path.is_file -a filepath
+function path.is.file -a filepath
   test -f $filepath
 end
 
 ## Returns whether the path is a file
 ## @param path - the path to be checked
-function path.is_block -a filepath
+function path.is.block -a filepath
   test -b $filepath
 end
 
 ## Returns whether the path is readable
 ## @param path - the path to be checked
-function path.is_readable -a filepath
+function path.is.readable -a filepath
   test -r $filepath
 end
 
 ## Returns whether the path is writable
 ## @param path - the path to be checked
-function path.is_writable -a filepath
+function path.is.writable -a filepath
   test -w $filepath
 end
 ## Returns whether the path is executable
 ## @param path - the path to be checked
-function path.is_executable -a filepath
+function path.is.executable -a filepath
   test -x $filepath
 end
 
@@ -68,20 +68,20 @@ function path.exists -a filepath
   test -e $filepath
 end
 
-function path.not_found -a filepath
+function path.is.absent -a filepath
   not path.exists $filepath
 end
 
 ## Returns whether the path is older than another path
 ## @param path - the path to be checked
 ## @param another_path - the path to be checked against
-function path.is_older -a filepath_a filepath_b
+function path.is.older -a filepath_a filepath_b
   test $filepath_a -ot $filepath_b
 end
 
 ## Returns whether the path is newer than another path
 ## @param path - the path to be checked
 ## @param another_path - the path to be checked against
-function path.is_newer -a filepath_a filepath_b
+function path.is.newer -a filepath_a filepath_b
   test $filepath_a -nt $filepath_b
 end

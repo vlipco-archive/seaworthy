@@ -3,7 +3,7 @@ function task.components.enable.run
 	
 	# assign reusable global vars
 	set component (sanitize_arg $argv[1]); shift
-	set target_dir "$COMP_TARGETS/$component"
+	set target_dir "$components_target/$component"
 
 	_copy_component
  	_common.clean_broken_links
@@ -50,7 +50,7 @@ function _link_consul_config
 	atn.info "Linking consul config files:"
 	for config_file in (find "$consul_dir" -name "*.json")
 		set -l filename (basename $config_file)
-		set -l destination_file "$CLUSTER_DIR/consul/$filename"
+		set -l destination_file "$cluster_dir/consul/$filename"
 		echo "  $filename"
 		ln -s "$config_file" "$destination_file"
 	end
@@ -78,7 +78,7 @@ function _link_events
 	path.dir? "$events_dir" ; or return 0
 	for event_bin in (find "$events_dir" -type f -executable)
 		set -l filename (basename $event_bin)
-		set -l destination_file "$CLUSTER_DIR/events/$filename"
+		set -l destination_file "$cluster_dir/events/$filename"
 		atn.info "Linking '$event_bin' event handler"
 		ln -s "$event_bin" "$destination_file"
 	end
@@ -89,7 +89,7 @@ function _link_checks
 	path.dir? "$checks_dir" ; or return 0
 	for check_bin in (find "$checks_dir" -type f -executable)
 		set -l filename (basename $check_bin)
-		set -l destination_file "$CLUSTER_DIR/checks/$filename"
+		set -l destination_file "$cluster_dir/checks/$filename"
 		atn.info "Linking '$check_bin' check"
 		ln -s "$check_bin" "$destination_file"
 	end
@@ -101,21 +101,21 @@ function _link_events
 	path.dir? "$events_dir" ; or return 0
 	for event_bin in (find "$events_dir" -type f -executable)
 		set -l filename (basename $event_bin)
-		set -l destination_file "$CLUSTER_DIR/events/$filename"
+		set -l destination_file "$cluster_dir/events/$filename"
 		atn.info "Linking '$event_bin' event handler"
 		ln -s "$event_bin" "$destination_file"
 	end
 end
 
 function _copy_component
-	if atn.resolve_dir_path "$component" ${COMP_SOURCES[@]} > /dev/null
-		set -l source_dir (atn.resolve_dir_path "$component" ${COMP_SOURCES[@]})
+	if atn.resolve_dir_path "$component" ${component_sources[@]} > /dev/null
+		set -l source_dir (atn.resolve_dir_path "$component" ${component_sources[@]})
 		atn.info "Source of $component component found in $source_dir"
 		path.dir? "$target_dir" ; and atn.end "Component is already enabled, skipping"
 		atn.info "Copying to $target_dir"
 		cp -R "$source_dir" "$target_dir/"
 	else
-		_fail_with_cleanup "Unable to find $component in: ${COMP_SOURCES[@]}"
+		_fail_with_cleanup "Unable to find $component in: ${component_sources[@]}"
 	end
 end
 

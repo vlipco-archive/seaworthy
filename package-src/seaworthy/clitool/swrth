@@ -1,10 +1,10 @@
 #!/usr/bin/env fish
 
 source (dirname (status --current-filename))/autoctono/atn.fish
-
-atn.task.add "consul" "Consul cluster operations"
-#atn.task.add components 	"Manage local cluster components"
-#atn.task.add waypoint 	"Waypoint component operations"
+#exit 1
+atn.task.add consul 	"Consul cluster operations"
+atn.task.add components "Manage local cluster components"
+atn.task.add waypoint 	"Waypoint component operations"
 
 function main -a task
 	if test $task

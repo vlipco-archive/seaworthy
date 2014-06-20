@@ -1,10 +1,8 @@
 ## stuff exposed to all components subcommands
 
-set CLUSTER_DIR "/var/cluster/active"
-set COMP_TARGETS "$CLUSTER_DIR/components"
-
-COMP_SOURCES[0]set  "/usr/local/lib/seaworthy/components"
-COMP_SOURCES[1]set  "/usr/lib/seaworthy/components"
+set cluster_dir "/var/cluster/active"
+set components_target "$cluster_dir/components"
+set component_sources "/usr/local/lib/seaworthy/components" "/usr/lib/seaworthy/components"
 
 function task.components.common.run
 	atn.module.require extras
@@ -22,8 +20,10 @@ end
 
 function _common.clean_broken_links
 	#atn.info "Cleaning symlinks"
-	for folder in /etc/systemd/system /usr/bin /usr/sbin /var/cluster/active/checks /var/cluster/active
-		path.dir? $folder ; or break
+	set clean_dirs "/etc/systemd/system" "/usr/bin" "/usr/sbin" \
+	  "/var/cluster/active/checks" "/var/cluster/active"
+	for folder in $clean_dirs
+		path.is.dir $folder ; or break
 		for broken in (find -L "$folder" -type l)
 			# TODO add verbose flag to print this
 			#echo "Removing broken link $broken"

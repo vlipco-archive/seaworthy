@@ -20,8 +20,8 @@ function consul.leader
 	end
 end
 
-function consul.url
-	echo (atn.get consul.addr)$argv[1]
+function consul.url -a url
+	echo (atn.get consul.addr)$url
 end
 
 function consul.ensure_leader_exists

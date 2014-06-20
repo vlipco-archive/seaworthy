@@ -11,17 +11,15 @@ set atn_modules_path "$bundle_src/modules" "$atn_src/modules"
 set atn_tasks_path "$bundle_src/tasks"
 
 # bootstrap sourcing
-source "$atn_src/modules/arguments.fish"
+source "$atn_src/corefunc/arguments.fish"
+source "$atn_src/corefunc/misc.fish"
+
+source "$atn_src/modules/log.fish"
 source "$atn_src/modules/path.fish"
 source "$atn_src/modules/module.fish"
+source "$atn_src/modules/task.fish"
 
 # from here require works
-module.require misc
-module.require variables
-module.require log
-module.require task
-
-# todo add flag to skip printing
-function atn.debug
-	log.debug $argv
-end
+#module.require log
+#exit 1
+#module.require task
