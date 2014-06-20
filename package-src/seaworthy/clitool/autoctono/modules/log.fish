@@ -23,5 +23,7 @@ function log.error
 end
 
 function log.debug
-  echo.blue "$argv"
+  if set -q bundle_debug_messages
+  	echo.blue "$argv" 1>&2
+  end
 end

@@ -30,13 +30,12 @@ end
 ## In case it is not raises `DependencyNotMetException`.
 ##
 ## @param dependency - a string containing the name or a path of the command to be checked
-function atn.depends_on
-  set -l dependency "$argv[1]"
-  if ! which -s "$dependency"
-    atn.raise DependencyNotMetException "This script depends on '$dependency', but it is not executable. Check your \$PATH definition or install it before running."
-    return 1
-  end
-end
+#function atn.depends_on -a dependency
+#  if ! which -s "$dependency"
+#    atn.raise DependencyNotMetException "This script depends on '$dependency', but it is not #executable. Check your \$PATH definition or install it before running."
+#    return 1
+#  end
+#end
 
 #function atn.resolve_dir_path
 #  set -l dir_name "$argv[1]"

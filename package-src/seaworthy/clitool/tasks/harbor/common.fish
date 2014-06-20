@@ -1,6 +1,6 @@
 function task.harbor.common.run
-	atn.module.require extras
-	atn.module.require consul
+	module.require extras
+	module.require consul
 end
 
 function _tcp_docker

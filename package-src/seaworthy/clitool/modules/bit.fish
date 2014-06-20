@@ -18,42 +18,31 @@
 #
 # $ cat template.json.bit | bitp > compiled.json
 
-function bit.compile_string
-	set -l l_delim "{{"
-	set -l r_delim "}}"
+function bit.compile_template -a template_file output_file
+
+	set l_delim "{{"
+	set r_delim "}}"
 	# the pattern is: get everything between delimiters that doesn't
 	# have the right delimeter. This allow multiple interpolations
 	# per line to occur
-	set -l pattern "${l_delim}[^${r_delim}]*${r_delim}"
+	set exp_pattern $l_delim'[^'$r_delim']*'$r_delim
 
-	# read each line, the OR is in case the file's missing
-	# a new line in the end. more info: http://bit.ly/1xFVHKU
-	# set IFS '' preserves whitespace when reading the lines
-	while read line #; or [ -n "$line" ]
+	log.debug "Compiling $template_file -> $output_file"
+	begin
+		for line in (cat "$template_file")
+			if echo $line | grep -qG $exp_pattern
+				set parsed_line $line
+				for expression in (echo $line | grep -o $exp_pattern)
+					set -l bash_expression (echo $expression | sed "s/$l_delim//")
+					set bash_expression (echo $bash_expression | sed "s/$r_delim//")
+					set -l result (bash -l -c "$bash_expression")
+					set parsed_line (echo $parsed_line | sed "s/$expression/$result/g")
+				end
+				echo $parsed_line
+			else
+				echo $line # no expression in the line, leave it as is
+			end
 
-		if echo "$line" | grep -G "$pattern" -q
-			# this line has expressions in it
-			set -l parsed_line "$line"
-
-			while read expression
-				# remove delimiters from the expression
-				set -l bash_expression ${expression/$l_delim/}
-				set bash_expression ${bash_expression/$r_delim/}
-
-				# execute the expression with bash as subprocess
-				# TODO raise exceptions on failure
-				set -l result (bash -l -c "$bash_expression")
-				set parsed_line ${parsed_line/$expression/$result}
-			end <<< (echo "$line" | grep -o "$pattern")
-
-			echo "$parsed_line"
-		else
-			# no expression in the line, leave it as is
-			echo "$line"
 		end
-	end
-end
-
-function bit.compile_template -a template_file output_file
-	cat "$template_file" | bit.compile_string > "$output_file"
+	end > $output_file
 end

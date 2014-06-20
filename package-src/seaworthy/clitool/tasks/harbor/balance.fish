@@ -1,6 +1,6 @@
 function task.harbor.balance.run
-	atn.module.require consul
-	atn.info "Balancing local harbor (date)"
+	module.require consul
+	log.info "Balancing local harbor (date)"
 	_balance_containers_ownership
 	_handle_containers
 end
@@ -9,10 +9,10 @@ end
 function _balance_containers_ownership
 	for offer in (_offers_lists)
 		if ! _offer_has_owner "$offer"
-			atn.info "I should get $offer"
+			log.info "I should get $offer"
 			_acquire_offer "$offer"
 			if _is_offer_mine "$offer"
-				atn.info "is mine!!"
+				log.info "is mine!!"
 			else
 				echo "didn't get it :("
 				echo "it belongs to: (_offer_owner "$offer")"

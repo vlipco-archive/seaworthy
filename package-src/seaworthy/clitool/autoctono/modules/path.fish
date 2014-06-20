@@ -20,11 +20,16 @@
 ## Using a list of search paths, try to find the indicated file
 ## @param filename - the file or dirname to look for
 ## @params lookupdir ... - space separated list of directories to look into
-function path.resolve -a filepath
+function path.resolve -a file_name
   atn.set_rargs $argv
   for folder in $rargs
-    set -l file_path "$folder/$file"
-    test -e "$file_path" ; and echo "$file_path" ; and return 0
+    set -l file_path "$folder/$file_name"
+    atn.debug "Checking if $file_path exists"
+    if path.exists $file_path
+      atn.debug "  -> yes"
+      echo "$file_path"
+      return 0
+    end
   end
   return 1
 end

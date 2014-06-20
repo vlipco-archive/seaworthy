@@ -1,5 +1,4 @@
-#!/bin/bash
-set -eo pipefail
+#!/usr/bin/env fish
 echo "Linking docker.service overrides"
 ln -s /var/cluster/active/components/base/misc/docker.service.d \
   /etc/systemd/system/docker.service.d

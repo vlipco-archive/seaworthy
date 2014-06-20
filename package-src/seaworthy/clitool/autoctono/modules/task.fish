@@ -4,57 +4,68 @@
 ## describing it.
 ## @param name - the name of the task
 ## @param description - a brief description for the task
-function atn.task.add -a task description
-  atn.debug "adding task $argv[1]"
-  if atn.task.exists $task
-    atn.set "atn.tasks.$task" $description
-    atn.debug "task $task is now defined"
-  else
-    # TODO make TaskNotFound exception
-    atn.abort "Task '$task' was not found"
-  end
-end
+#function task.add -a task description
+#  log.debug "adding task $task"
+#  if task.exists $task
+#    #atn.set "tasks.$task" $description
+#  else
+#    # TODO make TaskNotFound exception
+#    atn.abort "task '$task' was not found"
+#  end
+#end
 
 ## Run a given task name. It raises an exception if the task was not added
 ## @param task - the name of the task to run
-function atn.task.run -a task
+function task.run -a task
   atn.set_rargs $argv
-  if atn.task.exists $task
-    set -l task_path (atn.task.resolve_path $task)
-    if path.is_dir $task_path
-      # this is a group of tasks
-      source "$task_path/common.fish"
-      eval "task.$task.common.run"
-      if test "$rargs"
-        set -l subtask $rargs[1]; set -e rargs[1]
-        atn.debug "sourcing $task_path/$subtask.fish" 
-        source "$task_path/$subtask.fish" 
-        eval "task.$task.$subtask.run" $rargs
-      else
-        atn.debug "running default task"
-        eval "task.$task.default.run"
-      end
+  #task.exists $task; or atn.abort "task '$task' is unknown" #TaskNotKnown
+
+  set task_path (task.resolve_path $task)
+
+  if path.is.dir $task_path
+    # this is a group of tasks
+    atn.debug "sourcing $task_path/common.fish"
+    source "$task_path/common.fish"
+    set -l common_task "task.$task.common.run"
+    functions -q $common_task ; and eval $common_task
+    if test "$rargs"
+      set -l subtask $rargs[1]; set -e rargs[1]
+      atn.debug "sourcing $task_path/$subtask.fish" 
+      source "$task_path/$subtask.fish" 
+      eval "task.$task.$subtask.run" $rargs
     else
-      # this is a single task
-      source "$task_path"
-      eval "task.$task.run" $rargs
+      atn.debug "running default task"
+      set -l default_task "task.$task.default.run"
+      functions -q $default_task
+      or atn.abort "couldn't find a task to execute, not even $default_task"
+      eval $default_task
     end
   else
-    atn.abort "Task '$task' is unknown" #TaskNotKnown
+    # this is a single task
+    source $task_path
+    eval "task.$task.run" $rargs
   end
+
 end
 
 ## Checks whether a task is loaded
 ## @param task - the name of the task
-function atn.task.exists
-  set -l found_path (atn.task.resolve_path "$argv[1]")
-  atn.debug "task $argv[1] found in $found_path"
-  test -n "$found_path" ; return $status
-end
+#function task.exists -a task
+#  log.info "-- $task finding"
+#  set found_path (task.resolve_path $task)
+#  if test "$found_path"
+#    log.debug "task '$task' found in $found_path"
+#  #else
+#  #  atn.abort "task '$task' was not found"
+#  #  return 1
+#  end
+#end
 
 ## Resolves a given task name to its filename
 ## @param task - the name of the task
-function atn.task.resolve_path
-  path.resolve "$argv[1].fish" $atn_tasks_path
-  or path.resolve "$argv[1]" $atn_tasks_path
+function task.resolve_path -a task
+  #log.info "** $atn_tasks_path resolving **"
+  path.resolve "$task.fish" $atn_tasks_path
+  or path.resolve "$task" $atn_tasks_path
+  or atn.abort "task '$task' was not found"
 end

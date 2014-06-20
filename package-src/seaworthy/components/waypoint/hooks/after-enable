@@ -1,5 +1,4 @@
-#!/bin/bash
-set -eo pipefail
+#!/usr/bin/env fish
 
 echo "Initializing gitreceive"
 swrth waypoint init

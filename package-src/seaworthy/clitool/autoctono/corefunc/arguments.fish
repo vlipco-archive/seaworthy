@@ -33,15 +33,12 @@ end
 
 function atn.set_rargs --no-scope-shadowing
 	if test "$argv"
-		atn.debug "Parsing rargs of '"(atn.self_name)"' function"
 		set -l rargs_left (count (atn.named_arguments (atn.self_name)))
 		set rargs_left (math $rargs_left + 1)
-
 		if set -q argv[$rargs_left]
-			atn.debug "Starting rargs in argv[$rargs_left]"
 			set rargs $argv[$rargs_left..-1]
 		else
-			atn.debug "Function was called with no rargs, making empty list"
+			atn.debug "Function "(atn.self_name)" was called with no remaining args"
 			set rargs
 		end
 	else

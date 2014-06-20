@@ -24,8 +24,8 @@ function atn.abort
   exit 2
 end
 
-function atn.end
-	echo "$argv"
+function atn.done
+	echo.green $argv
 	exit 0
 end
 
@@ -47,7 +47,9 @@ end
 
 # todo add flag to skip printing
 function atn.debug
-	log.debug $argv
+	if set -q atn_debug_messages
+    echo.cyan "|d| $argv" 1>&2
+  end
 end
 
 ## Sets a globally scoped variable using registry Pattern

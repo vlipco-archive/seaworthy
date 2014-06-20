@@ -5,6 +5,6 @@
 set GIT_HOME "/var/cluster/git"
 
 function task.waypoint.common.run
-	atn.module.require extras
+	module.require extras
 end
 

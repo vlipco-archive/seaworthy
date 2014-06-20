@@ -1,15 +1,12 @@
 #!/usr/bin/env fish
 
+#set -g atn_debug_messages
 source (dirname (status --current-filename))/autoctono/atn.fish
-#exit 1
-atn.task.add consul 	"Consul cluster operations"
-atn.task.add components "Manage local cluster components"
-atn.task.add waypoint 	"Waypoint component operations"
 
 function main -a task
 	if test $task
 		atn.set_rargs $argv
-		atn.task.run $task $rargs
+		task.run $task $rargs
 	else
 		echo "No task was given"
 	end

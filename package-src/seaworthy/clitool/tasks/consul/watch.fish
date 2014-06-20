@@ -1,9 +1,9 @@
-_next_index
+function _next_index
 	# gets the largest ModifyIndex to use in the next cycle
 	jq 'sort_by(.ModifyIndex) | reverse | .[0].ModifyIndex'
 end
 
-_watch_loop
+function _watch_loop
 	set -l index "0"
 	while true
 
@@ -12,7 +12,7 @@ _watch_loop
 		set data (curl -s "$url" | jq -r '.' )
 		
 		echo "Query cycle completed, executing handler command '$handler_cmd'"
-		echo $data | $handler_cmd ; or atn.error "Handler command failed"
+		echo $data | $handler_cmd ; or log.error "Handler command failed"
 		
 		set index (echo $data | _next_index)
 

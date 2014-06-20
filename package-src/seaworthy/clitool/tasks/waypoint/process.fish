@@ -1,5 +1,5 @@
 function task.waypoint.process.run
-	atn.module.require consul
+	module.require consul
 	
 	# requires past this point will fail!
 	cd (atn.get atn.working_dir)
