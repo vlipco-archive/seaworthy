@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
 
-#set -g atn_debug_messages
+set -g atn_debug_messages
 source (dirname (status --current-filename))/autoctono/atn.fish
 
 function main -a task

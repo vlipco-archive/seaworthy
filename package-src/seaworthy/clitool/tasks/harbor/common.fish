@@ -15,7 +15,7 @@ function _local_count_of
 	set -l count 0
 	for key in $keys
 		set -l val (consul.kv.get $key)
-		[ "$val" set  = (hostname) ] ; and count=(( $count + 1 ))
+		[ "$val"  == (hostname) ] ; and set count (math $count+1)
 	end
 	echo $count
 end
@@ -27,7 +27,7 @@ function _max_count_of
 	set -l instances (consul.kv.get "apps/external/$argv[1]/instances") 
 	if [ -n "$instances" ]
 		set -l harbors (_matching_harbors_count)
-		echo (( $instances / $harbors ))
+		echo (math $instances/$harbors)
 	else
 		echo 0
 	end
@@ -45,7 +45,7 @@ end
 
 # list of items in the format app.n, e.g: rubyapp.2
 function _offers_lists
-	swrth consul kv ls containers/external | grep "state" | awk -F'/' '{print $argv[1]}'
+	consul.kv.ls containers/external | grep "state" | awk -F'/' '{print $argv[1]}'
 end
 
 function _offer_owner
@@ -53,7 +53,7 @@ function _offer_owner
 end
 
 function _offer_has_owner
-	[ -n (_offer_owner "$argv[1]") ]
+	test (_offer_owner "$argv[1]")
 	return $status
 end
 
@@ -62,7 +62,7 @@ function _acquire_offer
 end
 
 function _is_offer_mine
-	[ (_offer_owner "$argv[1]")" set  = "(hostname) ]
+	[ (_offer_owner "$argv[1]") == (hostname) ]
 	return $status
 end
 
@@ -75,5 +75,5 @@ function _my_offers
 end
 
 function _container_name
-	_tcp_docker inspect --format "{{.Name}}" "$argv[1]" | sed 's|^/; or'
+	_tcp_docker inspect --format "{{.Name}}" "$argv[1]" | sed 's|^/||'
 end

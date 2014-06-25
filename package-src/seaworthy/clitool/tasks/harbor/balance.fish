@@ -1,6 +1,5 @@
 function task.harbor.balance.run
-	module.require consul
-	log.info "Balancing local harbor (date)"
+	log.info "Balancing local harbor" (date)
 	_balance_containers_ownership
 	_handle_containers
 end
@@ -14,11 +13,11 @@ function _balance_containers_ownership
 			if _is_offer_mine "$offer"
 				log.info "is mine!!"
 			else
-				echo "didn't get it :("
-				echo "it belongs to: (_offer_owner "$offer")"
+				echo "didn't get it"
+				echo "it belongs to:" (_offer_owner "$offer")
 			end
 		else
-			echo "Ignoring $offer since it's already owner by (_offer_owner "$offer")"
+			echo "Ignoring $offer since it's already owner by" (_offer_owner "$offer")
 		end
 	end
 end

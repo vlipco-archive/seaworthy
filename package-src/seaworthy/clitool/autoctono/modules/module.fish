@@ -1,7 +1,9 @@
 ## Source a module file
 ## @param module - the name of the module
 function module.require
-    source (module.resolve_path $argv[1])
+  set -l mpath (module.resolve_path $argv[1])
+  atn.debug "Sourcing module $mpath"
+  source $mpath
 end
 
 ## Adds a directory to the end of the module lookup array of directories

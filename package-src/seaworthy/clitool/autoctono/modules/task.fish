@@ -1,22 +1,7 @@
-
-
-## Adds a new task. It is possible to add a description which is used when
-## describing it.
-## @param name - the name of the task
-## @param description - a brief description for the task
-#function task.add -a task description
-#  log.debug "adding task $task"
-#  if task.exists $task
-#    #atn.set "tasks.$task" $description
-#  else
-#    # TODO make TaskNotFound exception
-#    atn.abort "task '$task' was not found"
-#  end
-#end
-
 ## Run a given task name. It raises an exception if the task was not added
 ## @param task - the name of the task to run
 function task.run -a task
+  atn.debug "running task $task"
   atn.set_rargs $argv
   #task.exists $task; or atn.abort "task '$task' is unknown" #TaskNotKnown
 
@@ -47,19 +32,6 @@ function task.run -a task
   end
 
 end
-
-## Checks whether a task is loaded
-## @param task - the name of the task
-#function task.exists -a task
-#  log.info "-- $task finding"
-#  set found_path (task.resolve_path $task)
-#  if test "$found_path"
-#    log.debug "task '$task' found in $found_path"
-#  #else
-#  #  atn.abort "task '$task' was not found"
-#  #  return 1
-#  end
-#end
 
 ## Resolves a given task name to its filename
 ## @param task - the name of the task

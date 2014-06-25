@@ -23,7 +23,7 @@ function task.consul.watch.run
 	consul.ensure_leader_exists
 
 	# remove / in the beginning of the key
-	set key (echo "$argv[1]" | sed 's|^/; or') ; shift
+	set key (echo "$argv[1]" | sed 's|^/||') ; shift
 	set handler_cmd "${@:-cat}"
 	
 	set -l kv "swrth consul kv"

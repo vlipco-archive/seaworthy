@@ -1,0 +1,1 @@
+# a fish implementation of https://github.com/chilladx/config-parser

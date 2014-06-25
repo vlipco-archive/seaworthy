@@ -40,7 +40,7 @@ function consul.kv.ls
 	if [ -z "$argv[1]" ]
 		curl -s (consul.url "/v1/kv/?keys") | jq -r .[]
 	else
-		curl -s (consul.url "/v1/kv/$argv[1]/?keys") | jq -r .[] | sed "s|$argv[1]/; or"
+		curl -s (consul.url "/v1/kv/$argv[1]/?keys") | jq -r .[] | sed "s|$argv[1]/||"
 	end
 end
 
