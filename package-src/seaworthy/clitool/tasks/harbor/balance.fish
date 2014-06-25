@@ -6,6 +6,7 @@ end
 
 
 function _balance_containers_ownership
+	log.debug "Getting offer list to balance"
 	for offer in (_offers_lists)
 		if ! _offer_has_owner "$offer"
 			log.info "I should get $offer"
@@ -23,6 +24,7 @@ function _balance_containers_ownership
 end
 
 function _handle_containers
+	log.debug "Handling containers state"
 	set -l registry "registry.service.consul:5000"
 
 	for offer in (_my_offers)

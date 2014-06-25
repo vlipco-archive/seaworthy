@@ -3,7 +3,7 @@
 function module.require
   set -l mpath (module.resolve_path $argv[1])
   atn.debug "Sourcing module $mpath"
-  source $mpath
+  source $mpath ; or exit $status
 end
 
 ## Adds a directory to the end of the module lookup array of directories

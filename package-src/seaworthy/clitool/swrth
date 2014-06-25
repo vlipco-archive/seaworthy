@@ -1,7 +1,9 @@
 #!/usr/bin/env fish
 
-set -g atn_debug_messages
-source (dirname (status --current-filename))/autoctono/atn.fish
+#set -g atn_debug_messages
+set -g bundle_debug_messages
+
+source (dirname (status --current-filename))/autoctono/atn.fish ; or exit $status
 
 function main -a task
 	if test $task

@@ -10,13 +10,13 @@ function task.run -a task
   if path.is.dir $task_path
     # this is a group of tasks
     atn.debug "sourcing $task_path/common.fish"
-    source "$task_path/common.fish"
+    source "$task_path/common.fish" ; or exit $status
     set -l common_task "task.$task.common.run"
     functions -q $common_task ; and eval $common_task
     if test "$rargs"
       set -l subtask $rargs[1]; set -e rargs[1]
       atn.debug "sourcing $task_path/$subtask.fish" 
-      source "$task_path/$subtask.fish" 
+      source "$task_path/$subtask.fish"  ; or exit $status
       eval "task.$task.$subtask.run" $rargs
     else
       atn.debug "running default task"
@@ -27,7 +27,7 @@ function task.run -a task
     end
   else
     # this is a single task
-    source $task_path
+    source $task_path ; or exit $status
     eval "task.$task.run" $rargs
   end
 

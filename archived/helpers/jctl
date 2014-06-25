@@ -1,2 +1,0 @@
-#!/bin/bash
-journalctl -a -f -u $@

@@ -9,9 +9,9 @@ function _generate_info
 	echo "Role: $role"
 	echo "Max. instances per app in role:"
 	for app in (_apps_in_role "$role")
-		echo "  - $app: (_max_count_of $app)"
+		echo "  - $app:" (_max_count_of $app)
 	end
 	echo "Currently owned containers:"
 	_my_offers | sed 's|^|  - |'
-	echo "Total harbors in role: (_matching_harbors_count)"
+	echo "Total harbors in role:" (_matching_harbors_count)
 end

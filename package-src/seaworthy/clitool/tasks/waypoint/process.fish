@@ -1,19 +1,19 @@
 function task.waypoint.process.run
-	module.require consul
-	
+	#cat -
 	# requires past this point will fail!
-	cd (atn.get atn.working_dir)
+	#cd (atn.get atn.working_dir)
 
-	_netlog `pwd`
-	while read oldrev newrev refname
+	#netlog `pwd`
+	#while read oldrev newrev refname
+	while cat - | read oldrev newrev refname
       # Only run this script for the master branch. You can remove this 
       # if block if you wish to run it for others as well.
-      if [ $refname set   "refs/heads/master" ] 
+      if [ "$refname" = "refs/heads/master" ] 
  
         git archive $newrev | _process "$RECEIVE_REPO" "$newrev"
  
         set rc $status
-        if [ $rc !set   0 ] 
+        if [ $rc != 0 ] 
           echo "      ERROR: failed on rev $newrev - push denied"
           exit $rc
         end
@@ -21,12 +21,11 @@ function task.waypoint.process.run
     end
 end
 
-function _announce { 
-  set msg "---> $argv[1]"
-  echo -e "\e[1;33m${msg}\e[0m"
+function _announce -a msg
+  log.info "---> $msg"
 end
 
-function _indent_output { 
+function _indent_output
   sed -u 's/^/     /'
 end
 
@@ -40,10 +39,10 @@ function _process
 
 	# variables definition
 
-	set role (echo "$argv[1]" | awk -F'/' '{print $argv[1]}')
-	set repository (echo "$argv[1]" | awk -F'/' '{print $argv[2]}')
-	# revision uses only 7 chars
-	set revision "${2:0:7}"
+	set role (echo "$argv[1]" | awk -F'/' '{print $1}')
+	set repository (echo "$argv[1]" | awk -F'/' '{print $2}')
+	# revision uses only 7 chars?
+	set revision $argv[2] #"${2:0:7}"
 	set app_folder "$HOME/slugs/$role/$repository"
 	set revision_folder "$app_folder/$revision"
 
@@ -62,7 +61,7 @@ function _process
 end
 
 function _build_image
-	set builder (cat Seafile | grep builder | awk '{print $argv[2]}')
+	set builder (cat Seafile | grep builder | awk '{print $2}')
 
 	_announce "Getting last version of builder image"
 
@@ -78,7 +77,7 @@ function _build_image
 
 	_announce "Pushing resulting image to the cluster's registry, be patient..."
 
-	_tcp_docker push "$registry_image_name" 1> /dev/null | _indent_output
+	_tcp_docker push "$registry_image_name" > /dev/null | _indent_output
 end
 
 function _save_app_data
@@ -94,10 +93,10 @@ function _save_app_data
 	consul.kv.set $latest_revision_key $revision
 
 
-	set revision_data "(printf '{"receiver":"%s","role":"%s", "date":"%s"}' \
-	    (hostname)" "(date --iso-set 8601 seconds)" "$role")
+	set revision_data (printf '{"receiver":"%s","role":"%s", "date":"%s"}' \
+	    (hostname) (iso_date) "$role")
 
-	consul.kv.set $revisions_cns/$revision "$revision_data"
+	consul.kv.set "$revisions_cns/$revision" "$revision_data"
 
 	set desired_instances (consul.kv.get "$app_cns/instances")
 
@@ -125,10 +124,10 @@ function _handle_containers
 
 	# indent output with the rest
 	echo -n "     "
-	until [ "$running" set  = "$desired_instances" ] ; or [ $wait_cycles -eq 30 ]
+	while [ "$running" -eq "$desired_instances" -o $wait_cycles -eq 30 ]
 	   	# sleep at the beginning, allows instances to boot
 	   	sleep 1
-		set wait_cycles (( $wait_cycles + 1 ))
+		set wait_cycles (math $wait_cycles+1)
 		set running (_running_instances_of "$role/$repository")
 		echo -n "."
 	end

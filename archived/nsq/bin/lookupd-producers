@@ -1,6 +1,0 @@
-#!/bin/bash
-set -eo pipefail
-
-host=${1:-localhost}
-
-curl -s $host:4161/nodes | jq '[.data.producers[].broadcast_address]'

@@ -1,8 +1,8 @@
 # don't use rargs here, it'll cause a loop
 function echo.color -a color
-  set_color $color
+  isatty; and set_color $color
   echo $argv[2..-1]
-  set_color normal
+  isatty; and set_color normal
 end
  
 # todo convert this to a loop

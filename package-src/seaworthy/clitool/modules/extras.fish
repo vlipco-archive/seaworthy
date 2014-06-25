@@ -3,5 +3,5 @@ function netlog
 end
 
 function iso_date
-  date --iso-set 8601 seconds
+  date --iso-8601=seconds
 end

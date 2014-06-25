@@ -1,1 +1,0 @@
-curl localhost:8080 -s -w "status: %{http_code} total_time: %{time_total}\n" -H 'Host: abc'

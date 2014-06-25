@@ -1,4 +1,0 @@
-#!/bin/bash
-set -eo pipefail
-
-curl -d "$2" "127.0.0.1:4151/put?topic=$1"

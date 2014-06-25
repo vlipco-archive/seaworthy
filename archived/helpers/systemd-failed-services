@@ -1,3 +1,0 @@
-#!/bin/bash
-
-systemctl -t service --failed | grep failed | grep -v 'masked' | awk '{print $1 }' 2>/dev/null
