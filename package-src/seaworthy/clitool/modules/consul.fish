@@ -33,7 +33,9 @@ function consul.kv.set -a key value
 end
 
 function consul.kv.get -a key
-	curl -s (consul.url "/v1/kv/$key") | jq -r .[].Value | base64 -d | sed 's/$/\n/'
+	set target_url (consul.url "/v1/kv/$key")
+	log.debug "Getting $target_url"
+	curl -s $target_url | jq -r .[].Value | base64 -d | sed 's|$|\n|'
 end
 
 function consul.kv.ls -a key
