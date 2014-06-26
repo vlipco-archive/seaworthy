@@ -1,50 +1,22 @@
-function task.waypoint.process.run
-	#cat -
-	# requires past this point will fail!
-	#cd (atn.get atn.working_dir)
+function task.waypoint.deploy.run -a repo
+	echo "deploying $repo"
+	exit 1
+	# get revision
+	# extract archive
+	# go to app folder
+	# get role	
 
-	#netlog `pwd`
-	#while read oldrev newrev refname
-	while cat - | read oldrev newrev refname
-      # Only run this script for the master branch. You can remove this 
-      # if block if you wish to run it for others as well.
-      if [ "$refname" = "refs/heads/master" ] 
- 
-        git archive $newrev | _process "$RECEIVE_REPO" "$newrev"
- 
-        set rc $status
-        if [ $rc != 0 ] 
-          echo "      ERROR: failed on rev $newrev - push denied"
-          exit $rc
-        end
-      end
-    end
-end
 
-function _announce -a msg
-  log.info "---> $msg"
-end
-
-function _indent_output
-  sed -u 's/^/     /'
-end
-
-function _tcp_docker
-	docker -H "tcp://localhost:2375" $argv
-end
-
-function _process
-	
 	consul.ensure_leader_exists
 
 	# variables definition
 
-	set role (echo "$argv[1]" | awk -F'/' '{print $1}')
-	set repository (echo "$argv[1]" | awk -F'/' '{print $2}')
+	set -g role (echo "$argv[1]" | awk -F'/' '{print $1}')
+	set -g repository (echo "$argv[1]" | awk -F'/' '{print $2}')
 	# revision uses only 7 chars?
-	set revision $argv[2] #"${2:0:7}"
-	set app_folder "$HOME/slugs/$role/$repository"
-	set revision_folder "$app_folder/$revision"
+	set -g revision $argv[2] #"${2:0:7}"
+	set -g app_folder "$HOME/slugs/$role/$repository"
+	set -g revision_folder "$app_folder/$revision"
 
 	# TODO fail is the role isn't covered in the cluster
 
@@ -58,6 +30,7 @@ function _process
 	_build_image
 	_save_app_data
 	_handle_containers
+
 end
 
 function _build_image
@@ -67,9 +40,9 @@ function _build_image
 
 	_tcp_docker pull "$builder" 1> /dev/null
 
+	set image_name "$role/$repository"
 	_announce "Building $image_name with $builder"
 
-	set image_name "$role/$repository"
 	sti build . "$builder" "$image_name" -U "tcp://localhost:2375" 2>&1 | _indent_output
 
 	set registry_image_name "localhost:5000/$image_name:$revision"

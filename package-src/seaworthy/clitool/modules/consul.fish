@@ -28,30 +28,30 @@ function consul.ensure_leader_exists
 	consul.leader > /dev/null ; or atn.abort "no cluster leader"
 end
 
-function consul.kv.set
-	curl -s -X PUT -d "$argv[2]" (consul.url "/v1/kv/$argv[1]") > /dev/null
+function consul.kv.set -a key value
+	curl -s -X PUT -d "$value" (consul.url "/v1/kv/$key") > /dev/null
 end
 
-function consul.kv.get
-	curl -s (consul.url "/v1/kv/$argv[1]") | jq -r .[].Value | base64 -d | sed 's/$/\n/'
+function consul.kv.get -a key
+	curl -s (consul.url "/v1/kv/$key") | jq -r .[].Value | base64 -d | sed 's/$/\n/'
 end
 
-function consul.kv.ls
-	if [ -z "$argv[1]" ]
+function consul.kv.ls -a key
+	if [ -z "$key" ]
 		curl -s (consul.url "/v1/kv/?keys") | jq -r .[]
 	else
-		curl -s (consul.url "/v1/kv/$argv[1]/?keys") | jq -r .[] | sed "s|$argv[1]/||"
+		curl -s (consul.url "/v1/kv/$key/?keys") | jq -r .[] | sed "s|$key/||"
 	end
 end
 
-function consul.kv.del
-	curl -s -X DELETE -d "$argv[3]" (consul.url "/v1/kv/$argv[1]") > /dev/null
+function consul.kv.del -a key
+	curl -s -X DELETE (consul.url "/v1/kv/$key") > /dev/null
 end
 
-function consul.kv.raw_get
-	consul.api.raw_get "kv/$argv[1]" | jq -r .[]
+function consul.kv.raw_get -a key
+	consul.api.raw_get "kv/$key" | jq -r .[]
 end
 
-function consul.api.raw_get
-	curl -s (consul.url "/v1/$argv[1]")
+function consul.api.raw_get -a uri
+	curl -s (consul.url "/v1/$uri")
 end

@@ -9,3 +9,14 @@ function task.waypoint.common.run
 	module.require consul
 end
 
+function _announce -a msg
+  log.info "---> $msg"
+end
+
+function _indent_output
+  sed -u 's/^/     /'
+end
+
+function _tcp_docker
+	docker -H "tcp://localhost:2375" $argv
+end
