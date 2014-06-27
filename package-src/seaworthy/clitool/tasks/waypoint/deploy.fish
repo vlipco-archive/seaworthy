@@ -85,23 +85,24 @@ function _handle_containers
 	set running 0
 	set wait_cycles 0
 
-	# indent output with the rest
-	#echo -n "     "
 
 	log.debug "Checking instances state"
-	while [ "$running" -eq "$desired_instances" -o "$wait_cycles" -eq "30" ]
+	# indent output with the rest
+	echo -n "     "
+	#   	echo [ "$running" != "$desired_instances" -o "$wait_cycles" != "30" ]
+	while test "$running" -ne "$desired_instances" -a $wait_cycles -lt 30
 	   	# sleep at the beginning, allows instances to boot
 	   	sleep 1
-	   	log.debug "Increasing cycle counter"
+	   	#log.debug "Increasing cycle counter -> "(math $wait_cycles + 1)
 		set wait_cycles (math $wait_cycles + 1)
-		set running (_running_instances_of "$role/$repository")
+		set running (_running_instances_in $ctr_cns)
 		echo -n "."
-	end | _indent_output
+	end
 
 	# break the line for correct format
 	echo
 
-	if [ "$running" = "$desired_instances" ]
+	if [ "$running" != "$desired_instances" ]
 		echo "     ERROR: Some units didn't boot properly, manual intervention required"
 		exit 1
 	else
@@ -109,6 +110,15 @@ function _handle_containers
 	end
 end
 
-function _running_instances_of
-	echo 0
+function _running_instances_in -a cns
+	#log.debug "Finding running instances of $cns"
+	set -l running 0
+	for ctr in (consul.kv.ls $cns | grep state)
+		set ctr_state (consul.kv.get $ctr)
+		if [ "$ctr_state" = "running" ]
+			set running (math $running + 1)
+		else
+		end
+	end
+	echo $running
 end

@@ -2,6 +2,7 @@
 # Progrium's conulkv:based in http://git.io/XLm7JA
 
 function task.consul.kv.run -a action key
+	module.require consul
 	if test $action
 		consul.ensure_leader_exists
 		# remove / in the beginning of the key
