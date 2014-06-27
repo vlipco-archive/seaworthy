@@ -20,6 +20,10 @@ function consul.leader
 	end
 end
 
+function consul.node_name
+	consul.api.raw_get "agent/self" | jq -r '.Config.NodeName'
+end
+
 function consul.url -a url
 	echo (atn.get consul.addr)$url
 end

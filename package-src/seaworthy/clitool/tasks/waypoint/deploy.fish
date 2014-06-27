@@ -1,14 +1,22 @@
-function task.waypoint.deploy.run -a repo_fullname
-	_announce "Deploying $repo_fullname"
+function task.waypoint.deploy.run -a repo_fullname deploy_revision
 	consul.ensure_leader_exists
 
 	cd "$GIT_HOME/$repo_fullname"
 
 	set -gx role (echo "$repo_fullname" | awk -F'/' '{print $1}')
 	set -gx repository (echo "$repo_fullname" | awk -F'/' '{print $2}')
-	set -gx revision (git log -n 1 --pretty=format:"%h")
+
+	if test "$deploy_revision"
+		set -gx revision (echo $deploy_revision | cut -c 1-7 )
+	else
+		set -gx revision (git log -n 1 --pretty=format:"%h")
+	end
+
+	set -gx deploy_name "$role/$repository.$revision"
 	set -gx app_folder "$HOME/slugs/$repo_fullname"
 	set -gx revision_folder "$app_folder/$revision"
+
+	_announce "Deploying $deploy_name"
 
 	# cns stand for consul namespace
 	set -gx app_cns "apps/$role/$repository"
@@ -23,8 +31,8 @@ function task.waypoint.deploy.run -a repo_fullname
 
 	cd $revision_folder
 
-	### _build_image
-	### _save_app_data
+	_build_image
+	_save_app_data
 	_handle_containers
 
 end
@@ -37,7 +45,7 @@ function _build_image
 	_tcp_docker pull "$builder" 1> /dev/null
 
 	set image_name "$role/$repository"
-	_announce "Building $image_name with $builder"
+	_announce "Building $deploy_name with $builder"
 
 	sti build . "$builder" "$image_name" -U "tcp://localhost:2375" 2>&1 | _indent_output
 
@@ -76,11 +84,16 @@ function _handle_containers
 	end
 	
 	# containers ns
-	set ctr_cns "containers/$role/$repository.$revision"
-	log.debug "Iterating over instances"
+	set ctr_cns "containers/$deploy_name"
+	
+	log.info "Defining container instances to be run"
 	for i in (seq $desired_instances)
 		consul.kv.set "$ctr_cns.$i/state" "init"
 	end
+
+	log.debug "Distributing containers"
+
+	_distribute $deploy_name | _indent_output
 
 	set running 0
 	set wait_cycles 0
@@ -95,7 +108,7 @@ function _handle_containers
 	   	sleep 1
 	   	#log.debug "Increasing cycle counter -> "(math $wait_cycles + 1)
 		set wait_cycles (math $wait_cycles + 1)
-		set running (_running_instances_in $ctr_cns)
+		set running (consul.api.raw_get "catalog/service/$repository?tag=$revision" | jq -r '. | length')
 		echo -n "."
 	end
 
@@ -108,17 +121,4 @@ function _handle_containers
 	else
 		_announce "$desired_instances instances of $repository are now running"
 	end
-end
-
-function _running_instances_in -a cns
-	#log.debug "Finding running instances of $cns"
-	set -l running 0
-	for ctr in (consul.kv.ls $cns | grep state)
-		set ctr_state (consul.kv.get $ctr)
-		if [ "$ctr_state" = "running" ]
-			set running (math $running + 1)
-		else
-		end
-	end
-	echo $running
 end

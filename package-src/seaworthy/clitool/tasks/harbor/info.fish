@@ -12,6 +12,6 @@ function _generate_info
 		echo "  - $app:" (_max_count_of $app)
 	end
 	echo "Currently owned containers:"
-	_my_offers | sed 's|^|  - |'
+	_my_ctrs | sed 's|^|  - |'
 	echo "Total harbors in role:" (_matching_harbors_count)
 end

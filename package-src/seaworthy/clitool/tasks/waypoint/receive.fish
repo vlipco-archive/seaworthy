@@ -1,6 +1,8 @@
 
 # WARN: don't print anything here, it's against the protocol
 function task.waypoint.receive.run -a rcv_x rcv_user 
+
+
     
     #log.debug "Original command $SSH_ORIGINAL_COMMAND"
 
@@ -25,7 +27,7 @@ function task.waypoint.receive.run -a rcv_x rcv_user
 
     begin
         echo '#!/usr/bin/env fish'
-        echo 'swrth waypoint deploy "$REPO"'
+        echo 'cat - | read oldrev newrev refname; swrth waypoint deploy "$REPO" "$newrev"'
     end > $prcv_hook
     
     #log.debug "Changing permissions of $prcv_hook"
