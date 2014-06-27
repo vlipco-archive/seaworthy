@@ -121,4 +121,32 @@ function _handle_containers
 	else
 		_announce "$desired_instances instances of $repository are now running"
 	end
+
+	_announce "Stopping old instances of the image"
+	for old in (consul.kv.ls "containers/$role/$repository" | grep -v "$revision")
+		consul.kv.del "$old"
+	end
+
+	set total_running 0
+	set wait_cycles 0
+
+	echo -n "     "
+
+	while test "$total_running" -ne "$desired_instances" -a $wait_cycles -lt 30
+	   	sleep 1
+		set wait_cycles (math $wait_cycles + 1)
+		# we get count of ALL instances of the app
+		set total_running (consul.api.raw_get "catalog/service/$repository" | jq -r '. | length')
+		echo -n "."
+	end
+
+	if [ "$total_running" != "$desired_instances" ]
+		echo "     ERROR: Some old units didn't stop properly, manual intervention required"
+		exit 1
+	else
+		_announce "Only recent container of the app are now running"
+	end
+
+	exit 0
+
 end

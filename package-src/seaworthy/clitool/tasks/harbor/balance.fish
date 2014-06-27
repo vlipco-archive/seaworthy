@@ -24,6 +24,20 @@ function task.harbor.balance.run
 	end
 
 	# todo handle container removal
+
+	for ctr in (docker ps -q)
+		set name (_container_name $ctr)
+		# check if format is xxx.yyy.d, e.g: ruby.4eef16f.1
+		if echo $name | grep -qE '^[^.]*\.[^.]*\.[0-9]+'
+			# stop this container unless an offer for it exists
+			if not ctr.mine | grep -qG $name
+				echo "Container $name must be stopped"
+				_tcp_docker stop $ctr
+				_tcp_docker rm -f $ctr
+			end
+		end
+	end
+
 	atn.done "Harbor has been balanced"
 
 end
