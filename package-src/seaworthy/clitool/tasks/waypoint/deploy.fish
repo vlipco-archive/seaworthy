@@ -122,6 +122,9 @@ function _handle_containers
 		_announce "$desired_instances instances of $repository are now running"
 	end
 
+	# todo verify that new images exists for at least N seconds
+	# perform healthcheck on new images?
+
 	_announce "Stopping old instances of the image"
 	for old in (consul.kv.ls "containers/$role/$repository" | grep -v "$revision")
 		consul.kv.del "$old"
