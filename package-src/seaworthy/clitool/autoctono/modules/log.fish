@@ -18,12 +18,22 @@ function log.info
   echo.yellow "$argv"
 end
 
+function log.step
+  log.info "  -> $argv"
+end
+
 function log.error
   echo.red "$argv" 1>&2
 end
 
 function log.debug
   if set -q bundle_debug_messages
-  	echo.blue "$argv" 1>&2
+  	echo "     Δ: $argv" #1>&2
   end
+end
+
+function log.title
+	echo
+	echo.green "========== $argv"
+	echo
 end

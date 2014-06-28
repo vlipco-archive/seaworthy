@@ -24,8 +24,12 @@ function atn.abort
   exit 2
 end
 
+function atn.indent
+  cat - | sed 's/^/        /'
+end
+
 function atn.done
-	echo.green $argv
+	log.title $argv
 	exit 0
 end
 

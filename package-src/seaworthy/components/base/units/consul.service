@@ -1,5 +1,4 @@
 [Unit]
-
 Description=Consul Server
 Requires=cluster.target
 
@@ -14,4 +13,3 @@ ExecStart=/usr/bin/consul agent -config-dir /var/cluster/active/consul
 
 [Install]
 WantedBy=cluster.target
-Also=dns-exposer.service

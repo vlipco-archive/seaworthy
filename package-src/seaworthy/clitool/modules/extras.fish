@@ -1,5 +1,5 @@
 function netlog
-  echo "$argv" | nc localhost 9090 ^-
+  echo "$argv" | nc localhost 9090 ^&-
 end
 
 function iso_date

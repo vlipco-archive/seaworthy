@@ -26,6 +26,7 @@ install: rpm
 	@echo
 	@echo "Installing Seaworthy package"
 	@sudo rpm --install release/seaworthy-*.rpm
+	@sudo swrth init
 
 # the first run of the stop cluster.target will fail
 # handle that in an elegant way!

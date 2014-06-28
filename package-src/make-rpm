@@ -33,6 +33,5 @@ fpm -s dir -t rpm -n seaworthy -v "$version" --rpm-os "linux" \
   --maintainer "David Peláez <david@vlipco.co>" \
   --url "https://github.com/vlipco/seaworthy" \
   --description "vlipco's minimal cluster toolkit" \
-  --after-install "hooks/after-install" \
   --directories "/usr/lib/seaworthy" \
   --inputs "inputs_manifest"

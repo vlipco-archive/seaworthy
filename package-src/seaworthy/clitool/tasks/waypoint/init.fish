@@ -1,5 +1,5 @@
 function task.waypoint.init.run
-	useradd -d $GIT_HOME git ; or true
+	useradd -d $GIT_HOME git ^&-
     #cat > $GIT_HOME/receiver <<-EOF
 	#	#!/bin/bash
 	#	exec /usr/bin/slug-receiver \$argv

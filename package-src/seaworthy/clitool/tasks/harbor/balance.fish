@@ -15,7 +15,7 @@ function task.harbor.balance.run
 			log.info "Pulling $image_name"
 			_tcp_docker pull "$image_name" 1> /dev/null
 			log.info "Running $ctr"
-			_tcp_docker rm "$ctr" ^- ; or true
+			_tcp_docker rm "$ctr" ^&- ; or true
 			_tcp_docker run -dt --name "$ctr" -P \
 			  -e CONSUL_NAME="$ctr_app" -e CONSUL_TAGS="$ctr_tag" \
 			  "$image_name"
