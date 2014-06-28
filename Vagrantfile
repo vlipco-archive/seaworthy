@@ -16,4 +16,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # using a specific IP.
   config.vm.network "private_network", ip: "10.77.77.5"
 
+  config.vm.provision "shell", inline: "gem install fpm && yum install -y fish bc"
+
 end
