@@ -73,12 +73,9 @@ end
 function _handle_containers
 	_announce "Waiting for instances to start"
 
-	log.debug "Checking number of desired_instances"
-
 	set desired_instances (consul.kv.get "$app_cns/instances")
 
 	if [ -z "$desired_instances" ]
-		log.debug "Setting desired_instances to 1"
 		set desired_instances 1
 		consul.kv.set "$app_cns/instances" $desired_instances
 	end
@@ -91,7 +88,6 @@ function _handle_containers
 		consul.kv.set "$ctr_cns.$i/state" "init"
 	end
 
-	log.debug "Distributing containers"
 
 	_distribute $deploy_name | _indent_output
 
@@ -99,14 +95,12 @@ function _handle_containers
 	set wait_cycles 0
 
 
-	log.debug "Checking instances state"
 	# indent output with the rest
 	echo -n "     "
 	#   	echo [ "$running" != "$desired_instances" -o "$wait_cycles" != "30" ]
 	while test "$running" -ne "$desired_instances" -a $wait_cycles -lt 30
 	   	# sleep at the beginning, allows instances to boot
 	   	sleep 1
-	   	#log.debug "Increasing cycle counter -> "(math $wait_cycles + 1)
 		set wait_cycles (math $wait_cycles + 1)
 		set running (consul.api.raw_get "catalog/service/$repository?tag=$revision" | jq -r '. | length')
 		echo -n "."

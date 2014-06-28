@@ -3,4 +3,4 @@ Description=Seaworthy Cluster Services
 After=docker.service
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=server.target

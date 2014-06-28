@@ -8,7 +8,8 @@ function task.harbor.balance.run
 	for ctr in (ctr.mine)
 		set -l ctr_app (echo "$ctr" | awk -F'.' '{print $1}')
 		set -l ctr_tag (echo "$ctr" | awk -F'.' '{print $2}')
-		set -l image_name "$registry:5000/external/$ctr_app:$ctr_tag"
+		#set -l image_name "$registry:5000/external/$ctr_app:$ctr_tag"
+		set -l image_name "registry.service.consul:5000/external/$ctr_app:$ctr_tag"
 		
 		if not _tcp_docker ps | grep -q -G "$ctr"
 			log.info "Pulling $image_name"

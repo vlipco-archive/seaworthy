@@ -7,8 +7,8 @@ Requires=cluster.target
 
 Restart=always
 RestartSec=5
-ExecStartPre=-/usr/local/bin/docker rm ferry
-ExecStart=/usr/local/bin/docker run --net host -t --name ferry vlipco/srv-router
+ExecStartPre=-/usr/bin/docker rm ferry
+ExecStart=/usr/bin/docker run --net host -t --name ferry vlipco/srv-router
 
 [Install]
 WantedBy=cluster.target

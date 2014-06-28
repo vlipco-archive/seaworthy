@@ -138,6 +138,7 @@ function _enable_units
 	if path.is.dir "$units_dir"
 		for unit in (find $units_dir -type f)
 			log.info "Enabling" (basename $unit)
+			log.debug "$unit"
 			systemctl enable "$unit" 2>| sed 's/^/  /'
 		end
 		log.info "Reloading systemd daemon"

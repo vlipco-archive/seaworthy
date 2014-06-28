@@ -31,6 +31,7 @@ install: rpm
 # handle that in an elegant way!
 dev_clean:
 	@sudo systemctl stop cluster.target || echo "... ignoring"
+	@sudo systemctl stop dnsmasq.service || echo "... ignoring"
 	@if [[ -d "/var/cluster/active/components" ]] && which swrth &> /dev/null; then \
 		echo "Disabling local components for clean cycle"; \
 		for comp in $$(ls /var/cluster/active/components -1); do \
@@ -52,6 +53,7 @@ start:
 	@sudo swrth components enable admin
 	@sudo swrth components enable harbor
 	@sudo swrth components enable ferry
+	@sudo systemctl restart dnsmasq.service
 	@sudo systemctl restart docker.service
 	@sudo systemctl restart cluster.target
 
