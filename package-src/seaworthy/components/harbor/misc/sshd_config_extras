@@ -1,0 +1,2 @@
+Match User git
+    ForceCommand /usr/bin/swrth waypoint receive

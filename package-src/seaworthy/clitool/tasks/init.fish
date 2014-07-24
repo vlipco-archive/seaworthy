@@ -7,6 +7,10 @@ function task.init.run
 
 	echo "Creating local configuration directories/files and links"
 
+	if [ ! -d /etc/swrth ]
+		cp -r /usr/lib/seaworthy/config /etc/swrth
+	end
+
 	mkdir -p /usr/local/lib/seaworthy/components
 	
 	mkdir -p /var/cluster/active/consul

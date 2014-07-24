@@ -280,7 +280,9 @@ pre {
   .list-group-item .list-inline {
     padding-left: 0px;
     color: #777777;
-    font-size: 13px; }
+    font-size: 13px;
+    overflow: scroll;
+    height: 30px; }
   .list-group-item .list-group-item-heading {
     border-bottom: 2px solid #eee;
     color: #555555; }

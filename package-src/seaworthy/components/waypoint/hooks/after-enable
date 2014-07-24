@@ -5,3 +5,19 @@ swrth waypoint init
 
 echo "Ensuring registry folder exists"
 mkdir -p /var/cluster/registry
+
+if [ ! -e /etc/ssh/sshd_config.orig ]
+	cp /etc/ssh/sshd_config /etc/ssh/sshd_config.orig
+end
+
+cat /etc/ssh/sshd_config.orig > /etc/ssh/sshd_config
+cat /var/cluster/active/components/waypoint/misc/sshd_config_additions >> /etc/ssh/sshd_config
+
+if sshd -t
+	echo "SSH config updated and validated"
+	systemctl restart sshd
+else
+	echo "ERROR! sshd_config validation didn't pass, restoring original configuration"
+	cat /etc/ssh/sshd_config.orig > /etc/ssh/sshd_config
+	exit 1
+end
