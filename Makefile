@@ -56,6 +56,7 @@ dev_clean:
 start:
 	@sudo swrth config base.bootstrap true
 	@sudo swrth config base.server true
+	@sudo swrth components enable base
 	@sudo swrth components enable waypoint
 	@sudo swrth components enable admin
 	@sudo swrth components enable harbor

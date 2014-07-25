@@ -21,9 +21,6 @@ function task.init.run
 	echo
 	echo "Enabling base component"
 	echo
-	
-	swrth components enable base
-
 
 	echo
 	echo "end."
