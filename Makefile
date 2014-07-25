@@ -48,12 +48,20 @@ dev_clean:
 		echo "Cleaning cluster data"; \
 		sudo rm -rf "/var/local/consul"; \
 	fi
+	@if [[ -d "/etc/swrth" ]]; then \
+		echo "Cleaning config dir"; \
+		sudo rm -rf "/etc/swrth"; \
+	fi
 
 start:
+	@sudo swrth config base.bootstrap true
+	@sudo swrth config base.server true
 	@sudo swrth components enable waypoint
 	@sudo swrth components enable admin
 	@sudo swrth components enable harbor
+	@sudo swrth config harbor.role external
 	@sudo swrth components enable ferry
+	@sudo swrth config ferry.domains sea.test
 	@sudo systemctl restart dnsmasq.service
 	@sudo systemctl restart docker.service
 	@sudo systemctl restart cluster.target

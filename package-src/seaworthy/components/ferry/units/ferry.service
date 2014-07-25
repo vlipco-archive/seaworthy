@@ -8,9 +8,7 @@ Requires=cluster.target
 Restart=always
 RestartSec=5
 ExecStartPre=-/usr/bin/docker rm -f ferry
-ExecStart=/usr/bin/docker run --net host -t --name ferry vlipco/srv-router
+ExecStart=/usr/bin/bash -l -c 'exec docker run --net host -t --name ferry -e  "DOMAINS=$(swrth config ferry.domains)" vlipco/srv-router'
 
 [Install]
 WantedBy=cluster.target
-
-docker run --net host -t --name ferry -e "DOMAINS=sea.test" vlipco/srv-router

@@ -1,4 +1,4 @@
 {
-	"server": {{echo 'true'}},
-	"bootstrap": {{echo 'true'}}
+	"server": {{swrth config base.server}},
+	"bootstrap": {{swrth config base.bootstrap}}
 }
