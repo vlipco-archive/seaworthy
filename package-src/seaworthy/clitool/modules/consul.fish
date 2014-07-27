@@ -43,9 +43,9 @@ end
 
 function consul.kv.ls -a key
 	if [ -z "$key" ]
-		curl -s (consul.url "/v1/kv/?keys") | jq -r .[]
+		curl -s (consul.url "/v1/kv/?keys") | jq -r .[] | grep -e '^$' -v
 	else
-		curl -s (consul.url "/v1/kv/$key?keys") | jq -r .[] | sed "s|$key/||"
+		curl -s (consul.url "/v1/kv/$key?keys") | jq -r .[] | sed "s|$key/||" | grep -e '^$' -v
 	end
 end
 

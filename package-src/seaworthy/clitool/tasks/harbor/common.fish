@@ -15,3 +15,14 @@ end
 function _container_name
 	_tcp_docker inspect --format "{{.Name}}" "$argv[1]" | sed 's|^/||'
 end
+
+function _docker_env -a app
+	module.require consul
+	set role (swrth config harbor.role)
+	set namespace "apps/$role/$app/environment"
+	begin
+		for env_var in (consul.kv.ls $namespace )
+			echo '-e "'(echo $env_var | tr a-z A-Z)"="(consul.kv.get "$namespace/$env_var")'"'
+		end
+	end | tr "\\n" " "
+end

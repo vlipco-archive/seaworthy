@@ -31,6 +31,11 @@ function task.waypoint.deploy.run -a repo_fullname deploy_revision
 
 	cd $revision_folder
 
+	_announce "Saving Seafile to key-value storage"
+	# store keyfile removing whitespace between key & value
+	set encoded_seafile (cat Seafile | sed -e 's/[ \t]*:[ \t]*/:/g' | base64)
+	consul.kv.set "$app_cns/seafile" "$encoded_seafile"
+
 	_build_image
 	_save_app_data
 	_handle_containers
@@ -38,9 +43,9 @@ function task.waypoint.deploy.run -a repo_fullname deploy_revision
 end
 
 function _build_image
-	set builder (cat Seafile | grep builder | awk '{print $2}')
+	set builder (consul.kv.get "$app_cns/seafile" | base64 --decode | filter_value "builder")
 
-	_announce "Getting last version of builder image"
+	_announce "Getting last version of $builder"
 
 	_tcp_docker pull "$builder" 1> /dev/null
 
@@ -136,6 +141,7 @@ function _handle_containers
 		set total_running (consul.api.raw_get "catalog/service/$repository" | jq -r '. | length')
 		echo -n "."
 	end
+	echo 
 
 	if [ "$total_running" != "$desired_instances" ]
 		echo "     ERROR: Some old units didn't stop properly, manual intervention required"

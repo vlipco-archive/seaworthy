@@ -16,8 +16,9 @@ function task.harbor.balance.run
 			_tcp_docker pull "$image_name" 1> /dev/null
 			log.info "Running $ctr"
 			_tcp_docker rm "$ctr" ^&- ; or true
-			_tcp_docker run -dt --name "$ctr" -P \
-			  -e CONSUL_NAME="$ctr_app" -e CONSUL_TAGS="$ctr_tag" \
+			set consul_env (_docker_env $ctr_app)
+			eval _tcp_docker run -dt --name "$ctr" -P \
+			  -e CONSUL_NAME="$ctr_app" -e CONSUL_TAGS="$ctr_tag" $consul_env \
 			  "$image_name"
 		else
 			log.info "$ctr is already running"

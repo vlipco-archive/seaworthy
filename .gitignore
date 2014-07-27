@@ -2,6 +2,7 @@
 tmp/
 .tmp/
 .bundle/
+bin/
 .vagrant/
 release
 go-vendor/pkg
