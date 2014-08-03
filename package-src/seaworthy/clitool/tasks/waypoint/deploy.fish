@@ -52,7 +52,7 @@ function _build_image
 	set image_name "$role/$repository"
 	_announce "Building $deploy_name with $builder"
 
-	sti build . "$builder" "$image_name" -U "tcp://localhost:2375" 2>&1 | _indent_output
+	sti build . "$builder" "$image_name" -U "tcp://localhost:2375" 2>&1; or exit 1 | _indent_output
 
 	set registry_image_name "localhost:5000/$image_name:$revision"
 	_tcp_docker tag "$image_name" "$registry_image_name"
