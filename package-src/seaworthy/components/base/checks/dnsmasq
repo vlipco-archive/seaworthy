@@ -1,0 +1,11 @@
+#!/bin/bash
+set -eo pipefail
+docker_ip="$(swrth docker ip)"
+if cat /etc/resolv.conf | grep -q "nameserver $docker_ip"; then
+	echo "Local DNS resolver points to Dnsmasq"
+else
+	echo "Local DNS resolver doesn't include localhost's Dnsmasq, forcing update"
+	test -e /etc/resolv.conf.orig || cp /etc/resolv.conf /etc/resolv.conf.orig
+	echo "nameserver $docker_ip" > /etc/resolv.conf
+	exit 1
+fi

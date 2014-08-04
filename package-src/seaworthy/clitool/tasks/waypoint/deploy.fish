@@ -78,6 +78,15 @@ function _build_image
 
 	_announce "Building $deploy_name with $builder"
 
+	#module.require containers
+	#
+	#set env_data (ctr.env "$role/$repository")
+	#
+	#if test "$env_data"
+	#	echo "Passing environment during build"
+	#	set env_options "-e '$env_options'"
+	#end
+
 	sti build . "$builder" "$image_name" -U "tcp://localhost:2375" 2>&1; or exit 1
 
 	docker.tcp tag "$image_name:latest" "$registry_image_name"

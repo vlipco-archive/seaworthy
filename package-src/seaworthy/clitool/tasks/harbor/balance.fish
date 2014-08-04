@@ -11,20 +11,21 @@ function task.harbor.balance.run
 		#set -l image_name "$registry:5000/external/$ctr_app:$ctr_tag"
 		set prefix (docker.registry_prefix)
 		set -l image_name "$prefix/$ctr_app:$ctr_tag"
-		echo "---"
+
 		if not docker.tcp ps | grep -q -G "$ctr"
 			log.info "Pulling $image_name"
 			docker.tcp pull "$image_name" 1> /dev/null
 			log.info "Running $ctr"
 			docker.tcp rm "$ctr" ^&- ; or true
-			set consul_env (_docker_env $ctr_app)
+			set role (swrth config harbor.role)
+			set consul_env (ctr.env "$role/$ctr_app")
 			eval docker.tcp run -dt --name "$ctr" -P \
 			  -e CONSUL_NAME="$ctr_app" -e CONSUL_TAGS="$ctr_tag" $consul_env \
 			  "$image_name"
 		else
 			log.info "$ctr is already running"
 		end
-		echo "---"
+
 	end
 
 	# todo handle container removal

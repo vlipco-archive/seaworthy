@@ -1,3 +1,3 @@
 function task.docker.common.run
-	echo "NOT IMPLEMENTED"
+	# NOT IMPLEMENTED
 end

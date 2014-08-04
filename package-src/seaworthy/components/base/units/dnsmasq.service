@@ -11,7 +11,7 @@ ExecStartPre=/bin/bash -c "test -e $BKP || cp $TGT $BKP"
 
 ExecStart=/usr/sbin/dnsmasq -k -C /var/cluster/active/components/base/misc/dnsmasq.conf
 
-ExecStartPost=/bin/bash -c "echo 'nameserver 172.17.42.1' > $TGT"
+ExecStartPost=/bin/bash -c "echo nameserver $(swrth docker ip) > $TGT"
 
 ExecStopPost=/bin/bash -c "cat $BKP > $TGT"
 

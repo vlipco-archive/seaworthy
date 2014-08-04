@@ -1,0 +1,7 @@
+{
+    "check": {
+        "name": "DNS resolver configuration check",
+        "script": "/var/cluster/active/checks/dnsmasq",
+        "interval": "30s"
+    }
+}
