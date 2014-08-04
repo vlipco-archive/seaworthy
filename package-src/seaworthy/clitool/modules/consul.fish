@@ -50,7 +50,7 @@ function consul.kv.ls -a key
 end
 
 function consul.kv.del -a key
-	curl -s -X DELETE (consul.url "/v1/kv/$key") > /dev/null
+	curl -s -X DELETE (consul.url "/v1/kv/$key")"?recurse" > /dev/null
 end
 
 function consul.kv.raw_get -a key

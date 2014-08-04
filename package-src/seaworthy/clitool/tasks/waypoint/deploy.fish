@@ -156,6 +156,10 @@ function _handle_containers
 
 	if [ "$running" != "$desired_instances" ]
 		echo "ERROR: Some units didn't boot properly, manual intervention required"
+		echo "Removing failed containers from KV"
+		for i in (seq $desired_instances)
+			consul.kv.del "$ctr_cns.$i"
+		end
 		exit 1
 	else
 		_announce "$desired_instances instances of $repository are now running"
