@@ -19,10 +19,12 @@ end
 
 function _distribute -a ctr_filter
 	module.require containers
-
+	#TODO disable role hardcode
 	set harbors (consul.api.raw_get "catalog/service/harbor?tag=external" | jq -r '.[] | .Node')
 
 	set harbors_count (count $harbors)
+
+	#echo "Finding unsng $ctr_filter"
 
 	if [ -z (_next_available $ctr_filter) ]
 		log.info "No unassigned containers matching $ctr_filter were found"

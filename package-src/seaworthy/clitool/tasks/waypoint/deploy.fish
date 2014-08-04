@@ -38,6 +38,11 @@ function task.waypoint.deploy.run -a repo_fullname deploy_revision
 
 	cd $revision_folder
 
+	if not test -e Seafile
+		echo "ERROR: Seafile is not present in the repo's root"
+		exit 1
+	end
+
 	if not cat Seafile | jq '.' >- ^&1
 		echo "ERROR: Seafile is not valid JSON"
 		exit 1
@@ -45,7 +50,7 @@ function task.waypoint.deploy.run -a repo_fullname deploy_revision
 
 	_announce "Saving Seafile to key-value storage"
 	# store keyfile removing whitespace between key & value
-	set flattened_seafile (cat Seafile | jq -M -c)
+	set flattened_seafile (cat Seafile | jq -M -c '.')
 	consul.kv.set "$app_cns/seafile" "$flattened_seafile"
 
 	_build_image
@@ -56,7 +61,12 @@ end
 
 
 function _build_image
-	set builder (consul.kv.get "$app_cns/seafile" | base64 --decode | filter_value "builder")
+	set builder (consul.kv.get "$app_cns/seafile" | jq -r ".builder")
+
+	if [ -z "$builder" ]
+		echo "ERROR: Seafile doesn't specify a builder image"
+		exit 1
+	end
 
 	_announce "Getting last version of $builder"
 
@@ -74,8 +84,7 @@ function _build_image
 
 	_announce "Pushing resulting image to the cluster's registry, be patient..."
 	
-	# TODO error handling, e.g the registry is down  > /dev/null
-	if docker.tcp push "$registry_image_name"
+	if docker.tcp push "$registry_image_name" > /dev/null
 		echo "Push completed"
 	else
 		echo "ERROR: Push failed"
@@ -97,7 +106,7 @@ function _save_app_data
 end
 
 function _handle_containers
-	_announce "Waiting for instances to start"
+	
 
 	set desired_instances (consul.kv.get "$app_cns/instances")
 
@@ -109,13 +118,17 @@ function _handle_containers
 	# containers ns
 	set ctr_cns "containers/$deploy_name"
 	
-	log.info "Defining container instances to be run"
+	_announce "Defining container instances to be run"
+	
 	for i in (seq $desired_instances)
-		consul.kv.set "$ctr_cns.$i/state" "init"
+		# all container will have at least an owner field even if empty
+		# otherwise they won't be listed in the containers module
+		consul.kv.set "$ctr_cns.$i/owner" "null"
 	end
 
-
 	_distribute $deploy_name
+
+	_announce "Waiting for instances to start"
 
 	set running 0
 	set wait_cycles 0
@@ -149,8 +162,6 @@ function _handle_containers
 
 	set total_running 0
 	set wait_cycles 0
-
-	echo -n "     "
 
 	while test "$total_running" -ne "$desired_instances" -a $wait_cycles -lt 30
 	   	sleep 1
