@@ -1,16 +1,6 @@
-function task.waypoint.distribute.run -a app
-	if [ -z $app ]
-		atn.abort "You didn't indicate what application to balance. Use all for all apps."
+function task.waypoint.distribute.run -a role app
+	if test -z $app; or test -z $role
+		atn.abort "Role and application params are required."
 	end
-	
-	set ctr_filter $app
-	[ $app = "all" ]; and set filter
-
-	_distribute $ctr_filter
+	_distribute $role $app
 end
-
-
-
-#function ctr.acquire -a ctr_id
-#	consul.kv.set "containers/external/$ctr_id/owner" (hostname)
-#end

@@ -135,7 +135,7 @@ function _handle_containers
 		consul.kv.set "$ctr_cns.$i/owner" "null"
 	end
 
-	_distribute $deploy_name
+	_distribute $role $repository
 
 	_announce "Waiting for instances to start"
 

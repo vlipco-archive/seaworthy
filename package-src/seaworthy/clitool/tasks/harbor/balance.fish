@@ -1,29 +1,33 @@
 function task.harbor.balance.run
 	log.info "Balancing local harbor" (date)
 
-	#log.debug "Handling containers state"
-	
-	#set -l registry (consul.api.raw_get "catalog/service/registry" | jq -r '.[0].Address')
-
 	for ctr in (ctr.mine)
-		set -l ctr_app (echo "$ctr" | awk -F'.' '{print $1}')
-		set -l ctr_tag (echo "$ctr" | awk -F'.' '{print $2}')
-		#set -l image_name "$registry:5000/external/$ctr_app:$ctr_tag"
-		set prefix (docker.registry_prefix)
-		set -l image_name "$prefix/$ctr_app:$ctr_tag"
+		set ctr_role (echo "$ctr" | awk -F'/' '{print $1}' )
+		set harbor_role (swrth config harbor.role)
 
-		if not docker.tcp ps | grep -q -G "$ctr"
-			log.info "Pulling $image_name"
-			docker.tcp pull "$image_name" 1> /dev/null
-			log.info "Running $ctr"
-			docker.tcp rm "$ctr" ^&- ; or true
-			set role (swrth config harbor.role)
-			set consul_env (ctr.env "$role/$ctr_app")
-			eval docker.tcp run -dt --name "$ctr" -P \
-			  -e CONSUL_NAME="$ctr_app" -e CONSUL_TAGS="$ctr_tag" $consul_env \
-			  "$image_name"
+		if [ "$ctr_role" != "$harbor_role" ]
+			echo "ERROR: Role mismatch $ctr doesn't belong to $harbor_role role"
 		else
-			log.info "$ctr is already running"
+			set ctr_name (echo "$ctr" | awk -F'/' '{print $2}' )
+
+			set -l ctr_app (echo "$ctr_name" | awk -F'.' '{print $1}')
+			set -l ctr_tag (echo "$ctr_name" | awk -F'.' '{print $2}')
+			set prefix (docker.registry_prefix)
+			set -l image_name "$prefix/$ctr_app:$ctr_tag"
+
+			if not docker.tcp ps | grep -q -G "$ctr"
+				log.info "Pulling $image_name"
+				docker.tcp pull "$image_name" 1> /dev/null
+				log.info "Running $ctr"
+				docker.tcp rm "$ctr" ^&- ; or true
+				set role (swrth config harbor.role)
+				set consul_env (ctr.env "$role/$ctr_app")
+				eval docker.tcp run -dt --name "$ctr_name" -P \
+				  -e CONSUL_NAME="$ctr_app" -e CONSUL_TAGS="$ctr_tag" $consul_env \
+				  "$image_name"
+			else
+				log.info "$ctr is already running"
+			end
 		end
 
 	end

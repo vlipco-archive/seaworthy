@@ -13,33 +13,34 @@ function _announce -a msg
   log.info "==== $msg"
 end
 
-#function _indent_output
-#  sed -u 's/^/     /'
-#end
+function _distribute -a role app
 
-function _distribute -a ctr_filter
+	set ctr_filter "$role/$app"
+
 	module.require containers
-	#TODO disable role hardcode
-	set harbors (consul.api.raw_get "catalog/service/harbor?tag=external" | jq -r '.[] | .Node')
+
+	set harbors (consul.api.raw_get "catalog/service/harbor?tag=$role" | jq -r '.[] | .Node')
 
 	set harbors_count (count $harbors)
-
-	#echo "Finding unsng $ctr_filter"
-
-	if [ -z (_next_available $ctr_filter) ]
+	
+	if [ -z (_next_available $role $app) ]
 		log.info "No unassigned containers matching $ctr_filter were found"
 		exit 0
 	else
 		log.info "Distributing $app containers"
 	end
+	
+	if [ "$harbors_count" = "0" ]
+		echo "ERROR: There are no $role harbors for $app"
+		exit 1
+	end
+	log.info "Distributing containers between $harbors_count $role harbor(s)"
 
-	log.info "Distributing containers between $harbors_count harbor(s)"
-
-	while not [ -z (_next_available $ctr_filter) ]
+	while not [ -z (_next_available $role $app) ]
 		set cycle_harbor $harbors[1]
 		set ctr (_next_available)
 		log.info "Assigning $ctr to $cycle_harbor"
-		consul.kv.set "containers/external/$ctr/owner" $cycle_harbor
+		consul.kv.set "containers/$ctr/owner" $cycle_harbor
 		if [ $harbors_count -gt 1 ]
 			# rotate the array
 			set harbors $harbors[2..-1]
@@ -47,14 +48,14 @@ function _distribute -a ctr_filter
 		end
 	end
 
-	for ctr in (ctr.available $filter)
-		log.info "Assigning $ctr to -"
-	end
+	#for ctr in (ctr.available $role | grep $app)
+	#	log.info "Assigning $ctr to -"
+	#end
 
 	#breakpoint
 	# todo handle death node ownership
 end
 
-function _next_available -a ctr_filter
-	ctr.available $filter | head -n1
+function _next_available -a role app
+	ctr.available "$role" | grep "$app"| head -n1
 end

@@ -2,25 +2,26 @@
 ### Listing commmands
 ###
 
-function ctr.available -a app
-	set ctr_list (ctr.all)
-	test $app; and set ctr_list (echo $ctr_list|grep $app)
-	for ctr in $ctr_list
-		if [ (consul.kv.get "containers/external/$ctr/owner") = "null" ]
+function ctr.available -a role_filter
+	#set ctr_list (ctr.all | grep "$role_filter/" )
+	#test "$role" ; and set ctr_list (echo $ctr_list )
+	for ctr in (ctr.all | grep "$role_filter/" )
+		set owner (consul.kv.get "containers/$ctr/owner")
+		if [ "$owner" = "null" ]
 			echo $ctr
 		end
 	end
 end
 
-# list of items in the format app.n, e.g: rubyapp.2
+# list of items in the format role/app.n, e.g: staff/rubyapp.2
 function ctr.all
 	# all container will have at least an owner field even if empty
-	consul.kv.ls containers/external | grep "owner" | awk -F'/' '{print $1}'
+	consul.kv.ls "containers" | grep "owner" | sed 's|/owner||'
 end
 
 function ctr.mine
 	for ctr in (ctr.all)
-		if [ (consul.kv.get "containers/external/$ctr/owner") = (consul.node_name) ]
+		if [ (consul.kv.get "containers/$ctr/owner") = (consul.node_name) ]
 			echo "$ctr"
 		end
 	end
