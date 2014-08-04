@@ -52,14 +52,14 @@ function _build_image
 	set image_name "$role/$repository"
 	_announce "Building $deploy_name with $builder"
 
-	sti build . "$builder" "$image_name" -U "tcp://localhost:2375" 2>&1; or exit 1 | _indent_output
+	sti build . "$builder" "$image_name" -U "tcp://localhost:2375" 2>&1; or exit 1
 
 	set registry_image_name "localhost:5000/$image_name:$revision"
 	_tcp_docker tag "$image_name" "$registry_image_name"
 
 	_announce "Pushing resulting image to the cluster's registry, be patient..."
-
-	_tcp_docker push "$registry_image_name" > /dev/null | _indent_output
+	# TODO error handling, e.g the registry is down
+	_tcp_docker push "$registry_image_name" > /dev/null
 end
 
 function _save_app_data
@@ -94,14 +94,11 @@ function _handle_containers
 	end
 
 
-	_distribute $deploy_name | _indent_output
+	_distribute $deploy_name
 
 	set running 0
 	set wait_cycles 0
 
-
-	# indent output with the rest
-	echo -n "     "
 	#   	echo [ "$running" != "$desired_instances" -o "$wait_cycles" != "30" ]
 	while test "$running" -ne "$desired_instances" -a $wait_cycles -lt 30
 	   	# sleep at the beginning, allows instances to boot
@@ -115,7 +112,7 @@ function _handle_containers
 	echo
 
 	if [ "$running" != "$desired_instances" ]
-		echo "     ERROR: Some units didn't boot properly, manual intervention required"
+		echo "ERROR: Some units didn't boot properly, manual intervention required"
 		exit 1
 	else
 		_announce "$desired_instances instances of $repository are now running"
