@@ -1,7 +1,8 @@
 function task.waypoint.deploy.run -a repo_fullname deploy_revision
 	consul.ensure_leader_exists
+	module.require docker
 
-	cd "$GIT_HOME/$repo_fullname"
+	cd "$GIT_HOME/bare/$repo_fullname"
 
 	set -gx role (echo "$repo_fullname" | awk -F'/' '{print $1}')
 	set -gx repository (echo "$repo_fullname" | awk -F'/' '{print $2}')
@@ -18,6 +19,12 @@ function task.waypoint.deploy.run -a repo_fullname deploy_revision
 
 	_announce "Deploying $deploy_name"
 
+	set rns (docker.registry_prefix)
+	_announce "Using $rns as registry namespace"
+
+	_announce "Login into the registry"
+	docker.login
+
 	# cns stand for consul namespace
 	set -gx app_cns "apps/$role/$repository"
 	set -gx revisions_cns "$app_cns/revisions"
@@ -31,10 +38,15 @@ function task.waypoint.deploy.run -a repo_fullname deploy_revision
 
 	cd $revision_folder
 
+	if not cat Seafile | jq '.' >- ^&1
+		echo "ERROR: Seafile is not valid JSON"
+		exit 1
+	end
+
 	_announce "Saving Seafile to key-value storage"
 	# store keyfile removing whitespace between key & value
-	set encoded_seafile (cat Seafile | sed -e 's/[ \t]*:[ \t]*/:/g' | base64)
-	consul.kv.set "$app_cns/seafile" "$encoded_seafile"
+	set flattened_seafile (cat Seafile | jq -M -c)
+	consul.kv.set "$app_cns/seafile" "$flattened_seafile"
 
 	_build_image
 	_save_app_data
@@ -42,24 +54,33 @@ function task.waypoint.deploy.run -a repo_fullname deploy_revision
 
 end
 
+
 function _build_image
 	set builder (consul.kv.get "$app_cns/seafile" | base64 --decode | filter_value "builder")
 
 	_announce "Getting last version of $builder"
 
-	_tcp_docker pull "$builder" 1> /dev/null
+	docker.tcp pull "$builder" 1> /dev/null
 
-	set image_name "$role/$repository"
+	set prefix (docker.registry_prefix)
+	set image_name "$prefix/$repository"
+	set registry_image_name "$image_name:$revision"
+
 	_announce "Building $deploy_name with $builder"
 
 	sti build . "$builder" "$image_name" -U "tcp://localhost:2375" 2>&1; or exit 1
 
-	set registry_image_name "localhost:5000/$image_name:$revision"
-	_tcp_docker tag "$image_name" "$registry_image_name"
+	docker.tcp tag "$image_name:latest" "$registry_image_name"
 
 	_announce "Pushing resulting image to the cluster's registry, be patient..."
-	# TODO error handling, e.g the registry is down
-	_tcp_docker push "$registry_image_name" > /dev/null
+	
+	# TODO error handling, e.g the registry is down  > /dev/null
+	if docker.tcp push "$registry_image_name"
+		echo "Push completed"
+	else
+		echo "ERROR: Push failed"
+		exit 1
+	end
 end
 
 function _save_app_data

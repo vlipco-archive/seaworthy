@@ -17,10 +17,6 @@ end
 #  sed -u 's/^/     /'
 #end
 
-function _tcp_docker
-	docker -H "tcp://localhost:2375" $argv
-end
-
 function _distribute -a ctr_filter
 	module.require containers
 
